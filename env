@@ -12,7 +12,7 @@ DB_NAME='multiagent_platform'
 JWT_SECRET=c21a7afd5c4c0a73d59dcc9e70f8ba50dcb50c4cca018f573bd7fd45ffe2107185b4e1decbd60a436ed569ae5c7241975aed7670731e80fdeeabc134219a00b4
 
 # OpenAI Configuration
-OPENAI_API_KEY=sk-dB1DAI_Qi2lQac2rWZE_yq31U9H3DnHgCcMxc1FFPFT3BlbkFJ1rKksqKiBVqlcAkfzmNyGwTH4bTAHOYfFpq03gsyEA
+OPENAI_API_KEY=
 
 # Blockchain Configuration
 BLOCKCHAIN_NETWORK_URL='https://endpoints.omniatech.io/v1/bsc/testnet/public'
