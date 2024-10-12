@@ -1,0 +1,29 @@
+{
+  "name": "multiagent-platform",
+  "version": "1.0.0",
+  "description": "A multiagent platform for blockchain and AI interaction",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "form-data": "^4.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "langchain": "^0.2.19",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^2.3.0",
+    "natural": "^8.0.1",
+    "node-cache": "^5.1.2",
+    "openai": "^4.56.0",
+    "web3": "^1.5.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  }
+}
