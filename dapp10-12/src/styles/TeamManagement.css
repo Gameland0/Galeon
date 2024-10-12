@@ -1,0 +1,197 @@
+.team-management {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.team-management h2 {
+  color: #333;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 10px;
+}
+
+/* 按钮样式 */
+.toggle-form-btn, .create-team-btn, .use-team-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 10px 0;
+  transition: background-color 0.3s;
+}
+
+.toggle-form-btn:hover, .create-team-btn:hover, .use-team-btn:hover {
+  background-color: #45a049;
+}
+
+/* 创建和编辑团队表单 */
+.create-team-form, .edit-team-form {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 4px;
+  margin-top: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.create-team-form h3, .edit-team-form h3 {
+  margin-top: 0;
+  color: #4CAF50;
+}
+
+.create-team-form input, .create-team-form textarea,
+.edit-team-form input, .edit-team-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* 代理选择区域 */
+.agent-selection {
+  margin-top: 20px;
+}
+
+.agent-selection h4 {
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.agent-lists {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.user-agents, .marketplace-agents {
+  width: 48%;
+}
+
+.user-agents h5, .marketplace-agents h5 {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.agent-item:hover {
+  background-color: #f0f0f0;
+}
+
+.agent-item.selected {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+}
+
+.agent-item span {
+  font-weight: bold;
+}
+
+/* 团队列表 */
+.team-list {
+  margin-top: 30px;
+}
+
+.team-list h3 {
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.team-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 4px;
+  transition: box-shadow 0.3s;
+}
+
+.team-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.team-item h4 {
+  margin-top: 0;
+  color: #4CAF50;
+}
+
+.team-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.team-actions button, .team-actions .use-team-btn {
+  margin-right: 10px;
+}
+
+/* 编辑团队操作 */
+.edit-team-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.edit-team-actions button {
+  margin-right: 10px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.edit-team-actions button:first-child {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.edit-team-actions button:first-child:hover {
+  background-color: #45a049;
+}
+
+.edit-team-actions button:last-child {
+  background-color: #f44336;
+  color: white;
+}
+
+.edit-team-actions button:last-child:hover {
+  background-color: #d32f2f;
+}
+
+.Edit {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  margin: 10px 0;
+  width: 50px;
+  height: 38px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .agent-lists {
+    flex-direction: column;
+  }
+
+  .user-agents, .marketplace-agents {
+    width: 100%;
+  }
+
+  .team-actions {
+    flex-direction: column;
+  }
+
+  .team-actions button, .team-actions .use-team-btn {
+    margin-right: 0;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+}
