@@ -1,0 +1,559 @@
+import React, { useContext, useState } from 'react';
+import { Modal, Button, Select, Form, Input, message } from 'antd';
+import { 
+    Connection, 
+    Keypair, 
+    LAMPORTS_PER_SOL, 
+    PublicKey, 
+    SystemProgram, 
+    Transaction, 
+    TransactionInstruction,
+    clusterApiUrl
+} from '@solana/web3.js';  
+import * as anchor from '@project-serum/anchor';
+import { Program, AnchorProvider, Idl } from '@project-serum/anchor';
+import { Buffer } from 'buffer';  
+import { ChatContext } from './ChatContext';
+import { usePhantomWallet } from '../hook/usePhantomWallet';
+
+const { Option } = Select;
+
+export const ContractDeployment: React.FC = () => {
+  const { 
+    deployModalVisible, 
+    setDeployModalVisible,
+    contracts,
+    selectedContracts,
+    setMessages,
+    conversationId
+  } = useContext(ChatContext);
+
+  const [selectedContract, setSelectedContract] = useState<string | null>(null);
+  const [isCompiling, setIsCompiling] = useState(false);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [networkType, setNetworkType] = useState('devnet');
+  const [compilationResult, setCompilationResult] = useState<any>(null);
+//   const [wallet, setWallet] = useState<any>(null);
+  const { wallet, connected } = usePhantomWallet();
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  const updateSourceWithProgramId = (source: string, programId: string): string => {
+    try {
+      // 处理 declare_id! 的情况
+      const declareIdPattern = /declare_id!\s*\(\s*"[^"]*"\s*\)/;
+      if (declareIdPattern.test(source)) {
+        return source.replace(declareIdPattern, `declare_id!("${programId}")`);
+      }
+  
+      // 如果没找到 declare_id!，在代码开头添加
+      const lines = source.split('\n');
+      // 找到 pub mod 的位置
+      const modIndex = lines.findIndex(line => /pub\s+mod/.test(line));
+      if (modIndex !== -1) {
+        // 在 pub mod 后插入 declare_id!
+        lines.splice(modIndex + 1, 0, `    declare_id!("${programId}");`);
+      } else {
+        // 如果没找到 pub mod，就在文件开头添加
+        lines.unshift(`declare_id!("${programId}");`);
+      }
+      return lines.join('\n');
+    } catch (error) {
+      console.error('Error updating source with program ID:', error);
+      throw error;
+    }
+  };
+
+  const connectWallet = async () => {
+    try {
+      setIsConnecting(true);
+      
+      // 检查是否安装了 Phantom
+      if (!(window as any).phantom?.solana) {
+        // 提供 Phantom 钱包安装链接
+        window.open('https://phantom.app/', '_blank');
+        throw new Error('Please install Phantom wallet');
+      }
+
+      const phantom = (window as any).phantom?.solana;
+      
+      if (!phantom.isConnected) {
+        await phantom.connect();
+      }
+      
+      message.success('Wallet connected successfully!');
+    } catch (error: any) {
+      console.error('Wallet connection error:', error);
+      message.error(error.message || 'Failed to connect wallet');
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  const getNetworkConnection = () => {
+    const networks = {
+      'devnet': clusterApiUrl('devnet'),
+      'testnet': clusterApiUrl('testnet'),
+      'mainnet': clusterApiUrl('mainnet-beta')
+    };
+  
+    return new Connection(
+      networks[networkType as keyof typeof networks],
+      { 
+        commitment: 'confirmed',
+        confirmTransactionInitialTimeout: 60000
+      }
+    );
+  };
+
+  const compileSolanaProgram = async (source: string, type: string) => {
+    if (type === 'solana-anchor') {
+      try {
+        // 1. 生成程序密钥对
+        const programKeypair = Keypair.generate();
+        const programId = programKeypair.publicKey.toString();
+  
+        // 2. 更新源码中的 program id
+        let updatedSource = source;
+        const declareIdPattern = /declare_id!\s*\(\s*"[^"]*"\s*\)/;
+        
+        if (declareIdPattern.test(source)) {
+          // 如果找到现有的 declare_id!，替换它
+          updatedSource = source.replace(declareIdPattern, `declare_id!("${programId}")`);
+        } else {
+          // 如果没有找到，添加到合适的位置
+          const lines = source.split('\n');
+          // 查找 mod 声明
+          const modIndex = lines.findIndex(line => line.includes('pub mod'));
+          
+          if (modIndex !== -1) {
+            // 在 mod 声明后添加
+            lines.splice(modIndex + 1, 0, `    declare_id!("${programId}");`);
+          } else {
+            // 如果没找到 mod 声明，添加到开头
+            lines.unshift(`declare_id!("${programId}");`);
+          }
+          updatedSource = lines.join('\n');
+        }
+  
+        // 3. 尝试解析 IDL，但即使失败也不影响主流程
+        let idl = null;
+        try {
+          idl = await extractIdlFromSource(updatedSource);
+        } catch (error) {
+          console.warn('IDL extraction warning:', error);
+        }
+  
+        // 4. 记录调试信息
+        console.log('Generated Program ID:', programId);
+        console.log('Original Source:', source);
+        console.log('Updated Source:', updatedSource);
+  
+        // 5. 返回编译结果
+        return {
+          success: true,
+          programId: programKeypair.publicKey,
+          keypair: programKeypair,
+          idl: idl,
+          source: updatedSource
+        };
+  
+      } catch (error: any) {
+        console.error('Compilation error:', error);
+        throw new Error(`Compilation failed: ${error.message}`);
+      }
+    } else if (type === 'solana-cargo') {
+      try {
+        const programKeypair = Keypair.generate();
+        const programId = programKeypair.publicKey.toString();
+  
+        let updatedSource = source;
+        const declareIdPattern = /declare_id!\s*\(\s*"[^"]*"\s*\)/;
+        
+        if (declareIdPattern.test(source)) {
+          updatedSource = source.replace(declareIdPattern, `declare_id!("${programId}")`);
+        } else {
+          const lines = source.split('\n');
+          const modIndex = lines.findIndex(line => line.includes('pub mod'));
+          if (modIndex !== -1) {
+            lines.splice(modIndex + 1, 0, `    declare_id!("${programId}");`);
+          } else {
+            lines.unshift(`declare_id!("${programId}");`);
+          }
+          updatedSource = lines.join('\n');
+        }
+  
+        return {
+          success: true,
+          programId: programKeypair.publicKey,
+          keypair: programKeypair,
+          source: updatedSource
+        };
+      } catch (error: any) {
+        console.error('Cargo compilation error:', error);
+        throw new Error(`Cargo compilation failed: ${error.message}`);
+      }
+    }
+    throw new Error(`Unsupported program type: ${type}`);
+  };
+
+  const extractIdlFromSource = async (source: string): Promise<Idl> => {
+    try {
+      // 解析源码中的 IDL 定义
+      const idlRegex = /#\[program\]\s*pub\s*mod\s*(\w+)\s*{([^}]*)}/;
+      const match = source.match(idlRegex);
+      
+      if (!match) {
+        throw new Error('Unable to extract IDL from source');
+      }
+
+      const programName = match[1];
+      const programContent = match[2];
+
+      // 构造基本的 IDL
+      const idl: Idl = {
+        version: "0.1.0",
+        name: programName,
+        instructions: [],
+        accounts: [],
+        types: []
+      };
+
+      // 解析指令
+      const instructionRegex = /pub\s*fn\s*(\w+)\s*\((.*?)\)/g;
+      let instructionMatch;
+      while ((instructionMatch = instructionRegex.exec(programContent)) !== null) {
+        idl.instructions.push({
+          name: instructionMatch[1],
+          accounts: [],
+          args: []
+        });
+      }
+
+      return idl;
+    } catch (error) {
+      console.error('Error extracting IDL:', error);
+      throw error;
+    }
+  };
+
+  const deploySolanaProgram = async (compilationResult: any) => {
+    try {
+      if (!wallet || !connected) {
+        throw new Error('Wallet not connected');
+      }
+  
+      const connection = getNetworkConnection();
+      // console.log('connection:',connection);
+      const programId = compilationResult.programId;
+      const programKeypair = compilationResult.keypair;
+      const programData = Buffer.from(compilationResult.source, 'utf8');
+  
+      // 1. 创建程序账户
+      const space = programData.length;
+      const rentExemptionAmount = await connection.getMinimumBalanceForRentExemption(space);
+  
+      const createAccountTx = new Transaction().add(
+        SystemProgram.createAccount({
+          fromPubkey: wallet.publicKey,
+          newAccountPubkey: programId,
+          lamports: rentExemptionAmount,
+          space: space,
+          programId: new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111")
+        })
+      );
+  
+      console.log('Creating program account...');
+      const createAccountSignature = await sendTransactionWithRetry(
+        connection,
+        wallet,
+        createAccountTx,
+        [programKeypair]
+      );
+      console.log('Program account created:', createAccountSignature);
+  
+      // 2. 写入程序数据
+      console.log('Writing program data...');
+      const MAX_CHUNK_SIZE = 800;
+      const chunks: Buffer[] = [];
+      for (let i = 0; i < programData.length; i += MAX_CHUNK_SIZE) {
+        chunks.push(programData.slice(i, Math.min(i + MAX_CHUNK_SIZE, programData.length)));
+      }
+  
+      const signatures: string[] = [];
+      for (let i = 0; i < chunks.length; i++) {
+        console.log(`Writing chunk ${i + 1}/${chunks.length}`);
+        
+        const writeInstruction = new TransactionInstruction({
+          keys: [
+            { pubkey: new PublicKey(programId), isSigner: true, isWritable: true },
+            { pubkey: wallet.publicKey, isSigner: true, isWritable: true },
+          ],
+          programId: new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111"),
+          data: Buffer.concat([
+            Buffer.from([0]),
+            Buffer.from(new Uint32Array([i * MAX_CHUNK_SIZE]).buffer),
+            chunks[i]
+          ])
+        });
+  
+        const writeTx = new Transaction().add(writeInstruction);
+        
+        const signature = await sendTransactionWithRetry(
+          connection,
+          wallet,
+          writeTx,
+          [programKeypair]
+        );
+  
+        signatures.push(signature);
+        console.log(`Chunk ${i + 1} written:`, signature);
+  
+        // 短暂延迟
+        if (i < chunks.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+
+      return {
+        success: true,
+        programId: programId.toString(),
+        signatures
+      };
+  
+    } catch (error) {
+      console.error('Deployment error:', error);
+      throw error;
+    }
+  };
+
+  const createWriteInstruction = (
+    programId: PublicKey,
+    walletPubkey: PublicKey,
+    offset: number,
+    data: Buffer
+  ): TransactionInstruction => {
+    // 创建写入偏移量的缓冲区，确保是小端序
+    const offsetBuffer = Buffer.alloc(4);
+    offsetBuffer.writeUInt32LE(offset, 0);
+  
+    return new TransactionInstruction({
+      keys: [
+        { pubkey: programId, isSigner: true, isWritable: true },
+        { pubkey: walletPubkey, isSigner: true, isWritable: false },
+      ],
+      programId: new PublicKey("BPFLoaderUpgradeab1e11111111111111111111111"),
+      data: Buffer.concat([
+        Buffer.from([3]), // Write instruction op code for BPFLoader
+        offsetBuffer,     // Offset in little-endian format
+        data             // Actual data chunk
+      ])
+    });
+  };
+
+  const sendTransactionWithRetry = async (
+    connection: Connection,
+    wallet: any,
+    transaction: Transaction,
+    signers: Keypair[],
+    retries = 3
+  ): Promise<string> => {
+    let lastError;
+  
+    for (let i = 0; i < retries; i++) {
+      try {
+        // 获取最新的 blockhash
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+        transaction.recentBlockhash = blockhash;
+        transaction.feePayer = wallet.publicKey;
+  
+        // 清除所有签名
+        transaction.signatures = [];
+  
+        // 按顺序签名
+        if (signers.length > 0) {
+          transaction.sign(...signers);
+        }
+  
+        // 获取钱包签名
+        const signedTx = await wallet.signTransaction(transaction);
+  
+        // 立即发送交易
+        const signature = await connection.sendRawTransaction(signedTx.serialize(), {
+          skipPreflight: false,
+          preflightCommitment: 'confirmed',
+        });
+  
+        // 等待确认
+        const confirmation = await connection.confirmTransaction({
+          signature,
+          blockhash,
+          lastValidBlockHeight
+        }, 'confirmed');
+  
+        if (confirmation.value.err) {
+          throw new Error(`Transaction failed: ${JSON.stringify(confirmation.value.err)}`);
+        }
+  
+        return signature;
+      } catch (error) {
+        console.log(`Attempt ${i + 1} failed:`, error);
+        lastError = error;
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+  
+    throw lastError;
+  };
+  
+  const handleCompile = async () => {
+    if (!selectedContract) {
+      message.error('Please select a contract');
+      return;
+    }
+  
+    setIsCompiling(true);
+    try {
+      const contract = contracts.find((c: any) => c.name === selectedContract);
+      if (!contract) {
+        throw new Error('Contract not found');
+      }
+  
+      const result = await compileSolanaProgram(contract.source, contract.type);
+      setCompilationResult(result);
+  
+      // 更新显示的源码
+      if (result.source) {
+        message.success(`Compilation successful. Program ID: ${result.programId.toString()}`);
+      }
+  
+    } catch (error: any) {
+      console.error('Compilation error:', error);
+      message.error(error.message || 'Compilation failed');
+    } finally {
+      setIsCompiling(false);
+    }
+  };
+  
+  const handleDeploy = async () => {
+    if (!compilationResult?.success) {
+      message.error('Please compile the contract first');
+      return;
+    }
+  
+    setIsDeploying(true);
+    try {
+      message.loading('Deploying program...');
+      const result = await deploySolanaProgram(compilationResult);
+      
+      if (result.success) {
+        setMessages((prev: any) => [...prev, {
+          sender: 'system',
+          content: `Program deployed successfully!\nProgram ID: ${result.programId}\nTransactions:\n${result.signatures.map((sig, i) => `${i + 1}. ${sig}`).join('\n')}`,
+          conversationId
+        }]);
+  
+        message.success('Program deployed successfully!');
+        setDeployModalVisible(false);
+      }
+    } catch (error: any) {
+      console.error('Deployment error:', error);
+      message.error(`Deployment failed: ${error.message}`);
+    } finally {
+      setIsDeploying(false);
+    }
+  };
+  
+
+  return (
+    <Modal
+      title="Deploy Contract"
+      visible={deployModalVisible}
+      onCancel={() => setDeployModalVisible(false)}
+      footer={null}
+      width={800}
+    >
+      <Form layout="vertical">
+
+      <Form.Item>
+          {connected ? (
+            <div className="flex items-center">
+              <span className="text-green-500 mr-2">✓ Wallet Connected</span>
+              <span className="text-gray-600">
+                {wallet?.publicKey?.toString().slice(0, 6)}...
+                {wallet?.publicKey?.toString().slice(-4)}
+              </span>
+            </div>
+          ) : (
+            <Button
+              onClick={connectWallet}
+              loading={isConnecting}
+              type="primary"
+              style={{ marginBottom: '16px' }}
+            >
+              Connect Phantom Wallet
+            </Button>
+          )}
+        </Form.Item>
+
+        <Form.Item label="Select Contract">
+          <Select 
+            value={selectedContract} 
+            onChange={setSelectedContract}
+            style={{ width: '100%' }}
+          >
+            {contracts.map((contract: any) => (
+              <Option key={contract.name} value={contract.name}>
+                {contract.name} ({contract.type})
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item label="Network">
+          <Select value={networkType} onChange={setNetworkType}>
+            <Option value="devnet">Devnet</Option>
+            <Option value="testnet">Testnet</Option>
+            <Option value="mainnet">Mainnet</Option>
+          </Select>
+        </Form.Item>
+
+        {selectedContract && (
+          <Form.Item label="Source Code">
+            <Input.TextArea
+                value={compilationResult ? compilationResult.source : 
+                    contracts.find((c: any) => c.name === selectedContract)?.source}
+                rows={10}
+                readOnly
+            />
+            </Form.Item>        
+        )}
+
+        <Form.Item>
+          <Button
+            onClick={handleCompile}
+            loading={isCompiling}
+            style={{ marginRight: 16 }}
+          >
+            Compile
+          </Button>
+          <Button
+            type="primary"
+            onClick={handleDeploy}
+            loading={isDeploying}
+            disabled={!compilationResult}
+          >
+            Deploy
+          </Button>
+        </Form.Item>
+
+        {compilationResult && (
+          <Form.Item label="Compilation Result">
+            <pre style={{ maxHeight: 200, overflow: 'auto' }}>
+              {JSON.stringify(compilationResult, null, 2)}
+            </pre>
+          </Form.Item>
+        )}
+      </Form>
+    </Modal>
+  );
+};
