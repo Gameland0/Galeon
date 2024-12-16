@@ -1,0 +1,195 @@
+.agent-details {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 20px;
+  background-image: url(../image/chatmain.png);
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+
+.disabled {
+  opacity: 0.7;
+}
+
+::-webkit-scrollbar {
+  width: 2px;
+}
+
+.details-context {
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.agent-details h2 {
+  margin-top: 0;
+}
+
+.agent-details textarea {
+  width: 97%;
+  height: 100px;
+  margin: 10px 0;
+  padding: 10px;
+  background: #E7FFED;
+  border-radius: 20px;
+  border: 1px solid #2DF25B;
+  resize: vertical;
+  color: #222222;
+  outline: none;
+  font-size: 13px;
+  font-family: Times New Roman;
+}
+
+.agent-details textarea::placeholder {
+  color: #2DF25B;
+  font-size: 13px;
+}
+
+.agent-details button {
+  border: none;
+  cursor: pointer;
+}
+
+.agent-info {
+  color: #222222;
+  .name {
+    font-weight: bold;
+    font-size: 26px;
+    color: #022222;
+  }
+  .agent-icon {
+    width: 21px;
+    height: 22px;
+    margin-right: 8px;
+  }
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.button-group button, .Train-Agent {
+  width: 150px;
+  height: 30px;
+  background: linear-gradient(45deg, #7DFF9B 0%, #E7FF85 100%);
+  border-radius: 25px;
+  font-size: 14px;
+  color: #222222;
+}
+
+.long-border {
+  width: 100%;
+  height: 2px;
+  background: #2DF25B;
+  border-radius: 1px;
+  margin-top: 30px;
+}
+
+.training-data-item {
+  background: #F8FFFA;
+  border-radius: 20px;
+  border: 1px solid #B8EFC5;
+  padding: 20px 30px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+
+.No-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .border {
+    width: 300px;
+    height: 2px;
+    background: #ECECEC;
+    border-radius: 1px;
+  }
+}
+
+.Edit-agent {
+  background-image: url(../image/edit_agent_bg.png);
+  background-size: 100% 100%;
+  padding: 20px;
+  input {
+    background: #E7FFED;
+    border-radius: 15px;
+    border: 1px solid #2DF25B;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-family: Times New Roman;
+  }
+  button {
+    width: 30%;
+    height: 30px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #222222;
+    font-family: Times New Roman;
+  }
+  .Save-button {
+    background: #7DFF9B;
+    font-family: Times New Roman;
+  }
+  .Cancel-button {
+    background: #E7FF85;
+    font-family: Times New Roman;
+  }
+  .select-model {
+    width: 180px;
+    height: 41px;
+    background: #E7FFED;
+    border-radius: 15px;
+    border: 1px solid #2DF25B;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    margin-left: 20px;
+    select {
+      width: 100%;
+      height: 27px;
+      border: none;
+      outline: none;
+      background: none;
+      font-size: 13px;
+      font-family: Times New Roman;
+    }
+  }
+}
+
+.agent-training {
+  color: #222222;
+  .training-select {
+    width: 130px;
+    background: #E7FFED;
+    border-radius: 15px;
+    border: 1px solid #2DF25B;
+    padding: 9px 15px;
+  }
+  select {
+    width: 100%;
+    background: #E7FFED;
+    border: none;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .Start-Training {
+    width: 50%;
+    margin: auto;
+    button {
+      width: 100%;
+      height: 40px;
+      background: #7DFF9B;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #222222;
+      &:hover {
+        background: #baffca;
+      }
+    }
+  }
+}
