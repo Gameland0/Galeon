@@ -1,0 +1,28 @@
+.markdown-body {
+    box-sizing: border-box;
+    min-width: 200px;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 45px;
+  }
+  
+  @media (max-width: 767px) {
+    .markdown-body {
+      padding: 15px;
+    }
+  }
+  
+  .message .markdown-body {
+    background-color: transparent;
+    color: inherit;
+  }
+  
+  .message .markdown-body pre {
+    background-color: #f6f8fa;
+  }
+  
+  .message .markdown-body code {
+    background-color: rgba(27,31,35,0.05);
+    border-radius: 3px;
+    padding: 0.2em 0.4em;
+  }
