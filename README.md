@@ -1,14 +1,13 @@
-# 🧠 FLock RAG Trading Signals
+# Galeon
 
-> AI-Powered Crypto Trading Signals Enhanced by FLock's Retrieval Augmented Generation
+Galeon redefines how Web3 operates through an autonomous multi-agent system that gives AI the ability to perceive, reason, and execute — enabling true end-to-end automation from market insight to on-chain action, and fundamentally elevating the intelligence and efficiency of Web3.
 
-## 🏆 Hackathon Project Overview
+Within this architecture, the Auto Agent Mesh serves as a dynamic, self-organizing network of agents capable of forming specialized teams to handle complex tasks. The Galeon Agent Layer provides a modular, composable framework where capabilities can be assembled like Lego blocks, allowing users and developers to build agent workflows for trading, risk management, automation, and more. At the core, the Auto Agent Eco-Link functions as the cognitive backbone that connects, aligns, and optimizes all sub-agents, enabling coordinated decision-making and system-wide orchestration with shared context and memory.
 
-This project demonstrates the integration of **FLock RAG (Retrieval Augmented Generation)** into a crypto trading signals platform. By leveraging historical trading data and AI analysis, the system provides enhanced trading signals with dynamic confidence adjustments based on similar past market scenarios.
 
 ### 🎯 Core Innovation
 
-Traditional trading signals rely solely on current market conditions. Our FLock-enhanced system:
+Traditional trading signals rely solely on current market conditions. Our system:
 
 1. **Queries Historical Data** - Retrieves similar trading scenarios from FLock's decentralized knowledge base
 2. **AI Analysis** - Uses DeepSeek AI to analyze historical patterns and outcomes
