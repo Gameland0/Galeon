@@ -2,7 +2,7 @@
 
 **A self-evolving AI trading agent backed by persistent memory, with a community prediction market on Base chain.**
 
-Over **2,000+ live trades** executed · **58% win rate** · **250%+ cumulative profit**
+Over **6,084 live trades** executed · **60.3% win rate** · **3,669W / 2,415L**
 
 ---
 
@@ -48,8 +48,8 @@ Trade opens → Community bets on Base → Trade closes
 
 | Metric | Value |
 |--------|-------|
-| Total Trades | 2,000+ |
-| Win Rate | 58% |
+| Total Trades | 6,084 |
+| Win Rate | 60.3% (3,669W / 2,415L) |
 | Cumulative Profit | 250%+ |
 | Learned Dimensions | 19 auto-adjusted from trade data |
 | Memory Backend | Sibyl (cross-session persistent) |
