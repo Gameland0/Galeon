@@ -1,108 +1,46 @@
-# Galeon
+# Galeon — AI Trading Agent + Prediction Market
 
-**A self-evolving AI trading agent that learns from every trade it makes.**
+**A self-evolving AI trading agent backed by persistent memory, with a community prediction market on Base chain.**
 
-Galeon is not another signal bot or rule-based trading tool. It is an autonomous trading cognition system that perceives multi-dimensional market data, makes decisions, executes trades, and — most importantly — **automatically learns from outcomes to continuously improve its own strategy.**
-
-Over **2,000+ live trades** executed, achieving **58% win rate** and **250%+ cumulative profit**, with performance still improving as the system evolves.
+Over **2,000+ live trades** executed · **58% win rate** · **250%+ cumulative profit**
 
 ---
 
-## Core Innovation
+## What is Galeon?
 
-Most trading bots follow a fixed playbook: when rules work, they profit; when the market shifts, they bleed — until a human manually re-tunes them. **Galeon closes this loop autonomously.**
+Galeon combines two things:
 
-### The Self-Evolution Cycle
+### 1. Self-Evolving AI Trading Agent
 
-```
-  Perceive ──► Cognize ──► Decide ──► Execute
-     ▲                                    │
-     │                                    ▼
-  Evolve ◄── Backtest ◄── Analyze ◄── Review
-```
+Galeon perceives multi-dimensional market data, makes trading decisions, and — most importantly — **learns from every trade outcome to continuously improve its own strategy.**
 
-Every trade Galeon completes feeds back into the system:
-
-1. **Perceive** — Ingest real-time multi-dimensional market data
-2. **Cognize** — Identify token lifecycle stage, market regime, and signal alignment
-3. **Decide** — Multi-dimensional voting produces direction and confidence score
-4. **Execute** — Enter positions with dynamic sizing and risk controls
-5. **Review** — On exit, auto-verify what went right and wrong
-6. **Analyze** — Attribute outcomes to specific dimensions and rules
-7. **Backtest** — Validate proposed parameter changes against historical data
-8. **Evolve** — Apply validated adjustments, with overfitting protection
-
-**The rules that govern Galeon today were not written by humans — they were discovered by the system itself from 2,000+ trades.**
-
----
-
-## Multi-Dimensional Perception
-
-Galeon's edge comes from synthesizing signals that no single-dimension bot can capture:
-
-| Layer | Dimensions | Purpose |
-|-------|-----------|---------|
-| **On-Chain** | Smart Money flow, Buy/Sell Ratio, holder distribution | Detect "smart money" intent before price moves |
-| **Derivatives** | Funding rate, Open Interest stages, Taker ratio, Top Trader positions | Read contract market microstructure |
-| **Technical** | Multi-timeframe momentum, EMA channels, K-line patterns, RSI | Identify trend and entry timing |
-| **Macro** | BTC/ETH correlation, market regime (bull/bear/transition), sentiment cycles | Context-aware strategy weighting |
-| **LLM Cognition** | ChatGPT-powered reasoning for complex multi-signal scenarios | Handle ambiguity that rules can't |
-
-On-chain data is sourced via **Bitget Agent Skill**, providing real-time multi-dimensional chain analytics.
-
----
-
-## Intelligent Risk Control
-
-Risk management is not a single stop-loss — it's a **multi-layer defense system** that also learns:
-
-- **Red Line Layer** — Price anomaly detection (crash > 50% auto-blocked), honeypot/rug scoring, extreme BTC drawdown halt
-- **Self-Learned Blocking** — System automatically identifies and blocks stage + direction combinations with historically low win rates. These rules emerge from data, not human intuition
-- **Time-Decay Stop Loss** — The longer a position is held at a loss, the tighter the stop becomes. Prevents "hold and hope" behavior
-- **Loss Cooldown** — After a losing exit, cooldown period scales with loss severity. Prevents revenge trading on the same token
-
----
-
-## Architecture
+The self-evolution cycle:
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│                  Frontend (React + TypeScript)                │
-│  Dashboard · Trade Monitor · Learning Reports · P&L Analytics│
-└──────────────────────────┬───────────────────────────────────┘
-                           │ REST API + WebSocket
-┌──────────────────────────┴───────────────────────────────────┐
-│                    Galeon Brain Engine                        │
-│                                                              │
-│  ┌─────────────┐  ┌──────────────┐  ┌─────────────────────┐ │
-│  │ Perception  │  │  Cognition   │  │    Control System    │ │
-│  │             │  │              │  │                      │ │
-│  │ • On-Chain  │─►│ • Stage ID   │─►│ • Confidence Gate    │ │
-│  │ • Derivs    │  │ • Rules Eng  │  │ • Red Line Checks    │ │
-│  │ • Technical │  │ • LLM Reason │  │ • Position Sizing    │ │
-│  │ • Macro     │  │ • Voting     │  │ • Dynamic Params     │ │
-│  └─────────────┘  └──────────────┘  └──────────┬──────────┘ │
-│                                                 │            │
-│  ┌──────────────────────────────────────────────┴──────────┐ │
-│  │                  Execution Layer                         │ │
-│  │  Entry · Partial Exit · Staged TP · Time-Decay SL       │ │
-│  └──────────────────────────┬──────────────────────────────┘ │
-│                             │                                │
-│  ┌──────────────────────────┴──────────────────────────────┐ │
-│  │                  Evolution Layer                         │ │
-│  │  Auto-Verify · Attribution · RuleEvolver · Backtest     │ │
-│  │  Learning Reports · Overfitting Protection              │ │
-│  └─────────────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────────────┘
-                           │
-              ┌────────────┴────────────┐
-              │     Data Sources        │
-              │  • Bitget Agent Skill   │
-              │  • Derivatives API      │
-              │  • WebSocket Streams    │
-              │  • LLM (ChatGPT)       │
-              └─────────────────────────┘
+Perceive → Cognize → Decide → Execute → Review → Analyze → Evolve
+    ▲                                                           │
+    └───────────────────────────────────────────────────────────┘
 ```
+
+Signal dimensions: on-chain smart money, derivatives (OI/FR/Taker), technical analysis, macro regime, and LLM-powered reasoning for complex scenarios.
+
+Learned weights and trade lessons are stored in **Sibyl persistent memory** — so the agent remembers everything across restarts. No retraining required.
+
+### 2. Community Prediction Market on Base
+
+When Galeon opens a trade, a prediction event is created on **Base chain** where community members bet USDC on the outcome.
+
+- Winners split the pool proportionally (5% platform fee)
+- Settlement outcomes are written back to **Sibyl Memory**
+- At the next trade decision, Galeon recalls Base chain prediction history for that token — community accuracy directly influences the trade score
+
+```
+Trade opens → Community bets on Base → Trade closes
+     → Settlement on-chain → Outcome stored in Sibyl
+          → Recalled at next trade decision → Community vote (+1 / -1)
+```
+
+**Contract (Base Mainnet):** `0x7127ea3c571D4e446d29E26953a3D6DdD9fF558f`
 
 ---
 
@@ -113,9 +51,9 @@ Risk management is not a single stop-loss — it's a **multi-layer defense syste
 | Total Trades | 2,000+ |
 | Win Rate | 58% |
 | Cumulative Profit | 250%+ |
-| Self-Learned Rules | Auto-generated from trade data |
-| Auto Parameter Adjustments | 500+ (with overfitting protection) |
-| Uptime | Continuous 24/7 operation |
+| Learned Dimensions | 19 auto-adjusted from trade data |
+| Memory Backend | Sibyl (cross-session persistent) |
+| Prediction Market | Live on Base Mainnet |
 
 ---
 
@@ -124,23 +62,16 @@ Risk management is not a single stop-loss — it's a **multi-layer defense syste
 | Component | Technology |
 |-----------|-----------|
 | Backend | Node.js, Express |
-| Frontend | React, TypeScript, Ant Design |
+| Frontend | React, TypeScript |
 | Database | MySQL |
-| LLM | ChatGPT (complex scenario reasoning) |
-| On-Chain Data | Bitget Agent Skill |
-| Real-time | WebSocket price streams |
-| Evolution | Custom RuleEvolver with bounded optimization |
+| Persistent Memory | Sibyl |
+| Prediction Market | Base chain (Solidity, USDC) |
+| ML Win-Rate Model | Python, LightGBM |
+| LLM Reasoning | Claude / GPT |
 
 ---
 
 ## Quick Start
-
-### Prerequisites
-
-- Node.js >= 16.0.0
-- MySQL 5.7+
-
-### Setup
 
 ```bash
 git clone https://github.com/Gameland0/Galeon.git
@@ -148,7 +79,7 @@ cd Galeon
 
 # Backend
 cd server && npm install
-cp .env.example .env  # Configure your API keys
+cp .env.example .env
 npm start
 
 # Frontend
@@ -156,20 +87,27 @@ cd ../dapp && npm install
 npm start
 ```
 
+Key env variables:
+```
+LEARNING_STORAGE=sibyl         # Enable Sibyl persistent memory
+PAPER_TRADE_ENV=testnet        # testnet | mainnet
+PREDICTION_CONTRACT_ADDRESS=0x...
+```
+
 ---
 
 ## Roadmap
 
-- [x] Multi-dimensional perception (on-chain + derivatives + technical + macro)
-- [x] Rules Engine + LLM dual-track cognition
-- [x] Self-evolution loop (verify → attribute → adjust → backtest)
-- [x] Multi-layer risk control with self-learned blocking rules
-- [ ] Cross-token correlation analysis for sector rotation prediction
-- [ ] Regime-adaptive strategy switching (auto-select optimal params per market condition)
-- [ ] Multi-strategy parallel execution with automatic best-strategy selection
+- [x] Multi-dimensional AI trading agent
+- [x] Self-evolution loop (learn from every trade)
+- [x] Sibyl persistent memory (cross-session learning)
+- [x] Base chain prediction market
+- [x] Community prediction → trade decision integration
+- [ ] Cross-token correlation analysis
+- [ ] Regime-adaptive strategy auto-selection
 
 ---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details
+MIT License
