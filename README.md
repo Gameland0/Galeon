@@ -42,6 +42,70 @@ Trade opens → Community bets on Base → Trade closes
 
 **Contract (Base Mainnet):** `0x7127ea3c571D4e446d29E26953a3D6DdD9fF558f`
 
+### 3. Tamper-Proof Signal Anchoring on Creditcoin (Attestcoin)
+
+**BUIDL CTC 2026 Fall Hackathon — AI Track**
+
+Every AI trading signal is committed on **Ethereum Sepolia before execution**, then bridged to **Creditcoin CC3** via Attestcoin cryptographic proofs — no centralized oracle, no cherry-picking, no post-hoc editing.
+
+```
+AI Brain ──→ Sepolia Commit ──→ Attestcoin Proof (~7min) ──→ CC3 Record
+                 │                       │                        │
+            Signal hash             Merkle proof            Verified &
+            locked BEFORE           generated               recorded on
+            trade executes                                  Creditcoin
+```
+
+**Each signal = 4 on-chain transactions** (2 Sepolia + 2 CC3). ~20 signals/day = ~80 Creditcoin transactions/day.
+
+**Live Demo:** [testai.galeon.world/#/attestcoin](https://testai.galeon.world/#/attestcoin)
+
+#### USC Integration
+
+Galeon uses Creditcoin's **Universal Smart Contracts (USC)** in two ways:
+
+1. **GaleonASC.sol** — Deployed on CC3 via USC. Stores all AI positions (entry, exit, P&L) on-chain. Supports CTC prediction betting.
+
+2. **Block Prover Precompile** (`0x0000000000000000000000000000000000000FD2`) — A USC-exclusive protocol-level precompile. The contract calls `VERIFIER.verifyAndEmit()` to trustlessly verify that Sepolia events actually occurred — no oracle, no middleware.
+
+```solidity
+// GaleonASC.sol
+INativeQueryVerifier constant VERIFIER =
+    INativeQueryVerifier(0x0000000000000000000000000000000000000FD2);
+
+bool verified = VERIFIER.verifyAndEmit(
+    sourceChainKey, blockHeight, txBytes, merkleProof, continuityProof
+);
+require(verified, "proof verification failed");
+```
+
+#### Attestcoin Contracts
+
+| Contract | Chain | Address |
+|----------|-------|---------|
+| `GaleonTradeRecorder.sol` | Sepolia | [`0x666AecD5f08406D8d0D3cF511399FdC7cCbc6d39`](https://sepolia.etherscan.io/address/0x666AecD5f08406D8d0D3cF511399FdC7cCbc6d39) |
+| `GaleonASC.sol` | CC3 Testnet | [`0x666AecD5f08406D8d0D3cF511399FdC7cCbc6d39`](https://creditcoin-testnet.blockscout.com/address/0x666AecD5f08406D8d0D3cF511399FdC7cCbc6d39) |
+
+#### Attestcoin Backend Services
+
+| Module | File | Purpose |
+|--------|------|---------|
+| `AttestcoinBridge` | `server/src/services/attestcoin/AttestcoinBridge.js` | Main orchestrator, hooks into PaperTradeService |
+| `SepoliaRelayer` | `server/src/services/attestcoin/SepoliaRelayer.js` | Calls Sepolia: `commitSignal()`, `recordExit()` |
+| `ProofWatcher` | `server/src/services/attestcoin/ProofWatcher.js` | Polls `@gluwa/usc-sdk` for Attestcoin proofs |
+| `CC3Recorder` | `server/src/services/attestcoin/CC3Recorder.js` | Submits proofs to CC3 GaleonASC |
+| `attestcoinRoutes` | `server/src/routes/attestcoinRoutes.js` | REST API: positions, stats, price, bridge status |
+
+#### Attestcoin Environment Variables
+
+```bash
+SEPOLIA_WALLET_PRIVATE_KEY=<key>
+GALEON_RECORDER_ADDRESS=0x666AecD5f08406D8d0D3cF511399FdC7cCbc6d39
+CC3_WALLET_PRIVATE_KEY=<key>
+GALEON_ASC_ADDRESS=0x666AecD5f08406D8d0D3cF511399FdC7cCbc6d39
+ATTESTCOIN_ENABLED=true
+```
+
 ---
 
 ## Key Results
@@ -54,6 +118,7 @@ Trade opens → Community bets on Base → Trade closes
 | Learned Dimensions | 19 auto-adjusted from trade data |
 | Memory Backend | Sibyl (cross-session persistent) |
 | Prediction Market | Live on Base Mainnet |
+| Attestcoin Bridge | Live on CC3 Testnet (Sepolia → CC3) |
 
 ---
 
@@ -68,6 +133,8 @@ Trade opens → Community bets on Base → Trade closes
 | Prediction Market | Base chain (Solidity, USDC) |
 | ML Win-Rate Model | Python, LightGBM |
 | LLM Reasoning | Claude / GPT |
+| Cross-Chain Proofs | Attestcoin / @gluwa/usc-sdk |
+| Creditcoin | CC3 Testnet (USC + Block Prover Precompile) |
 
 ---
 
@@ -103,6 +170,8 @@ PREDICTION_CONTRACT_ADDRESS=0x...
 - [x] Sibyl persistent memory (cross-session learning)
 - [x] Base chain prediction market
 - [x] Community prediction → trade decision integration
+- [x] Attestcoin tamper-proof signal anchoring (Sepolia → CC3)
+- [x] Block Prover Precompile integration (USC)
 - [ ] Cross-token correlation analysis
 - [ ] Regime-adaptive strategy auto-selection
 
