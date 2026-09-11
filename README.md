@@ -58,8 +58,6 @@ AI Brain ──→ Sepolia Commit ──→ Attestcoin Proof (~7min) ──→ C
 
 **Each signal = 4 on-chain transactions** (2 Sepolia + 2 CC3). ~20 signals/day = ~80 Creditcoin transactions/day.
 
-**Live Demo:** [testai.galeon.world/#/attestcoin](https://testai.galeon.world/#/attestcoin)
-
 #### USC Integration
 
 Galeon uses Creditcoin's **Universal Smart Contracts (USC)** in two ways:
