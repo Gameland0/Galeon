@@ -13,3 +13,27 @@ coverage/
 .claude/
 *.bak*
 *.backup_*
+
+# Server backend (private trading logic)
+server/
+# Old backups
+backup_*/
+backups/
+dapp/
+# Trading scripts & data
+crypto-signal-engine.js
+signal-api-server.js
+signal-dashboard.html
+signal-snapshot.json
+hype_candles_cache.json
+hype_hf_backtest.py
+fetch_bsc_trades.js
+generate-users.js
+insert_recent_users.sql
+test-binance*.js
+test-hyperliquid*.js
+test-metis*.js
+# Credentials
+colosseum-credentials.md
+test-privy-signer-id.md
+build.tar.gz
