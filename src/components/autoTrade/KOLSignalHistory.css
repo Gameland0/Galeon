@@ -1,0 +1,417 @@
+/* KOL Signal History Modal Styles - 纯白清爽设计 */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modal-content.kol-signal-history {
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid #E8E8E8;
+  max-width: 1200px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* Close Button */
+.kol-signal-history .btn-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 100, 100, 0.15);
+  color: #D64545;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(255, 100, 100, 0.2);
+}
+
+.kol-signal-history .btn-close:hover {
+  background: rgba(255, 100, 100, 0.25);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 100, 100, 0.3);
+}
+
+/* Statistics Cards */
+.kol-signal-history .stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 24px;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.kol-signal-history .stat-card {
+  background: #FAFAFA;
+  border: 1px solid #F0F0F0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.kol-signal-history .stat-card:hover {
+  border-color: #1463FF;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.kol-signal-history .stat-icon {
+  font-size: 32px;
+  opacity: 0.9;
+}
+
+.kol-signal-history .stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kol-signal-history .stat-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.kol-signal-history .stat-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.kol-signal-history .stat-value.positive {
+  color: #2FBF7A;
+}
+
+.kol-signal-history .stat-value.negative {
+  color: #FF6464;
+}
+
+.kol-signal-history .stat-sublabel {
+  font-size: 11px;
+  color: #999;
+  margin-top: 2px;
+}
+
+/* Filters */
+.kol-signal-history .filters {
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #FAFAFA;
+  border-bottom: 1px solid #F0F0F0;
+  flex-wrap: wrap;
+}
+
+.kol-signal-history .filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kol-signal-history .filter-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  white-space: nowrap;
+}
+
+.kol-signal-history .filter-group select {
+  background: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #1A1A1A;
+  font-size: 13px;
+  min-width: 120px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.kol-signal-history .filter-group select:focus {
+  outline: none;
+  border-color: #1D6CF2;
+  background: #E5F0FF;
+  box-shadow: 0 0 0 3px rgba(29, 108, 242, 0.1);
+}
+
+.kol-signal-history .btn-refresh {
+  background: linear-gradient(135deg, #48DCA0 0%, #2FBF7A 100%);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+  margin-left: auto;
+  box-shadow: 0 2px 8px rgba(47, 191, 122, 0.2);
+}
+
+.kol-signal-history .btn-refresh:hover:not(:disabled) {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(47, 191, 122, 0.3);
+}
+
+.kol-signal-history .btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Alert */
+.kol-signal-history .alert {
+  margin: 16px 24px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.kol-signal-history .alert-error {
+  background: rgba(255, 110, 110, 0.15);
+  border: 1px solid rgba(255, 110, 110, 0.3);
+  color: #D64545;
+}
+
+/* Loading & Empty States */
+.kol-signal-history .loading-state,
+.kol-signal-history .empty-state {
+  padding: 60px 24px;
+  text-align: center;
+  color: #999;
+  background: #FFFFFF;
+  border-radius: 12px;
+  margin: 16px 24px;
+  border: 1px solid #F0F0F0;
+}
+
+.kol-signal-history .spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(140, 90, 255, 0.2);
+  border-top-color: #8C5AFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Signal Table */
+.kol-signal-history .signal-table-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 24px;
+  margin: 16px 0;
+}
+
+.kol-signal-history .signal-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.kol-signal-history .signal-table thead th {
+  position: sticky;
+  top: 0;
+  background: #FAFAFA;
+  color: #666;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 2px solid #F0F0F0;
+  z-index: 1;
+}
+
+.kol-signal-history .signal-table tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #F5F5F5;
+  font-size: 14px;
+  color: #1A1A1A;
+}
+
+.kol-signal-history .signal-table tbody tr:hover {
+  background: #F8F9FA;
+}
+
+.kol-signal-history .time-cell {
+  color: #666;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.kol-signal-history .kol-link {
+  color: #1463FF;
+  text-decoration: none;
+  transition: color 0.3s;
+  font-weight: 500;
+}
+
+.kol-signal-history .kol-link:hover {
+  color: #0F4FD6;
+  text-decoration: underline;
+}
+
+.kol-signal-history .signal-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.kol-signal-history .signal-badge.buy {
+  background: rgba(72, 220, 160, 0.15);
+  color: #2FBF7A;
+}
+
+.kol-signal-history .signal-badge.sell {
+  background: rgba(255, 110, 110, 0.15);
+  color: #D64545;
+}
+
+.kol-signal-history .status-icon {
+  font-size: 16px;
+}
+
+.kol-signal-history .status-icon.executed {
+  color: #2FBF7A;
+}
+
+.kol-signal-history .status-icon.not-executed {
+  color: #FF6464;
+  cursor: help;
+}
+
+.kol-signal-history .result-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.kol-signal-history .result-badge.open {
+  background: rgba(20, 99, 255, 0.12);
+  color: #1463FF;
+}
+
+.kol-signal-history .result-badge.win {
+  background: rgba(72, 220, 160, 0.15);
+  color: #2FBF7A;
+}
+
+.kol-signal-history .result-badge.loss {
+  background: rgba(255, 110, 110, 0.15);
+  color: #D64545;
+}
+
+.kol-signal-history .pnl-cell .positive {
+  color: #2FBF7A;
+  font-weight: 600;
+}
+
+.kol-signal-history .pnl-cell .negative {
+  color: #FF6464;
+  font-weight: 600;
+}
+
+.kol-signal-history .pnl-cell .text-muted {
+  color: #999;
+}
+
+/* Footer */
+.kol-signal-history .modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #F0F0F0;
+  display: flex;
+  justify-content: center;
+  background: #FAFAFA;
+  border-radius: 0 0 16px 16px;
+}
+
+.kol-signal-history .footer-text {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .kol-signal-history .stats-cards {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-content.kol-signal-history {
+    max-height: 95vh;
+  }
+
+  .kol-signal-history .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .kol-signal-history .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kol-signal-history .filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kol-signal-history .filter-group select {
+    width: 100%;
+  }
+
+  .kol-signal-history .btn-refresh {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .kol-signal-history .signal-table-container {
+    overflow-x: auto;
+  }
+
+  .kol-signal-history .signal-table {
+    min-width: 800px;
+  }
+}

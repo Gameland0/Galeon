@@ -1,0 +1,499 @@
+{
+  "version": "0.1.0",
+  "name": "solana_agent_registry",
+  "docs": [
+    "Solana个人Agent注册合约",
+    "功能：纯粹的个人Agent注册、管理和训练数据",
+    "对应EVM的AgentRegistry.ts"
+  ],
+  "instructions": [
+    {
+      "name": "initializeRegistry",
+      "docs": [
+        "初始化Agent注册表"
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "registry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "registerAgent",
+      "docs": [
+        "注册新Agent"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "registry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "agent",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "agentType",
+          "type": "string"
+        },
+        {
+          "name": "ipfsHash",
+          "type": "string"
+        },
+        {
+          "name": "imageUrl",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "batchRegisterAgents",
+      "docs": [
+        "批量注册Agent（对应EVM的betchregisterAgent）"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "registry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "names",
+          "type": {
+            "vec": "string"
+          }
+        },
+        {
+          "name": "descriptions",
+          "type": {
+            "vec": "string"
+          }
+        },
+        {
+          "name": "agentTypes",
+          "type": {
+            "vec": "string"
+          }
+        },
+        {
+          "name": "ipfsHashes",
+          "type": {
+            "vec": "string"
+          }
+        }
+      ],
+      "returns": {
+        "vec": "u64"
+      }
+    },
+    {
+      "name": "updateAgent",
+      "docs": [
+        "更新Agent信息"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "agent",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": {
+            "option": "string"
+          }
+        },
+        {
+          "name": "description",
+          "type": {
+            "option": "string"
+          }
+        },
+        {
+          "name": "agentType",
+          "type": {
+            "option": "string"
+          }
+        },
+        {
+          "name": "imageUrl",
+          "type": {
+            "option": "string"
+          }
+        }
+      ]
+    },
+    {
+      "name": "toggleAgentPublicity",
+      "docs": [
+        "切换Agent公开状态（对应EVM的toggleAgentPublicity）"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "agent",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "addTrainingData",
+      "docs": [
+        "添加训练数据"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "agent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "trainingData",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "ipfsHash",
+          "type": "string"
+        },
+        {
+          "name": "dataType",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "getAgentCount",
+      "docs": [
+        "获取Agent计数（对应EVM的getAgentCount）"
+      ],
+      "accounts": [
+        {
+          "name": "registry",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "returns": "u64"
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AgentRegistry",
+      "docs": [
+        "Agent注册表全局状态"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "agentCounter",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Agent",
+      "docs": [
+        "个人Agent账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "agentType",
+            "type": "string"
+          },
+          {
+            "name": "ipfsHash",
+            "type": "string"
+          },
+          {
+            "name": "imageUrl",
+            "type": "string"
+          },
+          {
+            "name": "isPublic",
+            "type": "bool"
+          },
+          {
+            "name": "createdAt",
+            "type": "i64"
+          },
+          {
+            "name": "updatedAt",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TrainingData",
+      "docs": [
+        "训练数据记录"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "agentId",
+            "type": "u64"
+          },
+          {
+            "name": "ipfsHash",
+            "type": "string"
+          },
+          {
+            "name": "dataType",
+            "type": "string"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "AgentRegistered",
+      "fields": [
+        {
+          "name": "agentId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "agentType",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "ipfsHash",
+          "type": "string",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AgentUpdated",
+      "fields": [
+        {
+          "name": "agentId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "updatedAt",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AgentPublicityToggled",
+      "fields": [
+        {
+          "name": "agentId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "isPublic",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TrainingDataAdded",
+      "fields": [
+        {
+          "name": "agentId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "ipfsHash",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "dataType",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "timestamp",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "NameTooLong",
+      "msg": "Name is too long (max 32 characters)"
+    },
+    {
+      "code": 6001,
+      "name": "DescriptionTooLong",
+      "msg": "Description is too long (max 200 characters)"
+    },
+    {
+      "code": 6002,
+      "name": "TypeTooLong",
+      "msg": "Agent type is too long (max 32 characters)"
+    },
+    {
+      "code": 6003,
+      "name": "IpfsHashTooLong",
+      "msg": "IPFS hash is too long (max 64 characters)"
+    },
+    {
+      "code": 6004,
+      "name": "ImageUrlTooLong",
+      "msg": "Image URL is too long (max 128 characters)"
+    },
+    {
+      "code": 6005,
+      "name": "DataTypeTooLong",
+      "msg": "Data type is too long (max 32 characters)"
+    },
+    {
+      "code": 6006,
+      "name": "UnauthorizedOwner",
+      "msg": "Unauthorized: not the owner"
+    },
+    {
+      "code": 6007,
+      "name": "ArrayLengthMismatch",
+      "msg": "Array length mismatch"
+    },
+    {
+      "code": 6008,
+      "name": "BatchSizeTooLarge",
+      "msg": "Batch size too large (max 10)"
+    }
+  ],
+  "address": "DHU9UBVaZNtw77FabwS7JmCxrgnNPA6Zg18xBPfB3rZ"
+}

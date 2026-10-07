@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dune": {
+      "type": "url",
+      "url": "https://api.dune.com/mcp/v1",
+      "headers": {
+        "x-dune-api-key": "eDnSkTYWgoCyyhzidCP8LBicprN4yn0Z"
+      }
+    }
+  }
+}

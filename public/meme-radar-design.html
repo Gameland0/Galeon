@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meme Radar - Design Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: Times New Roman;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    /* 和 AlphaAgentPage 完全一致的亮色渐变背景 */
+    background: linear-gradient(135deg, #fefcea, #f7f9fc, #f2f7ff);
+    color: #1E293B;
+    padding: 48px 24px;
+  }
+
+  .page-container { max-width: 1600px; margin: 0 auto; }
+
+  /* ===== Tab Navigation - 和 Alpha 一模一样 ===== */
+  .tab-nav {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-bottom: 32px;
+    border-bottom: 2px solid rgba(229, 231, 235, 0.3);
+    padding: 0;
+  }
+  .tab-btn {
+    padding: 12px 0;
+    font-size: 20px;
+    font-weight: 500;
+    border: none;
+    background: none;
+    color: #777;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: -2px;
+    border-bottom: 2px solid transparent;
+  }
+  .tab-btn.active {
+    font-weight: 600;
+    color: #1877F2;
+    border-bottom-color: #1877F2;
+  }
+  .tab-divider {
+    color: rgba(200, 200, 200, 0.5);
+    align-self: center;
+  }
+
+  /* ===== 3 Stat Cards - 和 Alpha 一模一样的三卡横排 ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    border-radius: 20px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+  }
+  .stat-card-blue {
+    background: linear-gradient(135deg, #3B82F6 0%, #6366F1 100%);
+    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  .stat-card-blue:hover {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.4), 0 8px 24px rgba(59, 130, 246, 0.3);
+  }
+  .stat-card-purple {
+    background: linear-gradient(135deg, #7C3AED 0%, #A78BFA 100%);
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  .stat-card-purple:hover {
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.4), 0 8px 24px rgba(124, 58, 237, 0.3);
+  }
+  .stat-card-dark {
+    background: linear-gradient(135deg, #1E293B 0%, #475569 100%);
+    box-shadow: 0 4px 16px rgba(30, 41, 59, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  .stat-card-dark:hover {
+    box-shadow: 0 0 30px rgba(71, 85, 105, 0.5), 0 8px 24px rgba(30, 41, 59, 0.4);
+  }
+  .stat-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-label span:first-child { font-size: 20px; }
+  .stat-label-text {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat-value {
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 8px;
+    font-family: Inter, system-ui, sans-serif;
+    letter-spacing: -1px;
+  }
+  .stat-sub {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+  }
+
+  /* ===== Page Content: 左420px + 右 flex - 和 Alpha 一致 ===== */
+  .page-content {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 40px;
+  }
+
+  /* Left Column */
+  .left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Info Card - 和 Alpha 的 AlphaAgentCard 一致 */
+  .info-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: none;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  .info-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+  }
+  .info-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-list {
+    margin: 0;
+    padding-left: 24px;
+    font-size: 15px;
+    line-height: 2;
+    color: #475569;
+  }
+  .info-list li { margin-bottom: 12px; }
+
+  /* Warning Card - 和 Alpha 一致 */
+  .warning-card {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: none;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+  .warning-card:hover {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transform: translateY(-3px);
+  }
+  .warning-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #d97706;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .warning-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #92400e;
+    margin: 0;
+  }
+
+  /* Right Column */
+  .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* ===== Filter Panel - 和 Alpha 一模一样的毛玻璃筛选面板 ===== */
+  .filter-panel {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Search Row */
+  .search-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-input {
+    flex: 1 1 auto;
+    min-width: 200px;
+    height: 44px;
+    padding: 0 16px;
+    font-size: 14px;
+    border: 1px solid #CBD5E1;
+    border-radius: 12px;
+    outline: none;
+    background: white;
+    color: #1E293B;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .search-input:focus {
+    border-color: #5A6AE6;
+    box-shadow: 0 0 0 3px rgba(90, 106, 230, 0.1);
+  }
+  .reset-btn {
+    height: 44px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #CBD5E1;
+    border-radius: 12px;
+    background: white;
+    color: #64748B;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .reset-btn:hover {
+    background: #F1F5F9;
+    border-color: #94A3B8;
+  }
+
+  /* Pill Filter Group - 和 Alpha 一致 */
+  .pill-group {
+    display: inline-flex;
+    gap: 6px;
+    padding: 4px;
+    background: #F1F5F9;
+    border-radius: 9999px;
+    margin-bottom: 16px;
+  }
+  .pill-btn {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 9999px;
+    background: transparent;
+    color: #64748B;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .pill-btn:hover { background: rgba(99, 102, 241, 0.1); color: #6366F1; }
+  .pill-btn.active { background: #6366F1; color: white; }
+
+  /* Status/Sort Row - 和 Alpha 一致 */
+  .filter-row {
+    display: flex;
+    justify-content: flex-start;
+    gap: 24px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .filter-row-label {
+    font-size: 12px;
+    color: #64748B;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .filter-row-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .outline-pill {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #CBD5E1;
+    border-radius: 9999px;
+    background: white;
+    color: #64748B;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .outline-pill:hover { background: #F1F5F9; color: #6366F1; }
+  .outline-pill.active { background: #6366F1; color: white; border: none; }
+
+  /* Shortcuts bar */
+  .shortcuts-bar {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #E2E8F0;
+    font-size: 11px;
+    color: #94A3B8;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .shortcuts-bar kbd {
+    padding: 2px 6px;
+    background: #F1F5F9;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 11px;
+  }
+
+  /* ===== Signal Card - 和 AlphaSignalCard 完全一致的暗色卡片 ===== */
+  .signal-card {
+    background: #161B22;
+    border: 1px solid #30363D;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .signal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Card Header - 和 Alpha 一致 */
+  .card-header {
+    background: #0F111A;
+    padding: 16px 20px;
+    border-bottom: 1px solid #30363D;
+  }
+  .card-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .token-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #E6EDF3;
+    letter-spacing: -0.3px;
+  }
+  .badge-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-chain {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818CF8;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+  }
+  .badge-sm {
+    background: rgba(0, 211, 149, 0.15);
+    color: #00D395;
+    border: 1px solid rgba(0, 211, 149, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    border-radius: 8px;
+  }
+  .badge-kol {
+    background: rgba(248, 210, 100, 0.15);
+    color: #F8D264;
+    border: 1px solid rgba(248, 210, 100, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 3px 8px;
+    border-radius: 8px;
+  }
+  .badge-watch {
+    background: rgba(248, 210, 100, 0.2);
+    color: #F8D264;
+    border: 1px solid #F8D264;
+  }
+  .badge-strong-buy {
+    background: #22c55e;
+    color: white;
+  }
+  .badge-veto {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+  }
+  .card-header-sub {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-header-sub span {
+    font-size: 11px;
+    color: #8B949E;
+    font-weight: 500;
+  }
+
+  /* Card Body - 和 Alpha 一致 */
+  .card-body { padding: 20px; }
+
+  /* Confidence / Radar Score - 和 Alpha 一致的展示 */
+  .score-section { margin-bottom: 14px; }
+  .score-label {
+    font-size: 10px;
+    color: #8B949E;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .score-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #F8D264;
+    font-family: Inter, system-ui, sans-serif;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .score-bar {
+    height: 6px;
+    background: rgba(248, 210, 100, 0.15);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #F8D264 0%, #F0C24B 100%);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* 2-column grid for Risk + Price - 和 Alpha 一致 */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .metric-label {
+    font-size: 10px;
+    color: #8B949E;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .risk-badge-low {
+    display: inline-block;
+    background: rgba(0, 199, 151, 0.2);
+    color: #00C797;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .risk-badge-medium {
+    display: inline-block;
+    background: rgba(248, 210, 100, 0.2);
+    color: #F8D264;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .risk-badge-high {
+    display: inline-block;
+    background: rgba(240, 84, 84, 0.2);
+    color: #F05454;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .price-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #E6EDF3;
+  }
+  .price-change {
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 6px;
+  }
+  .price-change.up { color: #00C797; }
+  .price-change.down { color: #F05454; }
+
+  /* Performance Card - 和 Alpha 一致 */
+  .perf-card {
+    background: rgba(90, 106, 230, 0.08);
+    border: 1px solid rgba(90, 106, 230, 0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  .perf-card-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .perf-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #5A6AE6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* 10-Dimension Mini Bars (Meme Radar 特有) */
+  .dimension-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 16px;
+  }
+  .dim-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dim-label {
+    font-size: 10px;
+    color: #8B949E;
+    width: 70px;
+    flex-shrink: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .dim-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .dim-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .dim-val {
+    font-size: 10px;
+    color: #E6EDF3;
+    font-weight: 600;
+    width: 24px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* Card Footer / Action - 和 Alpha 一致 */
+  .card-action {
+    padding: 16px 20px;
+    background: #0F111A;
+    border-top: 1px solid #30363D;
+    display: flex;
+    gap: 10px;
+  }
+  .action-btn {
+    flex: 1;
+    background: linear-gradient(135deg, #5A6AE6 0%, #3A4FE0 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(90, 106, 230, 0.4);
+  }
+
+  .card-footer {
+    padding: 10px 20px;
+    background: #0D0F15;
+    border-top: 1px solid #21262D;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .card-footer span {
+    font-size: 10px;
+    color: #6E7681;
+  }
+
+  /* Signals list */
+  .signals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ===== VETO 卡片特殊样式 ===== */
+  .signal-card.veto {
+    opacity: 0.6;
+  }
+  .signal-card.veto .token-name {
+    text-decoration: line-through;
+    color: #ef4444;
+  }
+
+  /* Responsive - 和 Alpha 一致 */
+  @media (max-width: 1200px) {
+    .page-content { grid-template-columns: 1fr; }
+    .left-column { max-width: 600px; margin: 0 auto; }
+  }
+  @media (max-width: 768px) {
+    body { padding: 20px 12px; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .tab-nav { gap: 24px; }
+    .tab-btn { font-size: 16px; }
+    .filter-row { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-container">
+
+  <!-- ===== Tab Navigation (和 Alpha 一模一样) ===== -->
+  <div class="tab-nav">
+    <button class="tab-btn active">Meme Radar</button>
+    <span class="tab-divider">|</span>
+    <button class="tab-btn">Auto Trade</button>
+  </div>
+
+  <!-- ===== 3 Stat Cards (和 Alpha 一模一样的三卡横排) ===== -->
+  <div class="stats-grid">
+    <!-- Card 1: Total Signals - 蓝色 -->
+    <div class="stat-card stat-card-blue">
+      <div class="stat-label">
+        <span>📡</span>
+        <span class="stat-label-text">Signals Scanned</span>
+      </div>
+      <div class="stat-value">1,247</div>
+      <div class="stat-sub">Today: 89 | This Hour: 12</div>
+    </div>
+
+    <!-- Card 2: Hit Rate - 紫色 -->
+    <div class="stat-card stat-card-purple">
+      <div class="stat-label">
+        <span>🎯</span>
+        <span class="stat-label-text">Signal Hit Rate</span>
+      </div>
+      <div class="stat-value">67.3%</div>
+      <div class="stat-sub">Win: 34 | Loss: 17</div>
+      <div style="font-size:11px; color:rgba(255,255,255,0.65); margin-top:4px;">51 triggered / 89 total</div>
+    </div>
+
+    <!-- Card 3: Avg Return - 灰蓝 -->
+    <div class="stat-card stat-card-dark">
+      <div class="stat-label">
+        <span>🧠</span>
+        <span class="stat-label-text">Avg Return (1h)</span>
+      </div>
+      <div class="stat-value">+18.5%</div>
+      <div class="stat-sub">Best: +142% | Worst: -23%</div>
+    </div>
+  </div>
+
+  <!-- ===== Page Content: 左右两栏 (和 Alpha 一致) ===== -->
+  <div class="page-content">
+
+    <!-- Left Column -->
+    <div class="left-column">
+
+      <!-- Radar Info Card -->
+      <div class="info-card">
+        <h4 class="info-title">📡 Meme Radar Engine</h4>
+        <ul class="info-list">
+          <li><strong>6-Source Scan</strong> — Smart Money, KOL, Whale, Trending, Social, New Tokens</li>
+          <li><strong>10-Dimension Score</strong> — Signal resonance, volume momentum, dev safety...</li>
+          <li><strong>Cross-Validation</strong> — Multi-source signals get higher confidence</li>
+          <li><strong>Auto Backtest</strong> — LLM optimizes weights based on historical performance</li>
+          <li><strong>Chains</strong> — Solana + BSC real-time monitoring</li>
+        </ul>
+      </div>
+
+      <!-- Scoring Info Card -->
+      <div class="info-card">
+        <h4 class="info-title">📊 Scoring Dimensions</h4>
+        <ul class="info-list" style="font-size:13px; line-height:1.8;">
+          <li><strong>Signal Resonance</strong> — Multi-source overlap count</li>
+          <li><strong>Smart Money</strong> — Smart money buy/sell ratio</li>
+          <li><strong>Whale & KOL</strong> — Large holder + KOL activity</li>
+          <li><strong>Volume Momentum</strong> — Volume spike detection</li>
+          <li><strong>Price Trend</strong> — 5m/1h price movement</li>
+          <li><strong>Dev Safety</strong> — Developer rug-pull history check</li>
+          <li><strong>Liquidity</strong> — Pool depth & holder distribution</li>
+          <li><strong>Social Buzz</strong> — Social media mentions</li>
+        </ul>
+      </div>
+
+      <!-- Risk Warning - 和 Alpha 一致 -->
+      <div class="warning-card">
+        <h4 class="warning-title">⚠️ Risk Warning</h4>
+        <p class="warning-text">
+          Meme tokens are extremely volatile and high risk. Radar signals are generated by
+          algorithms and are NOT financial advice. Most meme tokens go to zero. Always do
+          your own research (DYOR) and never invest more than you can afford to lose.
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="right-column">
+
+      <!-- ===== Filter Panel (和 Alpha 一模一样的结构) ===== -->
+      <div class="filter-panel">
+        <!-- Row 1: Search + Reset -->
+        <div class="search-row">
+          <input type="text" class="search-input" placeholder="🔍 Search token / contract..." />
+          <button class="reset-btn">Reset 🔄</button>
+        </div>
+
+        <!-- Row 2: Chain Filter (pill group) -->
+        <div class="pill-group">
+          <button class="pill-btn active">All</button>
+          <button class="pill-btn">Solana</button>
+          <button class="pill-btn">BSC</button>
+        </div>
+
+        <!-- Row 3: Signal Level + Sort -->
+        <div class="filter-row">
+          <div class="filter-row-group">
+            <span class="filter-row-label">Level:</span>
+            <button class="outline-pill active">All</button>
+            <button class="outline-pill">WATCH</button>
+            <button class="outline-pill">STRONG BUY</button>
+            <button class="outline-pill">VETO</button>
+          </div>
+          <div class="filter-row-group">
+            <span class="filter-row-label">Sort:</span>
+            <button class="outline-pill active">Score ▼</button>
+            <button class="outline-pill">Latest</button>
+            <button class="outline-pill">Volume</button>
+          </div>
+        </div>
+
+        <!-- Row 4: Shortcuts -->
+        <div class="shortcuts-bar">
+          <span>⌨️ Shortcuts:</span>
+          <span><kbd>/</kbd> Focus</span>
+          <span><kbd>r</kbd> Reset</span>
+          <span><kbd>c</kbd> Toggle Chain</span>
+          <span><kbd>s</kbd> Sort</span>
+        </div>
+      </div>
+
+      <!-- ===== Signal Cards List ===== -->
+      <div class="signals-list">
+
+        <!-- ===== Signal Card 1: STRONG BUY ===== -->
+        <div class="signal-card">
+          <!-- Header -->
+          <div class="card-header">
+            <div class="card-header-top">
+              <div class="token-name">PEPE2.0</div>
+              <div class="badge-row">
+                <span class="badge badge-chain">Solana</span>
+                <span class="badge badge-sm">🧠 SM Buy</span>
+                <span class="badge badge-kol">👑 KOL x3</span>
+                <span class="badge badge-strong-buy">STRONG BUY</span>
+              </div>
+            </div>
+            <div class="card-header-sub">
+              <span>📡 Meme Radar Signal</span>
+              <span>Updated 3 mins ago</span>
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="card-body">
+            <!-- Radar Score (和 Alpha 的 Confidence 位置一致) -->
+            <div class="score-section">
+              <div class="score-label">Radar Score</div>
+              <div class="score-value">82.5</div>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width: 82.5%"></div>
+              </div>
+            </div>
+
+            <!-- Risk + Price (2-column grid) -->
+            <div class="metric-grid">
+              <div>
+                <div class="metric-label">Risk Level</div>
+                <span class="risk-badge-medium">MEDIUM</span>
+              </div>
+              <div>
+                <div class="metric-label">Current Price</div>
+                <div>
+                  <span class="price-value">$0.00234</span>
+                  <span class="price-change up">↗ +45.2%</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 10-Dimension Scores (Meme Radar 特有 - 替换 Alpha 的 Performance 位置) -->
+            <div class="perf-card">
+              <div class="perf-card-header">
+                <span style="font-size:14px">📊</span>
+                <span class="perf-card-title">Dimension Scores</span>
+              </div>
+              <div class="dimension-grid">
+                <div class="dim-row">
+                  <span class="dim-label">Resonance</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:90%; background:#22c55e"></div></div>
+                  <span class="dim-val">9.0</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">SmartMoney</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:85%; background:#22c55e"></div></div>
+                  <span class="dim-val">8.5</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Whale/KOL</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:80%; background:#22c55e"></div></div>
+                  <span class="dim-val">8.0</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Volume</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:75%; background:#F8D264"></div></div>
+                  <span class="dim-val">7.5</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">PriceTrend</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:88%; background:#22c55e"></div></div>
+                  <span class="dim-val">8.8</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">DevSafety</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:70%; background:#F8D264"></div></div>
+                  <span class="dim-val">7.0</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Liquidity</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:82%; background:#22c55e"></div></div>
+                  <span class="dim-val">8.2</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Social</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:65%; background:#F8D264"></div></div>
+                  <span class="dim-val">6.5</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">SMQuality</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:78%; background:#22c55e"></div></div>
+                  <span class="dim-val">7.8</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">TopTrader</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:86%; background:#22c55e"></div></div>
+                  <span class="dim-val">8.6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action - 和 Alpha 一致 -->
+          <div class="card-action">
+            <button class="action-btn">
+              <span>🔍</span>
+              <span>View Details</span>
+            </button>
+          </div>
+
+          <!-- Footer -->
+          <div class="card-footer">
+            <span>Created: Mar 11, 02:34 PM</span>
+          </div>
+        </div>
+
+        <!-- ===== Signal Card 2: WATCH ===== -->
+        <div class="signal-card">
+          <div class="card-header">
+            <div class="card-header-top">
+              <div class="token-name">BONK2</div>
+              <div class="badge-row">
+                <span class="badge badge-chain">BSC</span>
+                <span class="badge badge-sm">🧠 SM Buy</span>
+                <span class="badge badge-watch">WATCH</span>
+              </div>
+            </div>
+            <div class="card-header-sub">
+              <span>📡 Meme Radar Signal</span>
+              <span>Updated 8 mins ago</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="score-section">
+              <div class="score-label">Radar Score</div>
+              <div class="score-value">59.4</div>
+              <div class="score-bar">
+                <div class="score-bar-fill" style="width: 59.4%"></div>
+              </div>
+            </div>
+            <div class="metric-grid">
+              <div>
+                <div class="metric-label">Risk Level</div>
+                <span class="risk-badge-medium">MEDIUM</span>
+              </div>
+              <div>
+                <div class="metric-label">Current Price</div>
+                <div>
+                  <span class="price-value">$0.0000156</span>
+                  <span class="price-change up">↗ +12.8%</span>
+                </div>
+              </div>
+            </div>
+            <div class="perf-card">
+              <div class="perf-card-header">
+                <span style="font-size:14px">📊</span>
+                <span class="perf-card-title">Dimension Scores</span>
+              </div>
+              <div class="dimension-grid">
+                <div class="dim-row">
+                  <span class="dim-label">Resonance</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:60%; background:#F8D264"></div></div>
+                  <span class="dim-val">6.0</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">SmartMoney</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:72%; background:#22c55e"></div></div>
+                  <span class="dim-val">7.2</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Whale/KOL</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:40%; background:#F05454"></div></div>
+                  <span class="dim-val">4.0</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Volume</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:68%; background:#F8D264"></div></div>
+                  <span class="dim-val">6.8</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">PriceTrend</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:55%; background:#F8D264"></div></div>
+                  <span class="dim-val">5.5</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">DevSafety</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:80%; background:#22c55e"></div></div>
+                  <span class="dim-val">8.0</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Liquidity</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:50%; background:#F8D264"></div></div>
+                  <span class="dim-val">5.0</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">Social</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:45%; background:#F05454"></div></div>
+                  <span class="dim-val">4.5</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">SMQuality</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:62%; background:#F8D264"></div></div>
+                  <span class="dim-val">6.2</span>
+                </div>
+                <div class="dim-row">
+                  <span class="dim-label">TopTrader</span>
+                  <div class="dim-bar"><div class="dim-bar-fill" style="width:58%; background:#F8D264"></div></div>
+                  <span class="dim-val">5.8</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-action">
+            <button class="action-btn">
+              <span>🔍</span>
+              <span>View Details</span>
+            </button>
+          </div>
+          <div class="card-footer">
+            <span>Created: Mar 11, 02:26 PM</span>
+          </div>
+        </div>
+
+        <!-- ===== Signal Card 3: VETO ===== -->
+        <div class="signal-card veto">
+          <div class="card-header">
+            <div class="card-header-top">
+              <div class="token-name">RUGPULL_TOKEN</div>
+              <div class="badge-row">
+                <span class="badge badge-chain">Solana</span>
+                <span class="badge badge-veto">VETO</span>
+              </div>
+            </div>
+            <div class="card-header-sub">
+              <span>📡 Meme Radar Signal</span>
+              <span>Updated 15 mins ago</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="score-section">
+              <div class="score-label">Radar Score</div>
+              <div class="score-value" style="color: #F05454;">12.3</div>
+              <div class="score-bar" style="background: rgba(240,84,84,0.15);">
+                <div class="score-bar-fill" style="width: 12.3%; background: linear-gradient(90deg, #F05454, #ef4444);"></div>
+              </div>
+            </div>
+            <div class="metric-grid">
+              <div>
+                <div class="metric-label">Risk Level</div>
+                <span class="risk-badge-high">HIGH</span>
+              </div>
+              <div>
+                <div class="metric-label">VETO Reason</div>
+                <div style="font-size:12px; color:#F05454; font-weight:600;">
+                  Dev has 3 rug-pull history
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <span>Created: Mar 11, 02:18 PM</span>
+          </div>
+        </div>
+
+      </div><!-- /signals-list -->
+
+    </div><!-- /right-column -->
+  </div><!-- /page-content -->
+</div><!-- /page-container -->
+
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Market Overview v8 - Galeon</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f7f9fc;
+  --card:rgba(255,255,255,0.82);
+  --blur:blur(20px);
+  --r:18px;
+  --shadow:0 2px 12px rgba(0,0,0,0.04);
+  --shadow-hover:0 8px 30px rgba(0,0,0,0.08);
+  --border:1px solid rgba(0,0,0,0.05);
+  --primary:#667eea;
+  --primary-deep:#4f46e5;
+  --green:#16a34a;
+  --red:#dc2626;
+  --amber:#d97706;
+  --text:#1e293b;
+  --text2:#64748b;
+  --text3:#94a3b8;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Inter',system-ui,sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+.page{max-width:1480px;margin:0 auto;padding:32px 40px 80px}
+
+/* ═══ HEADER ═══ */
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px}
+.hdr-title{font-size:24px;font-weight:800;color:var(--text);letter-spacing:-.5px}
+.hdr-title em{font-style:normal;color:var(--primary)}
+.hdr-right{display:flex;align-items:center;gap:14px}
+.live{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);font-weight:600}
+.live i{width:6px;height:6px;border-radius:50%;background:var(--green);display:block;box-shadow:0 0 0 0 rgba(22,163,106,0.4);animation:ring 2s ease infinite}
+@keyframes ring{0%,100%{box-shadow:0 0 0 0 rgba(22,163,106,0.4)}50%{box-shadow:0 0 0 8px rgba(22,163,106,0)}}
+.tabs{display:flex;background:var(--card);backdrop-filter:var(--blur);border-radius:11px;padding:3px;border:var(--border)}
+.tabs button{padding:8px 20px;font-size:12px;font-weight:600;border:0;background:0;color:var(--text3);border-radius:8px;cursor:pointer;transition:all .2s;font-family:var(--sans)}
+.tabs button.on{background:var(--primary);color:#fff;box-shadow:0 2px 10px rgba(102,126,234,.3)}
+.tabs button:hover:not(.on){color:var(--primary)}
+.icon-btn{width:36px;height:36px;border-radius:10px;border:var(--border);background:var(--card);backdrop-filter:var(--blur);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;transition:all .2s}
+.icon-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 4px 12px rgba(102,126,234,.25)}
+
+/* ═══ HERO: Asymmetric — big left metric + 3 small right ═══ */
+.hero{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:16px;margin-bottom:32px}
+.hero-main{
+  background:var(--card);backdrop-filter:var(--blur);border-radius:var(--r);
+  padding:28px 32px;box-shadow:var(--shadow);border:var(--border);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;transition:all .3s
+}
+.hero-main:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.hero-main::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),#a78bfa)}
+
+.hero-main .hero-label{font-size:12px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.hero-main .hero-big{font-family:var(--mono);font-size:42px;font-weight:800;margin:8px 0 4px;letter-spacing:-2px}
+.hero-main .hero-big .up{color:var(--green)}
+.hero-main .hero-detail{font-size:14px;color:var(--text2);line-height:1.6}
+.hero-main .hero-detail b{color:var(--text)}
+.hero-trend-row{display:flex;gap:24px;margin-top:14px}
+.hero-trend-item{display:flex;flex-direction:column}
+.hero-trend-item .label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.hero-trend-item .value{font-family:var(--mono);font-size:16px;font-weight:700;margin-top:2px}
+
+.hero-sm{
+  background:var(--card);backdrop-filter:var(--blur);border-radius:var(--r);
+  padding:22px 24px;box-shadow:var(--shadow);border:var(--border);
+  display:flex;flex-direction:column;justify-content:space-between;
+  transition:all .3s;position:relative;overflow:hidden
+}
+.hero-sm:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px)}
+.hero-sm::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.hero-sm.c2::before{background:linear-gradient(90deg,#8b5cf6,#c4b5fd)}
+.hero-sm.c3::before{background:linear-gradient(90deg,var(--green),#86efac)}
+.hero-sm.c4::before{background:linear-gradient(90deg,var(--primary),#93c5fd)}
+.hero-sm .sm-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.hero-sm .sm-val{font-family:var(--mono);font-size:24px;font-weight:800;margin:10px 0 4px;letter-spacing:-1px}
+.hero-sm .sm-sub{font-size:11px;color:var(--text3);line-height:1.4}
+.hero-sm .sm-sub b{color:var(--text2)}
+
+/* ═══ CONTEXT: 7:5 asymmetric split ═══ */
+.ctx{display:grid;grid-template-columns:7fr 5fr;gap:16px;margin-bottom:24px}
+.ctx-left{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ctx-right{
+  background:var(--card);backdrop-filter:var(--blur);border-radius:var(--r);
+  padding:22px 26px;box-shadow:var(--shadow);border:var(--border);transition:all .3s
+}
+.ctx-right:hover{box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.ctx-panel{
+  background:var(--card);backdrop-filter:var(--blur);border-radius:var(--r);
+  padding:20px 22px;box-shadow:var(--shadow);border:var(--border);transition:all .3s
+}
+.ctx-panel:hover{box-shadow:var(--shadow-hover);transform:translateY(-1px)}
+.sec-label{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-label::before{content:'';width:3px;height:13px;border-radius:2px;background:var(--primary)}
+.data-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:13px}
+.data-row:not(:last-of-type){border-bottom:1px solid rgba(0,0,0,0.04)}
+.data-row .l{color:var(--text2)}.data-row .v{font-family:var(--mono);font-weight:600;font-size:12px}
+.g{color:var(--green)}.r{color:var(--red)}.y{color:var(--amber)}.n{color:var(--text3)}
+.src-line{font-size:9px;color:#c0c7d0;margin-top:10px;padding-top:8px;border-top:1px solid rgba(0,0,0,0.04);display:flex;justify-content:space-between}
+.src-warn{color:var(--amber);font-weight:600}
+
+/* changes */
+.chg{display:flex;align-items:flex-start;gap:10px;padding:8px 0;font-size:13px;line-height:1.5;color:var(--text)}
+.chg:not(:last-child){border-bottom:1px solid rgba(0,0,0,0.03)}
+.chg-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.chg .act{font-weight:600}
+
+/* stress */
+.stress{border-radius:14px;padding:13px 22px;margin-bottom:28px;display:flex;align-items:center;gap:12px;transition:all .3s}
+.stress.low{background:rgba(22,163,106,0.05);border:1px solid rgba(22,163,106,0.12);color:#166534}
+.stress b{font-weight:700}
+.stress .mute{opacity:.65;margin-left:2px}
+
+/* ═══ MAIN: 12-col grid — table span 8, feed span 4 ═══ */
+.main{display:grid;grid-template-columns:8fr 4fr;gap:20px}
+
+/* TABLE CARD */
+.tbl-card{background:var(--card);backdrop-filter:var(--blur);border-radius:20px;padding:26px 28px;box-shadow:var(--shadow);border:var(--border)}
+.tbl-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.tbl-h{font-size:18px;font-weight:700}
+.tbl-note{font-size:11px;color:var(--text3)}
+
+/* filters */
+.flt{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.fg{display:flex;background:rgba(0,0,0,0.02);border-radius:10px;padding:3px}
+.fg button{padding:6px 14px;font-size:11px;font-weight:600;border:0;background:0;color:var(--text3);border-radius:7px;cursor:pointer;transition:all .18s;font-family:var(--sans)}
+.fg button.on{background:var(--text);color:#fff}
+.fg button:hover:not(.on){color:var(--primary)}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:separate;border-spacing:0 4px}
+.tbl th{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;padding:0 10px 12px;text-align:left}
+.tbl th.r{text-align:right}.tbl th.c{text-align:center}
+.tbl tbody tr{transition:all .2s;cursor:pointer}
+.tbl tbody tr:hover td{background:rgba(102,126,234,0.03)}
+.tbl td{padding:14px 10px;vertical-align:middle;background:transparent;transition:background .15s}
+.tbl tbody tr td:first-child{border-radius:12px 0 0 12px}
+.tbl tbody tr td:last-child{border-radius:0 12px 12px 0}
+
+/* token */
+.tk{display:flex;align-items:center;gap:10px}
+.tk-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+.tk-av.eth{background:linear-gradient(135deg,#627eea,#b8c5f2)}
+.tk-av.doge{background:linear-gradient(135deg,#c2a633,#f0d55e)}
+.tk-av.link{background:linear-gradient(135deg,#2a5ada,#7ba1f7)}
+.tk-av.aapl{background:linear-gradient(135deg,#555,#999)}
+.tk-av.sol{background:linear-gradient(135deg,#9945ff,#14f195)}
+.tk-info{}
+.tk-sym{font-size:14px;font-weight:700;color:var(--text)}
+.tk-row2{display:flex;align-items:center;gap:6px;margin-top:2px}
+.tk-price{font-size:11px;color:var(--text3);font-family:var(--mono)}
+.tk-chg{font-size:10px;font-weight:700}
+.rwa-tag{font-size:8px;font-weight:700;color:var(--primary);background:rgba(102,126,234,0.08);padding:2px 6px;border-radius:4px;margin-left:4px;letter-spacing:.3px}
+
+/* status */
+.st{padding:5px 12px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.3px;display:inline-flex;align-items:center;gap:5px}
+.st.entry{background:rgba(22,163,106,0.07);color:var(--green)}
+.st.ready{background:rgba(217,119,6,0.07);color:var(--amber)}
+.st.watch{background:rgba(148,163,184,0.07);color:var(--text3)}
+.st-dot{width:5px;height:5px;border-radius:50%}
+.st.entry .st-dot{background:var(--green);animation:ring 2s ease infinite}
+.st.ready .st-dot{background:var(--amber);animation:ring 2.5s ease infinite}
+.st.watch .st-dot{background:#cbd5e1}
+
+/* signal */
+.sig{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;font-family:var(--mono);letter-spacing:.3px}
+.sig.long{background:rgba(22,163,106,0.07);color:var(--green)}
+.sig.short{background:rgba(220,38,38,0.07);color:var(--red)}
+.sig.wait{background:rgba(148,163,184,0.05);color:#cbd5e1}
+
+/* score */
+.sc{text-align:right}
+.sc-big{font-size:20px;font-weight:800;font-family:var(--mono);letter-spacing:-1px}
+.sc-d{font-size:10px;font-weight:600;margin-top:2px}
+.sc-wr{font-size:9px;color:var(--text3);font-family:var(--mono);margin-top:3px}
+.sc-wr b{color:var(--text2)}
+
+/* targets */
+.tgt{font-family:var(--mono);font-size:11px;line-height:1.8}
+.tr{display:flex;align-items:center;gap:4px}
+.tl{font-size:9px;font-weight:800;min-width:16px;letter-spacing:.3px}
+.tl.in{color:var(--primary)}.tl.tp{color:var(--green)}.tl.sl{color:var(--red)}
+.tv{font-weight:600;color:var(--text)}
+.tp{font-size:9px;color:var(--text3);margin-left:2px}
+.tgt-na{color:#cbd5e1;font-size:11px}
+
+/* rr */
+.rr{text-align:center}
+.rr-v{font-family:var(--mono);font-size:13px;font-weight:800}
+.rr-bar{width:40px;height:4px;border-radius:2px;background:rgba(0,0,0,0.06);margin:4px auto 0;overflow:hidden}
+.rr-fill{height:100%;border-radius:2px}
+.rr.good .rr-v{color:var(--green)}.rr.good .rr-fill{background:var(--green);width:82%}
+.rr.ok .rr-v{color:var(--amber)}.rr.ok .rr-fill{background:var(--amber);width:56%}
+
+/* star */
+.star{width:28px;height:28px;border:0;background:0;cursor:pointer;font-size:15px;color:#d1d5db;border-radius:8px;transition:all .15s}
+.star:hover{color:#f59e0b;background:rgba(245,158,11,0.06)}
+.star.on{color:#f59e0b}
+
+/* chevron */
+.chev{font-size:9px;color:var(--text3);display:inline-block;transition:transform .2s;margin-left:2px}
+.chev.open{transform:rotate(90deg)}
+
+/* ═══ EXPANDED REPORT ═══ */
+.xr{display:none}
+.xr.open{display:table-row}
+.xr td{padding:4px 0 20px}
+.rpt{background:var(--card);backdrop-filter:var(--blur);border-radius:16px;padding:24px 28px;border:var(--border);box-shadow:0 4px 20px rgba(0,0,0,0.05)}
+
+.rpt-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,0.05)}
+.rpt-t{font-size:14px;font-weight:700;font-family:var(--mono)}
+.rpt-meta{display:flex;gap:12px;font-size:10px;color:var(--text3)}
+.rpt-meta .w{color:var(--amber);font-weight:700}
+
+/* dims 2x2 + pattern right = asymmetric */
+.rpt-body{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.dim{background:#f8fafc;border-radius:14px;padding:16px 18px;border:1px solid rgba(0,0,0,0.03);transition:all .2s}
+.dim:hover{box-shadow:0 2px 10px rgba(0,0,0,0.04);transform:translateY(-1px)}
+.dim-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.dim-n{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
+.dim-s{font-size:20px;font-weight:800;font-family:var(--mono)}
+.dl{display:flex;justify-content:space-between;padding:3px 0;font-size:11px}
+.dl .k{color:var(--text3)}.dl .v{font-weight:600;font-family:var(--mono)}
+
+/* pattern — full width */
+.pat{background:#f8fafc;border-radius:14px;padding:18px 22px;border:1px solid rgba(0,0,0,0.03);margin-bottom:16px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.pat-h{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.pat-p{font-size:12px;color:var(--text2);line-height:1.7;margin-top:6px}
+.pat-target{text-align:right}
+.pat-target .l{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.pat-target .big{font-size:22px;font-weight:800;font-family:var(--mono);margin-top:4px}
+.pat-target .note{font-size:10px;color:var(--text3);margin-top:4px;font-style:italic}
+.otag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block}
+.otag.bull{background:rgba(22,163,106,0.08);color:var(--green)}
+.otag.bear{background:rgba(220,38,38,0.08);color:var(--red)}
+
+/* cases side by side */
+.cases{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.case{border-radius:14px;padding:18px 20px}
+.case.bull{background:rgba(22,163,106,0.025);border:1px solid rgba(22,163,106,0.1)}
+.case.bear{background:rgba(220,38,38,0.025);border:1px solid rgba(220,38,38,0.1)}
+.case-h{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;margin-bottom:10px}
+.case.bull .case-h{color:var(--green)}.case.bear .case-h{color:var(--red)}
+.cl{list-style:none;padding:0}
+.cl li{font-size:12px;padding:4px 0 4px 16px;position:relative;line-height:1.6}
+.cl li::before{content:'';position:absolute;left:0;top:11px;width:5px;height:5px;border-radius:50%}
+.case.bull .cl li::before{background:var(--green)}.case.bear .cl li::before{background:var(--red)}
+.cl b{font-weight:700}
+
+/* risk — 5 items inline */
+.risk{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.ri{background:#f8fafc;border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(0,0,0,0.03)}
+.ri .l{font-size:9px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.4px}
+.ri .v{font-size:17px;font-weight:800;font-family:var(--mono);margin-top:4px}
+.ri .s{font-size:9px;color:var(--text3);margin-top:2px}
+
+/* conclusion */
+.conc{background:rgba(102,126,234,0.03);border-radius:14px;padding:18px 22px;border:1px solid rgba(102,126,234,0.1)}
+.conc-h{font-size:11px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:.4px;margin-bottom:12px}
+.conc-line{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:13px;line-height:1.6}
+.conc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:7px}
+.conc-line b{font-weight:700}
+.conc-line .m{color:var(--text3);font-size:12px}
+
+.rpt-ft{display:flex;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid rgba(0,0,0,0.04);font-size:9px;color:#c0c7d0}
+
+/* ═══ FEED ═══ */
+.feed-card{background:var(--card);backdrop-filter:var(--blur);border-radius:20px;padding:24px 22px;box-shadow:var(--shadow);border:var(--border);height:fit-content;position:sticky;top:80px}
+.feed-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.feed-h{font-size:16px;font-weight:700}
+.feed-live{font-size:10px;font-weight:700;color:var(--green);background:rgba(22,163,106,0.06);padding:4px 10px;border-radius:6px;display:flex;align-items:center;gap:5px}
+.feed-live i{width:5px;height:5px;border-radius:50%;background:var(--green);display:block;animation:ring 2s ease infinite}
+.feed-list{max-height:680px;overflow-y:auto;margin:0 -8px;padding:0 8px}
+.feed-list::-webkit-scrollbar{width:3px}
+.feed-list::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:2px}
+
+.fi{display:flex;gap:10px;padding:12px 8px;margin:0 -8px;border-radius:10px;transition:background .15s}
+.fi:hover{background:rgba(102,126,234,0.025)}
+.fi+.fi{border-top:1px solid rgba(0,0,0,0.03)}
+.fi:hover+.fi{border-top-color:transparent}
+.fi-time{font-size:10px;color:var(--text3);font-family:var(--mono);min-width:38px;padding-top:3px}
+.fi-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.fi-dot.blue{background:var(--primary)}.fi-dot.green{background:var(--green)}
+.fi-dot.amber{background:var(--amber)}.fi-dot.red{background:var(--red)}.fi-dot.purple{background:#8b5cf6}
+.fi-body{flex:1;min-width:0}
+.fi-title{font-size:12px;font-weight:700;color:var(--text)}
+.fi-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.4}
+.fi-tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;margin-top:5px}
+.fi-tag.ok{background:rgba(22,163,106,0.06);color:var(--green)}
+.fi-tag.warn{background:rgba(245,158,11,0.06);color:var(--amber)}
+.fi-tag.bad{background:rgba(220,38,38,0.06);color:var(--red)}
+.fi-tag.info{background:rgba(102,126,234,0.06);color:var(--primary)}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1200px){.main{grid-template-columns:1fr}.ctx{grid-template-columns:1fr}.hero{grid-template-columns:1fr 1fr}.rpt-body{grid-template-columns:1fr}.cases{grid-template-columns:1fr}.risk{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:768px){.hero{grid-template-columns:1fr}.page{padding:20px 16px}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-title"><em>AI</em> Market Overview</div>
+    <div class="hdr-right">
+      <div class="live"><i></i>Live</div>
+      <div class="tabs"><button class="on">All Signals</button><button>Watchlist</button></div>
+      <button class="icon-btn">&#x21bb;</button>
+    </div>
+  </div>
+
+  <!-- HERO: Big left + 3 small -->
+  <div class="hero">
+    <div class="hero-main">
+      <div class="hero-label">BTC Market State</div>
+      <div class="hero-big"><span class="up">BULL</span> &#x2197;</div>
+      <div class="hero-detail">$67,420 &middot; <b class="g">+2.3%</b> past 24h</div>
+      <div class="hero-trend-row">
+        <div class="hero-trend-item"><span class="label">Regime</span><span class="value">TREND_LONG</span></div>
+        <div class="hero-trend-item"><span class="label">Archetype</span><span class="value">BTC_PUMP</span></div>
+        <div class="hero-trend-item"><span class="label">Edge WR</span><span class="value g">68%</span></div>
+      </div>
+    </div>
+    <div class="hero-sm c2">
+      <div class="sm-label">Market Regime</div>
+      <div class="sm-val">TREND_LONG</div>
+      <div class="sm-sub">Archetype: <b>BTC_PUMP</b><br>Hist. long WR: <b class="g">68%</b></div>
+    </div>
+    <div class="hero-sm c3">
+      <div class="sm-label">AI Today</div>
+      <div class="sm-val"><span class="g">6</span>W / 2L</div>
+      <div class="sm-sub">Win rate <b>75%</b><br>PnL <b class="g">+$420</b></div>
+    </div>
+    <div class="hero-sm c4">
+      <div class="sm-label">Active Signals</div>
+      <div class="sm-val">14</div>
+      <div class="sm-sub"><b>3</b> Entry &middot; <b>4</b> Ready &middot; <b>7</b> Watch</div>
+    </div>
+  </div>
+
+  <!-- CONTEXT: Asymmetric 7:5 -->
+  <div class="ctx">
+    <div class="ctx-left">
+      <div class="ctx-panel">
+        <div class="sec-label">Sector Heatmap</div>
+        <div class="data-row"><span class="l">Layer 1</span><span class="v g">+3.2%</span></div>
+        <div class="data-row"><span class="l">DeFi</span><span class="v g">+2.1%</span></div>
+        <div class="data-row"><span class="l">Meme</span><span class="v r">-1.8%</span></div>
+        <div class="data-row"><span class="l">RWA Stocks</span><span class="v g">+1.2%</span></div>
+        <div class="src-line"><span>Binance + HL &middot; 14:30</span></div>
+      </div>
+      <div class="ctx-panel">
+        <div class="sec-label">On-chain Stress</div>
+        <div class="data-row"><span class="l">Avg Funding</span><span class="v g">+0.012%</span></div>
+        <div class="data-row"><span class="l">OI &#x394; 1h</span><span class="v g">+2.4%</span></div>
+        <div class="data-row"><span class="l">Taker Ratio</span><span class="v g">1.08</span></div>
+        <div class="data-row"><span class="l">Liq Bias</span><span class="v r">62% shorts</span></div>
+        <div class="src-line"><span>Binance API &middot; 14:30</span><span class="src-warn">&#x26A0; Social delayed</span></div>
+      </div>
+    </div>
+    <div class="ctx-right">
+      <div class="sec-label">What Changed</div>
+      <div class="chg"><span class="chg-dot g" style="background:var(--green)"></span><span><span class="act">BTC broke $67k</span> — trend confirmed BULL</span></div>
+      <div class="chg"><span class="chg-dot" style="background:var(--amber)"></span><span><span class="act">Meme sector weakening</span> — SM exiting DOGE, WIF</span></div>
+      <div class="chg"><span class="chg-dot" style="background:var(--green)"></span><span><span class="act">ETH & LINK building</span> — OI expanding, momentum up</span></div>
+      <div class="chg"><span class="chg-dot" style="background:#cbd5e1"></span><span>RWA stocks steady — no abnormal pressure</span></div>
+    </div>
+  </div>
+
+  <!-- STRESS -->
+  <div class="stress low">
+    <b>Stress: Low</b> — Normal conditions.<span class="mute">Short liq dominance (62%) = mild squeeze. Funding positive but not crowded.</span>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TABLE -->
+    <div class="tbl-card">
+      <div class="tbl-top"><div class="tbl-h">Signal Ranking</div><div class="tbl-note">Click any row for full analysis</div></div>
+      <div class="flt">
+        <div class="fg"><button class="on">All</button><button>Long</button><button>Short</button></div>
+        <div class="fg"><button class="on">All</button><button>Entry</button><button>Ready</button><button>Watch</button></div>
+        <div class="fg"><button class="on">All</button><button>Crypto</button><button>RWA</button></div>
+      </div>
+
+      <table class="tbl">
+        <thead><tr><th style="width:22px">#</th><th>Token</th><th>Status</th><th>Signal</th><th class="r">Score</th><th class="c">6h Trend</th><th>Levels</th><th class="c">R:R</th><th style="width:28px"></th></tr></thead>
+        <tbody>
+
+          <!-- ETH -->
+          <tr onclick="t('eth')">
+            <td style="color:var(--text3);font-weight:700;font-size:11px">1</td>
+            <td><div class="tk"><div class="tk-av eth">E</div><div class="tk-info"><div class="tk-sym">ETH <span class="chev" id="c-eth">&#x25B8;</span></div><div class="tk-row2"><span class="tk-price">$3,520</span><span class="tk-chg g">+4.2%</span></div></div></div></td>
+            <td><span class="st entry"><span class="st-dot"></span>Entry</span></td>
+            <td><span class="sig long">LONG</span></td>
+            <td class="sc"><div class="sc-big g">+12</div><div class="sc-d g">&#x2191;+4</div><div class="sc-wr">WR <b>72%</b></div></td>
+            <td class="c"><svg width="64" height="20" viewBox="0 0 64 20"><polyline points="0,17 9,15 18,13 27,11 36,13 45,7 54,4 64,1" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"/><circle cx="64" cy="1" r="2" fill="var(--green)"/></svg></td>
+            <td><div class="tgt"><div class="tr"><span class="tl in">IN</span><span class="tv">3,480–3,530</span></div><div class="tr"><span class="tl tp">TP</span><span class="tv">3,720</span><span class="tp">+5.7%</span></div><div class="tr"><span class="tl sl">SL</span><span class="tv">3,410</span><span class="tp">-3.1%</span></div></div></td>
+            <td><div class="rr good"><div class="rr-v">1:1.8</div><div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star on" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+          <!-- ETH EXPANDED -->
+          <tr class="xr" id="x-eth"><td colspan="9">
+            <div class="rpt">
+              <div class="rpt-top"><div class="rpt-t">ETH — Full Analysis</div><div class="rpt-meta"><span>14:30 UTC</span><span>Binance + HL</span><span class="w">&#x26A0; Social delayed</span></div></div>
+              <div class="rpt-body">
+                <div class="dim"><div class="dim-h"><span class="dim-n">Price Structure</span><span class="dim-s g">+4</span></div><div class="dl"><span class="k">4H K-line</span><span class="v g">BULL str=3</span></div><div class="dl"><span class="k">Position</span><span class="v">62%</span></div><div class="dl"><span class="k">EMA</span><span class="v g">Bullish</span></div><div class="dl"><span class="k">Support</span><span class="v">$3,410</span></div><div class="dl"><span class="k">Resistance</span><span class="v">$3,720</span></div></div>
+                <div class="dim"><div class="dim-h"><span class="dim-n">On-chain Flow</span><span class="dim-s g">+5</span></div><div class="dl"><span class="k">Smart Money</span><span class="v g">+15</span></div><div class="dl"><span class="k">OI</span><span class="v g">+8%</span></div><div class="dl"><span class="k">Taker</span><span class="v g">1.12</span></div><div class="dl"><span class="k">Funding</span><span class="v">+0.008%</span></div><div class="dl"><span class="k">BS ratio</span><span class="v g">1.6</span></div></div>
+                <div class="dim"><div class="dim-h"><span class="dim-n">Sentiment</span><span class="dim-s g">+2</span></div><div class="dl"><span class="k">Top Traders</span><span class="v">-1.2</span></div><div class="dl"><span class="k">Whale L/S</span><span class="v g">1.4</span></div><div class="dl"><span class="k">Retail L/S</span><span class="v y">1.6 &#x26A0;</span></div><div class="dl"><span class="k">Social</span><span class="v n">Normal</span></div></div>
+                <div class="dim"><div class="dim-h"><span class="dim-n">Environment</span><span class="dim-s g">+1</span></div><div class="dl"><span class="k">BTC</span><span class="v g">BULL</span></div><div class="dl"><span class="k">Regime</span><span class="v">TREND_LONG</span></div><div class="dl"><span class="k">Archetype</span><span class="v">BTC_PUMP</span></div><div class="dl"><span class="k">7D trend</span><span class="v g">+8.4%</span></div></div>
+              </div>
+              <div class="pat"><div><div class="pat-h"><span class="otag bull">Bullish</span>Bull Flag — 4H Confirmed</div><div class="pat-p">Flagpole $3,280→$3,520 (+7.3%). Consolidation $3,450–$3,520, declining volume.<br><b>Invalidation:</b> Close below $3,410.</div></div><div class="pat-target"><div class="l">2-Day Target</div><div class="big g">$3,680–$3,750</div><div class="note">Flagpole measured move</div></div></div>
+              <div class="cases">
+                <div class="case bull"><div class="case-h">Bull Case</div><ul class="cl"><li><b>SM +15</b> — Active inflow</li><li><b>OI +8%</b> — New money entering</li><li><b>Bull flag</b> — Target $3,720</li><li><b>BTC BULL</b> — 68% hist WR</li><li><b>Whales adding</b> — L/S 1.4</li></ul></div>
+                <div class="case bear"><div class="case-h">Counter-Argument</div><ul class="cl"><li><b>Retail chasing</b> — L/S 1.6, trigger at 2.0</li><li><b>Funding rising</b> — Crowded if &gt;0.03%</li><li><b>$3,720 resistance</b> — First test rejects</li><li><b>BTC dependent</b> — Reversal kills it</li></ul></div>
+              </div>
+              <div class="risk">
+                <div class="ri"><div class="l">Upside</div><div class="v g">+5.7%</div><div class="s">to $3,720</div></div>
+                <div class="ri"><div class="l">Downside</div><div class="v r">-3.1%</div><div class="s">to $3,410</div></div>
+                <div class="ri"><div class="l">R:R</div><div class="v g">1:1.8</div><div class="s">favorable</div></div>
+                <div class="ri"><div class="l">Hold Time</div><div class="v">18–36h</div><div class="s">pattern est.</div></div>
+                <div class="ri"><div class="l">Volatility</div><div class="v">Med</div><div class="s">ATR $85</div></div>
+              </div>
+              <div class="conc">
+                <div class="conc-h">AI Conclusion</div>
+                <div class="conc-line"><span class="conc-dot" style="background:var(--green)"></span><b>Worth pursuing.</b> SM + OI + bull flag + BTC BULL. R:R 1:1.8.</div>
+                <div class="conc-line"><span class="conc-dot" style="background:var(--amber)"></span><b>Watch:</b> Retail L/S near 2.0, funding &gt;0.03%, BTC at $68k.</div>
+                <div class="conc-line"><span class="conc-dot" style="background:var(--text3)"></span><b>Wait option:</b> Retest $3,480 → R:R 1:2.2. <span class="m">Patience pays.</span></div>
+              </div>
+              <div class="rpt-ft"><span>Binance (FR, OI, L/S) + HL (SM, taker) + K-line 15m/1h/4h &middot; 14:30 UTC</span><span class="src-warn">&#x26A0; Missing: Social, whale transfers</span></div>
+            </div>
+          </td></tr>
+
+          <!-- DOGE -->
+          <tr>
+            <td style="color:var(--text3);font-weight:700;font-size:11px">2</td>
+            <td><div class="tk"><div class="tk-av doge">D</div><div class="tk-info"><div class="tk-sym">DOGE</div><div class="tk-row2"><span class="tk-price">$0.1842</span><span class="tk-chg r">-2.8%</span></div></div></div></td>
+            <td><span class="st entry"><span class="st-dot"></span>Entry</span></td>
+            <td><span class="sig short">SHORT</span></td>
+            <td class="sc"><div class="sc-big r">-9</div><div class="sc-d r">&#x2193;-3</div><div class="sc-wr">WR <b>68%</b></div></td>
+            <td class="c"><svg width="64" height="20" viewBox="0 0 64 20"><polyline points="0,4 9,6 18,8 27,6 36,10 45,13 54,16 64,18" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round"/><circle cx="64" cy="18" r="2" fill="var(--red)"/></svg></td>
+            <td><div class="tgt"><div class="tr"><span class="tl in">IN</span><span class="tv">0.183–0.186</span></div><div class="tr"><span class="tl tp">TP</span><span class="tv">0.168</span><span class="tp">+8.7%</span></div><div class="tr"><span class="tl sl">SL</span><span class="tv">0.192</span><span class="tp">-4.3%</span></div></div></td>
+            <td><div class="rr good"><div class="rr-v">1:2.0</div><div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star" onclick="event.stopPropagation()">&#x2606;</button></td>
+          </tr>
+
+          <!-- LINK -->
+          <tr>
+            <td style="color:var(--text3);font-weight:700;font-size:11px">3</td>
+            <td><div class="tk"><div class="tk-av link">L</div><div class="tk-info"><div class="tk-sym">LINK</div><div class="tk-row2"><span class="tk-price">$18.75</span><span class="tk-chg g">+3.1%</span></div></div></div></td>
+            <td><span class="st ready"><span class="st-dot"></span>Ready</span></td>
+            <td><span class="sig long">LONG</span></td>
+            <td class="sc"><div class="sc-big g">+9</div><div class="sc-d g">&#x2191;+2</div><div class="sc-wr">WR <b>65%</b></div></td>
+            <td class="c"><svg width="64" height="20" viewBox="0 0 64 20"><polyline points="0,15 9,13 18,10 27,10 36,8 45,5 54,3 64,1" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"/><circle cx="64" cy="1" r="2" fill="var(--green)"/></svg></td>
+            <td><div class="tgt"><div class="tr"><span class="tl in">IN</span><span class="tv">18.50–18.80</span></div><div class="tr"><span class="tl tp">TP</span><span class="tv">20.40</span><span class="tp">+8.8%</span></div><div class="tr"><span class="tl sl">SL</span><span class="tv">17.80</span><span class="tp">-5.1%</span></div></div></td>
+            <td><div class="rr ok"><div class="rr-v">1:1.7</div><div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star" onclick="event.stopPropagation()">&#x2606;</button></td>
+          </tr>
+
+          <!-- AAPL -->
+          <tr>
+            <td style="color:var(--text3);font-weight:700;font-size:11px">4</td>
+            <td><div class="tk"><div class="tk-av aapl">A</div><div class="tk-info"><div class="tk-sym">AAPL <span class="rwa-tag">RWA</span></div><div class="tk-row2"><span class="tk-price">$198.32</span><span class="tk-chg g">+1.5%</span></div></div></div></td>
+            <td><span class="st ready"><span class="st-dot"></span>Ready</span></td>
+            <td><span class="sig long">LONG</span></td>
+            <td class="sc"><div class="sc-big g">+7</div><div class="sc-d g">&#x2191;+4</div><div class="sc-wr">WR <b>63%</b></div></td>
+            <td class="c"><svg width="64" height="20" viewBox="0 0 64 20"><polyline points="0,17 9,15 18,12 27,14 36,10 45,7 54,4 64,3" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"/><circle cx="64" cy="3" r="2" fill="var(--green)"/></svg></td>
+            <td><div class="tgt"><div class="tr"><span class="tl in">IN</span><span class="tv">196–199</span></div><div class="tr"><span class="tl tp">TP</span><span class="tv">210</span><span class="tp">+5.9%</span></div><div class="tr"><span class="tl sl">SL</span><span class="tv">192</span><span class="tp">-3.2%</span></div></div></td>
+            <td><div class="rr ok"><div class="rr-v">1:1.8</div><div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star on" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+          <!-- SOL -->
+          <tr>
+            <td style="color:var(--text3);font-weight:700;font-size:11px">5</td>
+            <td><div class="tk"><div class="tk-av sol">S</div><div class="tk-info"><div class="tk-sym">SOL</div><div class="tk-row2"><span class="tk-price">$178.90</span><span class="tk-chg r">-0.6%</span></div></div></div></td>
+            <td><span class="st watch"><span class="st-dot"></span>Watch</span></td>
+            <td><span class="sig wait">WAIT</span></td>
+            <td class="sc"><div class="sc-big n">+2</div><div class="sc-d r">&#x2193;-7</div><div class="sc-wr">WR <b>52%</b></div></td>
+            <td class="c"><svg width="64" height="20" viewBox="0 0 64 20"><polyline points="0,2 9,4 18,2 27,5 36,7 45,12 54,14 64,16" fill="none" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round"/><circle cx="64" cy="16" r="2" fill="var(--text3)"/></svg></td>
+            <td><div class="tgt-na">Signal weak &middot; Score &#x2265;6</div></td>
+            <td style="text-align:center;color:#cbd5e1">&mdash;</td>
+            <td><button class="star on" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FEED -->
+    <div class="feed-card">
+      <div class="feed-top"><div class="feed-h">Signal Feed</div><div class="feed-live"><i></i>Live</div></div>
+      <div class="feed-list">
+        <div class="fi"><div class="fi-time">14:30</div><div class="fi-dot blue"></div><div class="fi-body"><div class="fi-title">ETH &#x2192; Entry</div><div class="fi-desc">+8&#x2192;+12, bull flag + SM inflow</div><span class="fi-tag ok">Entry Signal</span></div></div>
+        <div class="fi"><div class="fi-time">14:25</div><div class="fi-dot amber"></div><div class="fi-body"><div class="fi-title">DOGE flipped SHORT</div><div class="fi-desc">Triangle break, SM exiting</div><span class="fi-tag warn">Direction Flip</span></div></div>
+        <div class="fi"><div class="fi-time">14:20</div><div class="fi-dot purple"></div><div class="fi-body"><div class="fi-title">SOL &#x2192; Watch</div><div class="fi-desc">+9&#x2192;+2, whales reducing</div><span class="fi-tag info">Downgraded</span></div></div>
+        <div class="fi"><div class="fi-time">14:15</div><div class="fi-dot green"></div><div class="fi-body"><div class="fi-title">PEPE volume spike</div><div class="fi-desc">3x avg, price flat</div><span class="fi-tag ok">New Signal</span></div></div>
+        <div class="fi"><div class="fi-time">14:10</div><div class="fi-dot blue"></div><div class="fi-body"><div class="fi-title">AAPL +3 &#x2192; +7</div><div class="fi-desc">Double bottom neckline</div><span class="fi-tag ok">Upgrading</span></div></div>
+        <div class="fi"><div class="fi-time">14:05</div><div class="fi-dot red"></div><div class="fi-body"><div class="fi-title">XRP blocked</div><div class="fi-desc">Position 92%, R:R &lt;1</div><span class="fi-tag bad">Risk Block</span></div></div>
+        <div class="fi"><div class="fi-time">14:00</div><div class="fi-dot amber"></div><div class="fi-body"><div class="fi-title">BTC &#x2192; BULL</div><div class="fi-desc">3 green + RSI recovery</div><span class="fi-tag warn">Regime</span></div></div>
+        <div class="fi"><div class="fi-time">13:55</div><div class="fi-dot blue"></div><div class="fi-body"><div class="fi-title">LINK +5 &#x2192; +9</div><div class="fi-desc">OI +12%</div><span class="fi-tag ok">&#x2191;</span></div></div>
+        <div class="fi"><div class="fi-time">13:45</div><div class="fi-dot green"></div><div class="fi-body"><div class="fi-title">ETH prev TP hit</div><div class="fi-desc">$3,380&#x2192;$3,480 +2.9%</div><span class="fi-tag ok">&#x2713;</span></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>function t(id){var r=document.getElementById('x-'+id),c=document.getElementById('c-'+id);if(r)r.classList.toggle('open');if(c)c.classList.toggle('open')}</script>
+</body>
+</html>

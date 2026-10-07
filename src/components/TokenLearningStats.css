@@ -1,0 +1,173 @@
+/* Token Learning Stats - Compact Badge Mode */
+.token-stats-badge {
+  display: inline-flex;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.token-stats-badge .stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.token-stats-badge .label {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.token-stats-badge .value {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.token-stats-badge .value.good {
+  color: #10b981;
+}
+
+.token-stats-badge .value.neutral {
+  color: #f59e0b;
+}
+
+.token-stats-badge .value.bad {
+  color: #ef4444;
+}
+
+/* Token Learning Stats - Full Display Mode */
+.token-stats-full {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.stats-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.stats-header .last-updated {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.stat-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.stat-value.highlight {
+  color: #60a5fa;
+  font-size: 16px;
+}
+
+.stat-value.success {
+  color: #10b981;
+}
+
+.stat-value.danger {
+  color: #ef4444;
+}
+
+.stat-value.warning {
+  color: #f59e0b;
+}
+
+.stat-value.neutral {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.signal-id {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+/* Loading and Error States */
+.token-stats .loading,
+.token-stats .error {
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.token-stats .error {
+  color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .token-stats-badge {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}

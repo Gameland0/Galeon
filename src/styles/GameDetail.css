@@ -1,0 +1,189 @@
+.game-detail-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.back-button {
+  margin-bottom: 16px;
+}
+
+.game-header {
+  margin-bottom: 24px;
+}
+
+.game-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.game-content {
+  margin-top: 24px;
+}
+
+.game-image-card {
+  margin-bottom: 16px;
+}
+
+.game-image {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.game-price-section {
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.price-tag {
+  font-size: 16px;
+  padding: 6px 12px;
+}
+
+.play-button {
+  height: 48px;
+  font-size: 16px;
+}
+
+.game-stats-card {
+  margin-top: 16px;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.game-stats-card .ant-statistic {
+  text-align: center;
+}
+
+.game-stats-card .ant-statistic-title {
+  color: #888888;
+  font-size: 14px;
+}
+
+.game-stats-card .ant-statistic-content {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.game-stats-card .ant-statistic-prefix,
+.game-stats-card .ant-statistic-suffix {
+  font-size: 20px;
+}
+
+.game-info-card {
+  height: 100%;
+}
+
+.game-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.game-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 400px;
+}
+
+.game-iframe-container {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.game-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  background-color: #f7f7f7;
+}
+
+.play-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  color: #1890ff;
+}
+
+/* 🔧 AI对战状态样式 */
+.ai-status-overlay {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.ai-thinking {
+  display: flex;
+  align-items: center;
+}
+
+.ai-debug-info {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #00ff00;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  z-index: 999;
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.ai-debug-info div {
+  margin-bottom: 4px;
+}
+
+/* 响应式样式 */
+@media (max-width: 768px) {
+  .game-detail-container {
+    padding: 16px;
+  }
+  
+  .game-meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .ai-debug-info {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin-top: 10px;
+    max-width: 100%;
+  }
+} 
