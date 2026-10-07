@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Market Overview v2 - Galeon</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #ffffff;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+.ov-wrap {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px 32px;
+}
+
+/* ── Header ── */
+.ov-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding-bottom: 20px; border-bottom: 1px solid #e8e8ec; margin-bottom: 24px;
+}
+.ov-header h1 {
+  font-size: 16px; font-weight: 700; color: #1a1a2e;
+  font-family: 'JetBrains Mono', monospace;
+}
+.ov-header h1 span { color: #2563eb; }
+.ov-subtitle { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.ov-header-right { display: flex; align-items: center; gap: 12px; }
+.ov-tabs { display: flex; gap: 0; }
+.ov-tabs button {
+  padding: 6px 16px; font-size: 11px; font-weight: 600;
+  border: 1px solid #d1d5db; background: #fff; color: #64748b;
+  cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
+}
+.ov-tabs button:first-child { border-radius: 6px 0 0 6px; }
+.ov-tabs button:last-child { border-radius: 0 6px 6px 0; }
+.ov-tabs button:not(:first-child) { margin-left: -1px; }
+.ov-tabs button.active {
+  background: #eff6ff; border-color: #2563eb; color: #2563eb; z-index: 1; position: relative;
+}
+.ov-tabs button:hover:not(.active) { background: #f8fafc; }
+.ov-refresh {
+  width: 32px; height: 32px; border-radius: 6px; border: 1px solid #d1d5db;
+  background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: #64748b; font-size: 14px; transition: all 0.15s;
+}
+.ov-refresh:hover { background: #f8fafc; color: #2563eb; }
+.ov-live-dot {
+  width: 6px; height: 6px; background: #22c55e; border-radius: 50%;
+  display: inline-block; margin-right: 6px; animation: ov-pulse 2s infinite;
+}
+@keyframes ov-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.ov-live-text { font-size: 11px; color: #94a3b8; }
+
+/* ── Market Environment Bar ── */
+.ov-env {
+  display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.ov-env-card {
+  flex: 1; min-width: 180px;
+  background: #f8fafc; border: 1px solid #e8e8ec; border-radius: 10px;
+  padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+}
+.ov-env-icon {
+  width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+}
+.ov-env-icon.btc { background: #fef3c7; color: #d97706; }
+.ov-env-icon.regime { background: #ede9fe; color: #7c3aed; }
+.ov-env-icon.sentiment { background: #dcfce7; color: #16a34a; }
+.ov-env-icon.signals { background: #dbeafe; color: #2563eb; }
+.ov-env-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.ov-env-value { font-size: 14px; font-weight: 700; color: #1a1a2e; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+.ov-env-value .up { color: #16a34a; }
+.ov-env-value .down { color: #dc2626; }
+
+/* ── Main Grid ── */
+.ov-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+}
+
+/* ── Section Card ── */
+.ov-section {
+  background: #fff; border: 1px solid #e8e8ec; border-radius: 12px;
+  padding: 20px 24px;
+}
+.ov-section-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+}
+.ov-section-title {
+  font-size: 13px; font-weight: 700; color: #1a1a2e;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.ov-section-badge {
+  font-size: 10px; font-weight: 600; color: #2563eb; background: #eff6ff;
+  padding: 3px 8px; border-radius: 4px;
+}
+
+/* ── Signal Table ── */
+.ov-table { width: 100%; border-collapse: collapse; }
+.ov-table th {
+  font-size: 10px; font-weight: 600; color: #94a3b8;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 0 8px 10px; text-align: left; border-bottom: 1px solid #e8e8ec;
+  white-space: nowrap;
+}
+.ov-table th.r { text-align: right; }
+.ov-table th.c { text-align: center; }
+.ov-table td { padding: 10px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.ov-table tr:last-child td { border-bottom: none; }
+.ov-table tr:hover { background: #f8fafc; }
+
+/* Token cell */
+.ov-token { display: flex; align-items: center; gap: 8px; }
+.ov-token-icon {
+  width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #64748b;
+}
+.ov-token-name { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+.ov-token-price { font-size: 11px; color: #94a3b8; margin-top: 1px; }
+
+/* Signal badge */
+.ov-signal {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.ov-signal.long { background: #dcfce7; color: #16a34a; }
+.ov-signal.short { background: #fee2e2; color: #dc2626; }
+.ov-signal.neutral { background: #f1f5f9; color: #94a3b8; }
+
+/* Score */
+.ov-score {
+  font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+}
+.ov-score.pos { color: #16a34a; }
+.ov-score.neg { color: #dc2626; }
+.ov-score-change {
+  font-size: 10px; font-weight: 500; margin-top: 2px; text-align: right;
+}
+
+/* Sparkline */
+.ov-sparkline { text-align: center; }
+
+/* ── Status Badge ── */
+.ov-status {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.3px;
+}
+.ov-status.entry { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+.ov-status.ready { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+.ov-status.watch { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.ov-status.hold { background: #dbeafe; color: #2563eb; border: 1px solid #bfdbfe; }
+.ov-status.exit { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.ov-status-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+}
+.ov-status.entry .ov-status-dot { background: #16a34a; animation: ov-pulse 2s infinite; }
+.ov-status.ready .ov-status-dot { background: #d97706; animation: ov-pulse 2s infinite; }
+.ov-status.watch .ov-status-dot { background: #94a3b8; }
+.ov-status.hold .ov-status-dot { background: #2563eb; }
+.ov-status.exit .ov-status-dot { background: #dc2626; animation: ov-pulse 1.5s infinite; }
+
+/* ── Target/SL/RR Block ── */
+.ov-targets {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; line-height: 1.6;
+}
+.ov-target-row { display: flex; align-items: center; gap: 4px; }
+.ov-target-label {
+  font-size: 9px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.3px; min-width: 24px;
+}
+.ov-target-label.tp { color: #16a34a; }
+.ov-target-label.sl { color: #dc2626; }
+.ov-target-label.entry { color: #2563eb; }
+.ov-target-val { font-weight: 600; color: #1a1a2e; }
+.ov-target-pct { font-size: 9px; color: #94a3b8; margin-left: 2px; }
+
+/* R:R ratio */
+.ov-rr {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+}
+.ov-rr.good { color: #16a34a; }
+.ov-rr.ok { color: #d97706; }
+.ov-rr.bad { color: #dc2626; }
+.ov-rr-bar {
+  width: 40px; height: 4px; border-radius: 2px; background: #e2e8f0;
+  overflow: hidden; display: inline-block; vertical-align: middle;
+}
+.ov-rr-fill { height: 100%; border-radius: 2px; }
+.ov-rr.good .ov-rr-fill { background: #16a34a; width: 80%; }
+.ov-rr.ok .ov-rr-fill { background: #d97706; width: 55%; }
+.ov-rr.bad .ov-rr-fill { background: #dc2626; width: 30%; }
+
+/* ── Pattern & Prediction ── */
+.ov-pattern { font-size: 11px; color: #64748b; }
+.ov-pattern-name {
+  font-weight: 600; color: #1a1a2e; font-size: 11px;
+}
+.ov-pattern-outlook {
+  font-size: 10px; margin-top: 3px; display: flex; align-items: center; gap: 4px;
+}
+.ov-outlook-tag {
+  font-size: 9px; font-weight: 600; padding: 1px 5px; border-radius: 3px;
+}
+.ov-outlook-tag.bullish { background: #dcfce7; color: #16a34a; }
+.ov-outlook-tag.bearish { background: #fee2e2; color: #dc2626; }
+.ov-outlook-tag.neutral { background: #f1f5f9; color: #64748b; }
+.ov-prediction {
+  font-size: 10px; color: #94a3b8; margin-top: 2px;
+}
+.ov-prediction b { color: #1a1a2e; }
+
+/* ── Star ── */
+.ov-star {
+  width: 28px; height: 28px; border: none; background: transparent;
+  cursor: pointer; font-size: 16px; border-radius: 4px; transition: all 0.15s;
+  color: #d1d5db;
+}
+.ov-star:hover { background: #fef3c7; color: #f59e0b; }
+.ov-star.active { color: #f59e0b; }
+
+/* ── Signal Feed ── */
+.ov-feed { max-height: 700px; overflow-y: auto; }
+.ov-feed-item {
+  display: flex; gap: 10px; padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+.ov-feed-item:last-child { border-bottom: none; }
+.ov-feed-time {
+  font-size: 10px; color: #94a3b8; font-family: 'JetBrains Mono', monospace;
+  min-width: 42px; padding-top: 2px;
+}
+.ov-feed-dot {
+  width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0;
+}
+.ov-feed-dot.direction { background: #f59e0b; }
+.ov-feed-dot.score { background: #2563eb; }
+.ov-feed-dot.new { background: #16a34a; }
+.ov-feed-dot.blocked { background: #dc2626; }
+.ov-feed-dot.dim { background: #7c3aed; }
+.ov-feed-content { flex: 1; }
+.ov-feed-title { font-size: 12px; font-weight: 600; color: #1a1a2e; }
+.ov-feed-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+.ov-feed-tag {
+  display: inline-block; font-size: 9px; font-weight: 600; padding: 1px 6px;
+  border-radius: 3px; margin-top: 4px;
+}
+.ov-feed-tag.warn { background: #fef3c7; color: #d97706; }
+.ov-feed-tag.info { background: #dbeafe; color: #2563eb; }
+.ov-feed-tag.danger { background: #fee2e2; color: #dc2626; }
+.ov-feed-tag.success { background: #dcfce7; color: #16a34a; }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .ov-grid { grid-template-columns: 1fr; }
+  .ov-wrap { padding: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="ov-wrap">
+
+  <!-- Header -->
+  <div class="ov-header">
+    <div>
+      <h1><span>AI</span> Market Overview</h1>
+      <div class="ov-subtitle">Real-time AI signal analysis across crypto &amp; RWA markets</div>
+    </div>
+    <div class="ov-header-right">
+      <span><span class="ov-live-dot"></span><span class="ov-live-text">Live - Updated 30s ago</span></span>
+      <div class="ov-tabs">
+        <button class="active">All Signals</button>
+        <button>My Watchlist</button>
+      </div>
+      <button class="ov-refresh" title="Refresh">&#x21bb;</button>
+    </div>
+  </div>
+
+  <!-- Market Environment Bar -->
+  <div class="ov-env">
+    <div class="ov-env-card">
+      <div class="ov-env-icon btc">&#x20bf;</div>
+      <div>
+        <div class="ov-env-label">BTC Trend</div>
+        <div class="ov-env-value"><span class="up">BULL</span> &#x2197;</div>
+      </div>
+    </div>
+    <div class="ov-env-card">
+      <div class="ov-env-icon regime">R</div>
+      <div>
+        <div class="ov-env-label">Market Regime</div>
+        <div class="ov-env-value">TREND_LONG</div>
+      </div>
+    </div>
+    <div class="ov-env-card">
+      <div class="ov-env-icon sentiment">S</div>
+      <div>
+        <div class="ov-env-label">Market Sentiment</div>
+        <div class="ov-env-value"><span class="up">72</span> / 100</div>
+      </div>
+    </div>
+    <div class="ov-env-card">
+      <div class="ov-env-icon signals">#</div>
+      <div>
+        <div class="ov-env-label">Active Signals</div>
+        <div class="ov-env-value">14 <span style="font-size:11px;color:#94a3b8;font-weight:400">tokens</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="ov-grid">
+
+    <!-- Left: Signal Ranking Table -->
+    <div class="ov-section" style="overflow-x:auto;">
+      <div class="ov-section-head">
+        <div class="ov-section-title">AI Signal Ranking</div>
+        <div class="ov-section-badge">Sorted by |Score|</div>
+      </div>
+
+      <table class="ov-table">
+        <thead>
+          <tr>
+            <th style="width:24px"></th>
+            <th>Token</th>
+            <th>Status</th>
+            <th>Signal</th>
+            <th class="r">Score</th>
+            <th class="c">Trend</th>
+            <th>Entry / TP / SL</th>
+            <th class="c">R:R</th>
+            <th>K-Line Pattern &amp; 2D Outlook</th>
+            <th style="width:32px"></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- Row 1: ETH — ENTRY signal, strong -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">1</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">ETH</div>
+                <div>
+                  <div class="ov-token-name">ETH</div>
+                  <div class="ov-token-price">$3,520</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status entry"><span class="ov-status-dot"></span>Entry</span>
+            </td>
+            <td><span class="ov-signal long">&#x25B2; LONG</span></td>
+            <td>
+              <div class="ov-score pos">+12</div>
+              <div class="ov-score-change" style="color:#16a34a">&#x2191;+4</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,20 10,18 20,16 30,14 40,16 50,10 60,6 72,2" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="2" r="2" fill="#16a34a"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets">
+                <div class="ov-target-row">
+                  <span class="ov-target-label entry">IN</span>
+                  <span class="ov-target-val">3,480 - 3,530</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label tp">TP</span>
+                  <span class="ov-target-val">3,720</span>
+                  <span class="ov-target-pct">+5.7%</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label sl">SL</span>
+                  <span class="ov-target-val">3,410</span>
+                  <span class="ov-target-pct">-3.1%</span>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr good">
+                1:1.8
+                <span class="ov-rr-bar"><span class="ov-rr-fill"></span></span>
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Bull Flag Breakout</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag bullish">Bullish</span>
+                  <span style="color:#94a3b8;font-size:10px">4H confirmed</span>
+                </div>
+                <div class="ov-prediction">2D target: <b>$3,680 - $3,750</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star active">&#x2605;</button></td>
+          </tr>
+
+          <!-- Row 2: DOGE — EXIT signal -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">2</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">DOGE</div>
+                <div>
+                  <div class="ov-token-name">DOGE</div>
+                  <div class="ov-token-price">$0.1842</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status entry"><span class="ov-status-dot"></span>Entry</span>
+            </td>
+            <td><span class="ov-signal short">&#x25BC; SHORT</span></td>
+            <td>
+              <div class="ov-score neg">-9</div>
+              <div class="ov-score-change" style="color:#dc2626">&#x2193;-3</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,6 10,8 20,10 30,8 40,12 50,16 60,20 72,22" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="22" r="2" fill="#dc2626"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets">
+                <div class="ov-target-row">
+                  <span class="ov-target-label entry">IN</span>
+                  <span class="ov-target-val">0.183 - 0.186</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label tp">TP</span>
+                  <span class="ov-target-val">0.168</span>
+                  <span class="ov-target-pct">+8.7%</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label sl">SL</span>
+                  <span class="ov-target-val">0.192</span>
+                  <span class="ov-target-pct">-4.3%</span>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr good">
+                1:2.0
+                <span class="ov-rr-bar"><span class="ov-rr-fill"></span></span>
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Descending Triangle</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag bearish">Bearish</span>
+                  <span style="color:#94a3b8;font-size:10px">Support breaking</span>
+                </div>
+                <div class="ov-prediction">2D target: <b>$0.165 - $0.172</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star">&#x2606;</button></td>
+          </tr>
+
+          <!-- Row 3: LINK — READY -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">3</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">LINK</div>
+                <div>
+                  <div class="ov-token-name">LINK</div>
+                  <div class="ov-token-price">$18.75</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status ready"><span class="ov-status-dot"></span>Ready</span>
+            </td>
+            <td><span class="ov-signal long">&#x25B2; LONG</span></td>
+            <td>
+              <div class="ov-score pos">+9</div>
+              <div class="ov-score-change" style="color:#16a34a">&#x2191;+2</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,16 10,14 20,12 30,12 40,10 50,8 60,6 72,4" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="4" r="2" fill="#16a34a"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets">
+                <div class="ov-target-row">
+                  <span class="ov-target-label entry">IN</span>
+                  <span class="ov-target-val">18.50 - 18.80</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label tp">TP</span>
+                  <span class="ov-target-val">20.40</span>
+                  <span class="ov-target-pct">+8.8%</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label sl">SL</span>
+                  <span class="ov-target-val">17.80</span>
+                  <span class="ov-target-pct">-5.1%</span>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr ok">
+                1:1.7
+                <span class="ov-rr-bar"><span class="ov-rr-fill"></span></span>
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Ascending Channel</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag bullish">Bullish</span>
+                  <span style="color:#94a3b8;font-size:10px">OI accumulating</span>
+                </div>
+                <div class="ov-prediction">2D target: <b>$19.80 - $20.50</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star">&#x2606;</button></td>
+          </tr>
+
+          <!-- Row 4: AAPL RWA — READY -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">4</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon" style="background:#dbeafe;color:#2563eb">AAPL</div>
+                <div>
+                  <div class="ov-token-name">AAPL <span style="font-size:9px;color:#2563eb;background:#eff6ff;padding:1px 5px;border-radius:3px;font-weight:600;margin-left:4px">RWA</span></div>
+                  <div class="ov-token-price">$198.32</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status ready"><span class="ov-status-dot"></span>Ready</span>
+            </td>
+            <td><span class="ov-signal long">&#x25B2; LONG</span></td>
+            <td>
+              <div class="ov-score pos">+7</div>
+              <div class="ov-score-change" style="color:#16a34a">&#x2191;+4</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,18 10,16 20,14 30,16 40,12 50,10 60,8 72,6" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="6" r="2" fill="#16a34a"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets">
+                <div class="ov-target-row">
+                  <span class="ov-target-label entry">IN</span>
+                  <span class="ov-target-val">196 - 199</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label tp">TP</span>
+                  <span class="ov-target-val">210</span>
+                  <span class="ov-target-pct">+5.9%</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label sl">SL</span>
+                  <span class="ov-target-val">192</span>
+                  <span class="ov-target-pct">-3.2%</span>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr ok">
+                1:1.8
+                <span class="ov-rr-bar"><span class="ov-rr-fill"></span></span>
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Double Bottom</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag bullish">Bullish</span>
+                  <span style="color:#94a3b8;font-size:10px">Neckline test</span>
+                </div>
+                <div class="ov-prediction">2D target: <b>$206 - $212</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star active">&#x2605;</button></td>
+          </tr>
+
+          <!-- Row 5: SOL — WATCH -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">5</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">SOL</div>
+                <div>
+                  <div class="ov-token-name">SOL</div>
+                  <div class="ov-token-price">$178.90</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status watch"><span class="ov-status-dot"></span>Watch</span>
+            </td>
+            <td><span class="ov-signal neutral">&#x25CF; WAIT</span></td>
+            <td>
+              <div class="ov-score" style="color:#64748b">+2</div>
+              <div class="ov-score-change" style="color:#dc2626">&#x2193;-7</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,4 10,6 20,4 30,6 40,8 50,14 60,16 72,18" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="18" r="2" fill="#94a3b8"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets" style="color:#94a3b8;">
+                <div style="font-size:11px;font-style:italic">Signal too weak</div>
+                <div style="font-size:10px;margin-top:2px">Wait for score &#x2265; 6</div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr" style="color:#94a3b8">
+                &#x2014;
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Consolidation Range</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag neutral">Neutral</span>
+                  <span style="color:#94a3b8;font-size:10px">No breakout</span>
+                </div>
+                <div class="ov-prediction">2D range: <b>$172 - $185</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star active">&#x2605;</button></td>
+          </tr>
+
+          <!-- Row 6: ARB — ENTRY SHORT -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">6</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">ARB</div>
+                <div>
+                  <div class="ov-token-name">ARB</div>
+                  <div class="ov-token-price">$1.12</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status ready"><span class="ov-status-dot"></span>Ready</span>
+            </td>
+            <td><span class="ov-signal short">&#x25BC; SHORT</span></td>
+            <td>
+              <div class="ov-score neg">-6</div>
+              <div class="ov-score-change" style="color:#94a3b8">&#x2192; 0</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,12 10,14 20,16 30,16 40,18 50,18 60,20 72,20" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="20" r="2" fill="#dc2626"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets">
+                <div class="ov-target-row">
+                  <span class="ov-target-label entry">IN</span>
+                  <span class="ov-target-val">1.11 - 1.14</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label tp">TP</span>
+                  <span class="ov-target-val">1.02</span>
+                  <span class="ov-target-pct">+8.9%</span>
+                </div>
+                <div class="ov-target-row">
+                  <span class="ov-target-label sl">SL</span>
+                  <span class="ov-target-val">1.18</span>
+                  <span class="ov-target-pct">-5.4%</span>
+                </div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr ok">
+                1:1.6
+                <span class="ov-rr-bar"><span class="ov-rr-fill"></span></span>
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Head &amp; Shoulders</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag bearish">Bearish</span>
+                  <span style="color:#94a3b8;font-size:10px">Right shoulder</span>
+                </div>
+                <div class="ov-prediction">2D target: <b>$1.00 - $1.05</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star">&#x2606;</button></td>
+          </tr>
+
+          <!-- Row 7: TSLA RWA — WATCH -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">7</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon" style="background:#dbeafe;color:#2563eb">TSLA</div>
+                <div>
+                  <div class="ov-token-name">TSLA <span style="font-size:9px;color:#2563eb;background:#eff6ff;padding:1px 5px;border-radius:3px;font-weight:600;margin-left:4px">RWA</span></div>
+                  <div class="ov-token-price">$312.10</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status watch"><span class="ov-status-dot"></span>Watch</span>
+            </td>
+            <td><span class="ov-signal long">&#x25B2; LONG</span></td>
+            <td>
+              <div class="ov-score pos">+5</div>
+              <div class="ov-score-change" style="color:#16a34a">&#x2191;+1</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,14 10,14 20,12 30,10 40,12 50,10 60,8 72,8" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="8" r="2" fill="#16a34a"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets" style="color:#94a3b8;">
+                <div style="font-size:11px;font-style:italic">Score improving</div>
+                <div style="font-size:10px;margin-top:2px">Wait for confirmation</div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr" style="color:#94a3b8">
+                &#x2014;
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Rising Wedge</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag neutral">Mixed</span>
+                  <span style="color:#94a3b8;font-size:10px">Wedge narrowing</span>
+                </div>
+                <div class="ov-prediction">2D range: <b>$305 - $320</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star">&#x2606;</button></td>
+          </tr>
+
+          <!-- Row 8: PEPE — WATCH -->
+          <tr>
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">8</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">PEPE</div>
+                <div>
+                  <div class="ov-token-name">PEPE</div>
+                  <div class="ov-token-price">$0.00001283</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ov-status watch"><span class="ov-status-dot"></span>Watch</span>
+            </td>
+            <td><span class="ov-signal neutral">&#x25CF; WAIT</span></td>
+            <td>
+              <div class="ov-score" style="color:#64748b">+4</div>
+              <div class="ov-score-change" style="color:#16a34a">&#x2191;+4</div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24">
+                <polyline points="0,20 10,20 20,18 30,16 40,16 50,14 60,12 72,10" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="72" cy="10" r="2" fill="#16a34a"/>
+              </svg>
+            </td>
+            <td>
+              <div class="ov-targets" style="color:#94a3b8;">
+                <div style="font-size:11px;font-style:italic">Emerging signal</div>
+                <div style="font-size:10px;margin-top:2px">Monitoring buildup</div>
+              </div>
+            </td>
+            <td style="text-align:center">
+              <div class="ov-rr" style="color:#94a3b8">
+                &#x2014;
+              </div>
+            </td>
+            <td>
+              <div class="ov-pattern">
+                <div class="ov-pattern-name">Volume Spike + Flat</div>
+                <div class="ov-pattern-outlook">
+                  <span class="ov-outlook-tag bullish">Building</span>
+                  <span style="color:#94a3b8;font-size:10px">Pre-breakout</span>
+                </div>
+                <div class="ov-prediction">2D if break: <b>+12% to +18%</b></div>
+              </div>
+            </td>
+            <td><button class="ov-star">&#x2606;</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right: Signal Feed -->
+    <div class="ov-section">
+      <div class="ov-section-head">
+        <div class="ov-section-title">Signal Feed</div>
+        <div class="ov-section-badge">Live</div>
+      </div>
+
+      <div class="ov-feed">
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">14:30</div>
+          <div class="ov-feed-dot score"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">ETH score +8 &#x2192; +12</div>
+            <div class="ov-feed-desc">SM +3&#x2192;+15, bull flag confirmed on 4H</div>
+            <span class="ov-feed-tag success">Entry Signal</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">14:25</div>
+          <div class="ov-feed-dot direction"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">DOGE flip LONG &#x2192; SHORT</div>
+            <div class="ov-feed-desc">Descending triangle support breaking, taker selling</div>
+            <span class="ov-feed-tag warn">Direction Flip</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">14:20</div>
+          <div class="ov-feed-dot dim"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">SOL whales reducing longs</div>
+            <div class="ov-feed-desc">Top trader L/S 1.8&#x2192;0.6, status downgraded to Watch</div>
+            <span class="ov-feed-tag info">Status Change</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">14:15</div>
+          <div class="ov-feed-dot new"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">PEPE volume spike detected</div>
+            <div class="ov-feed-desc">Volume 3x avg, price flat = accumulation pattern</div>
+            <span class="ov-feed-tag success">New Signal</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">14:10</div>
+          <div class="ov-feed-dot score"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">AAPL score +3 &#x2192; +7</div>
+            <div class="ov-feed-desc">Double bottom neckline retest, buyers stepping in</div>
+            <span class="ov-feed-tag success">Score Jump</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">14:05</div>
+          <div class="ov-feed-dot blocked"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">XRP signal blocked</div>
+            <div class="ov-feed-desc">Position 92%, R:R 1:0.6, risk too high</div>
+            <span class="ov-feed-tag danger">Risk Block</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">14:00</div>
+          <div class="ov-feed-dot direction"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">BTC regime &#x2192; BULL</div>
+            <div class="ov-feed-desc">3 consecutive green candles + RSI recovery from 42</div>
+            <span class="ov-feed-tag warn">Regime Change</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">13:55</div>
+          <div class="ov-feed-dot score"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">LINK score +5 &#x2192; +9</div>
+            <div class="ov-feed-desc">OI expanding +12%, ascending channel intact</div>
+            <span class="ov-feed-tag success">Upgrading</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">13:50</div>
+          <div class="ov-feed-dot dim"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">ARB H&amp;S pattern forming</div>
+            <div class="ov-feed-desc">Right shoulder + retail chasing longs = bearish setup</div>
+            <span class="ov-feed-tag info">Pattern Alert</span>
+          </div>
+        </div>
+
+        <div class="ov-feed-item">
+          <div class="ov-feed-time">13:40</div>
+          <div class="ov-feed-dot score"></div>
+          <div class="ov-feed-content">
+            <div class="ov-feed-title">ETH TP1 hit on previous signal</div>
+            <div class="ov-feed-desc">Entry $3,380 &#x2192; TP1 $3,480 (+2.9%)</div>
+            <span class="ov-feed-tag success">TP Hit</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

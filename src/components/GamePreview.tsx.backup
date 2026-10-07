@@ -1,0 +1,1117 @@
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { downloadFile, saveGameMetadata, GameMetadata, saveGameSourceCode, saveGameFiles, saveGameSourceMetadata } from '../services/api';
+import { MultiWalletContext } from '../contexts/MultiWalletContext';
+import { ChatContext } from './ChatContext';
+import { Alert, Button, Card, Form, Input, InputNumber, message, Modal, Select, Space, Upload } from 'antd';
+import { gameService } from '../services/gameService';
+import { UploadOutlined } from '@ant-design/icons';
+import { v4 as uuidv4 } from 'uuid';
+import { Transaction, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
+import { Buffer } from 'buffer';
+import { Web3Context } from '../contexts/Web3Context';
+
+const GAME_EVENTS = {
+  START: 'gameStart',
+  END: 'gameEnd',
+  SCORE_UPDATE: 'scoreUpdate'
+};
+
+interface GamePreviewProps {
+  msg: {
+    content: string;
+    blockchainFeatures: any;
+    gameType: any;
+    files: {
+      name: string;
+      path: string;
+      content: string;
+    }[];
+  };
+}
+
+const GamePreview = ({ msg }: GamePreviewProps) => {
+  const { getCurrentAccount, isAuthenticated, getCurrentWalletType, getWeb3Instance, getSolanaConnection } = useContext(MultiWalletContext);
+  const { gameCode, setDeployModalVisible, addContract, setGameCode } = useContext(ChatContext);
+  const [currentScore, setCurrentScore] = useState(0);
+  const [isGameEnded, setIsGameEnded] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isPublishModalVisible, setIsPublishModalVisible] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [form] = Form.useForm();
+  const iframeRef = useRef(null as HTMLIFrameElement | null);
+  const [assembledHtml, setAssembledHtml] = useState<string>('');
+
+  const currentAccount = getCurrentAccount();
+  const walletType = getCurrentWalletType();
+
+  const findcontract = () => {
+    // 检查gameCode和files是否存在
+    if (!gameCode || !gameCode.files || !Array.isArray(gameCode.files)) {
+      console.log('🔧 GamePreview: No gameCode or files found');
+      return false;
+    }
+    
+    // 🔧 修复：更宽松地检查合约文件（支持更多格式）
+    const contractFile = gameCode.files.find((f: any) => {
+      // 标准检查
+      if (f.language === 'solidity' || f.language === 'rust' ||
+      f.name?.toLowerCase().includes('.sol') ||
+      f.name?.toLowerCase().includes('.rs') ||
+          f.type === 'contract') {
+        return true;
+      }
+      
+      // 额外检查：包含合约关键词的文件
+      const fileName = (f.name || '').toLowerCase();
+      const fileContent = (f.content || '').toLowerCase();
+      
+      // 通过文件名判断
+      if (fileName.includes('contract') || fileName.includes('game') && fileName.includes('.sol')) {
+    return true;
+  }
+  
+      // 通过文件内容判断（Solidity关键词）
+      if (fileContent.includes('pragma solidity') || 
+          fileContent.includes('contract ') ||
+          fileContent.includes('interface ')) {
+        return true;
+      }
+      
+      // 通过文件内容判断（Rust关键词）
+      if (fileContent.includes('use anchor_') ||
+          fileContent.includes('#[program]') ||
+          fileContent.includes('pub mod ')) {
+        return true;
+      }
+      
+      return false;
+    });
+    
+    if (!contractFile) {
+      console.log('🔧 GamePreview: No contract file found in files:', gameCode.files.map(f => ({ name: f.name, language: f.language, type: f.type })));
+      return false;
+    }
+    
+    console.log('🔧 GamePreview: Found contract file:', contractFile.name, 'language:', contractFile.language);
+    return true;
+  }
+  
+  useEffect(() => {
+    const handleGameMessage = (event: MessageEvent) => {
+      console.log('🔧 Parent received message:', event.data);
+      if (event.data?.type === 'GAME_END' && typeof event.data.score === 'number') {
+        console.log('🔧 Setting game ended with score:', event.data.score);
+        setCurrentScore(event.data.score);
+        setIsGameEnded(true);
+        message.success(`Game Ended! Score: ${event.data.score}`);
+      }
+    };
+
+    window.addEventListener('message', handleGameMessage);
+
+    return () => {
+      // 清理监听器
+      window.removeEventListener('message', handleGameMessage);
+    };
+  }, []);
+
+  const handleFileDownload = async (file: any) => {
+    try {
+        // 根据文件类型生成正确的内容
+        let content = file.content;
+        let mimeType = 'text/plain';
+        
+        if (file.name === 'game.html') {
+          // 生成完整的HTML内容
+          content = buildGameContent();
+          mimeType = 'text/html';
+          console.log('🔧 GamePreview: Downloaded HTML content length:', content.length);
+          console.log('🔧 GamePreview: Downloaded HTML content preview:', content.substring(0, 300) + '...');
+        } else if (file.name === 'game.js') {
+          // 清理JavaScript内容
+          const cleanedJs = cleanJsContent(content);
+          content = cleanedJs;
+          mimeType = 'application/javascript';
+          console.log('🔧 GamePreview: Downloaded JS content length:', content?.length || 0);
+        } else if (file.name === 'game.css') {
+          // 清理CSS内容
+          const cleanedCss = cleanCssContent(content);
+          content = cleanedCss;
+          mimeType = 'text/css';
+          console.log('🔧 GamePreview: Downloaded CSS content length:', content?.length || 0);
+        } else {
+          console.log('🔧 GamePreview: Downloaded file content length:', content?.length || 0);
+        }
+        
+        // 如果内容为空，使用原始文件内容作为备用
+        if (!content && file.content) {
+          content = file.content;
+          console.log('🔧 GamePreview: Using fallback content, length:', content.length);
+        }
+        
+        // 最终检查：如果仍然没有内容，显示错误
+        if (!content) {
+          console.error('🔧 GamePreview: No content available for file:', file.name);
+          message.error(`No content available for ${file.name}`);
+          return;
+        }
+        
+        const blob = new Blob([content], { type: mimeType });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        
+        message.success(`Downloaded ${file.name} (${content.length} bytes)`);
+    } catch (error) {
+      console.error('Download failed:', error);
+      message.error(`Failed to download ${file.name}: ${error.message}`);
+    }
+  };
+
+  // 简化的JS内容清理函数，仅用于文件下载
+  const cleanJsContent = (content: string) => {
+    if (!content) return '';
+    
+    let cleanedContent = content.trim();
+    
+    // 如果内容以HTML标签开始，尝试提取JavaScript
+    if (cleanedContent.startsWith('<')) {
+      const scriptMatch = cleanedContent.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+      if (scriptMatch && scriptMatch[1].trim()) {
+        cleanedContent = scriptMatch[1].trim();
+      } else {
+        return content; // 如果无法提取，返回原内容
+      }
+    }
+    
+    return cleanedContent;
+  };
+
+
+
+  // 简化的CSS内容清理函数，仅用于文件下载
+  const cleanCssContent = (content: string) => {
+    if (!content) return '';
+    const trimmedContent = content.trim();
+    if (trimmedContent.startsWith('<')) {
+      const styleMatch = trimmedContent.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+      if (styleMatch) {
+        return styleMatch[1];
+      }
+      return content; // 如果无法提取，返回原内容
+    }
+    return content;
+  };
+
+
+
+  const buildGameContent = () => {
+    // 移除originalCode检查，直接检查files数组
+    if (!gameCode?.files || !Array.isArray(gameCode.files) || gameCode.files.length === 0) {
+      console.warn('🔧 No game files found');
+      return '<html><body><h2>No game content available</h2></body></html>';
+    }
+
+    const htmlFile = gameCode.files.find((f: any) => f.name === 'game.html' || f.name?.includes('.html'));
+    const jsFile = gameCode.files.find((f: any) => f.name === 'game.js' || f.name?.includes('.js'));
+    const cssFile = gameCode.files.find((f: any) => f.name === 'game.css' || f.name?.includes('.css'));
+
+    // 🔧 DEBUG: 检查文件内容
+    console.log('🔧 DEBUG HTML file:', htmlFile?.name, 'length:', htmlFile?.content?.length);
+    console.log('🔧 DEBUG JS file:', jsFile?.name, 'length:', jsFile?.content?.length);
+    console.log('🔧 DEBUG CSS file:', cssFile?.name, 'length:', cssFile?.content?.length);
+    console.log('🔧 DEBUG HTML first 200 chars:', htmlFile?.content?.substring(0, 200));
+    console.log('🔧 DEBUG JS first 200 chars:', jsFile?.content?.substring(0, 200));
+    console.log('🔧 DEBUG CSS first 200 chars:', cssFile?.content?.substring(0, 200));
+
+    // 🔧 清理JS内容，确保不包含HTML
+    const cleanJsContent = (content: string) => {
+      if (!content) return '';
+      
+      let cleaned = content.toString().trim();
+      console.log('🔧 Cleaning JS content, original length:', cleaned.length);
+      
+      // 检查是否包含HTML标记
+      const hasHtmlMarkers = /^</.test(cleaned) || 
+                            /<!DOCTYPE|<html|<head|<body|<\/\w+>/i.test(cleaned) ||
+                            /<\w+[^>]*>/.test(cleaned.substring(0, 200));
+      
+      if (hasHtmlMarkers) {
+        console.warn('🔧 JS content contains HTML markers, attempting extraction');
+        
+        // 方法1: 从script标签提取
+        const scriptMatches = cleaned.match(/<script[^>]*>([\s\S]*?)<\/script>/gi);
+        if (scriptMatches && scriptMatches.length > 0) {
+          const extractedJs = scriptMatches.map(script => {
+            const content = script.replace(/<script[^>]*>/i, '').replace(/<\/script>/i, '');
+            return content.trim();
+          }).filter(content => content.length > 0).join('\n\n');
+          
+          if (extractedJs) {
+            console.log('✅ Successfully extracted JS from script tags');
+            return extractedJs;
+          }
+        }
+        
+        // 方法2: 从body标签提取script
+        const bodyMatch = cleaned.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+        if (bodyMatch) {
+          const bodyContent = bodyMatch[1];
+          const bodyScripts = bodyContent.match(/<script[^>]*>([\s\S]*?)<\/script>/gi);
+          if (bodyScripts && bodyScripts.length > 0) {
+            const extractedJs = bodyScripts.map(script => {
+              const content = script.replace(/<script[^>]*>/i, '').replace(/<\/script>/i, '');
+              return content.trim();
+            }).filter(content => content.length > 0).join('\n\n');
+            
+            if (extractedJs) {
+              console.log('✅ Successfully extracted JS from body scripts');
+              return extractedJs;
+            }
+          }
+        }
+        
+        // 方法3: 去除所有HTML标签（保留原始空白，避免破坏正则等语法）
+        const strippedContent = cleaned
+          .replace(/<[^>]*>/g, '') // 移除所有HTML标签
+          .replace(/<!DOCTYPE[^>]*>/gi, '') // 移除DOCTYPE
+          .trim();
+        
+        // 验证剩余内容是否像JavaScript
+        if (strippedContent && (
+          strippedContent.includes('function') ||
+          strippedContent.includes('class ') ||
+          strippedContent.includes('const ') ||
+          strippedContent.includes('let ') ||
+          strippedContent.includes('var ')
+        )) {
+          console.log('✅ Extracted JS by stripping HTML tags');
+          return strippedContent;
+        }
+        
+        console.warn('❌ Could not extract valid JS content, using original content');
+        return cleaned; // 回退到原始内容，避免返回空导致逻辑中断
+      }
+      
+      console.log('✅ JS content is clean, length:', cleaned.length);
+      return cleaned;
+    };
+
+    // 🔧 清理CSS内容
+    const cleanCssContent = (content: string) => {
+      if (!content) return '';
+      
+      let cleaned = content.toString().trim();
+      
+      // 检查CSS是否包含HTML标记
+      const cssHasHtml = cleaned.includes('<!DOCTYPE') ||
+                        cleaned.includes('<html') ||
+                        cleaned.includes('<head') ||
+                        cleaned.includes('<body') ||
+                        /<\w+[^>]*>/.test(cleaned.substring(0, 100));
+      
+      if (cssHasHtml) {
+        console.warn('🔧 CSS content contains HTML, attempting extraction');
+        
+        // 尝试从style标签中提取CSS
+        const styleMatches = cleaned.match(/<style[^>]*>([\s\S]*?)<\/style>/gi);
+        if (styleMatches && styleMatches.length > 0) {
+          const extractedCss = styleMatches.map(style => {
+            const content = style.replace(/<style[^>]*>/i, '').replace(/<\/style>/i, '');
+            return content.trim();
+          }).filter(content => content.length > 0).join('\n\n');
+          
+          if (extractedCss) {
+            console.log('✅ Successfully extracted CSS from style tags');
+            return extractedCss;
+          }
+        }
+        
+        // 去除HTML标签，保留可能的CSS规则
+        const strippedCss = cleaned
+          .replace(/<[^>]*>/g, '') // 移除HTML标签
+          .replace(/<!DOCTYPE[^>]*>/gi, '') // 移除DOCTYPE
+          .trim();
+        
+        // 验证是否包含CSS规则
+        if (strippedCss && (strippedCss.includes('{') && strippedCss.includes('}'))) {
+          console.log('✅ Extracted CSS by stripping HTML tags');
+          return strippedCss;
+        }
+        
+        console.warn('❌ Could not extract valid CSS content, returning empty');
+        return '';
+      }
+      
+      return cleaned;
+    };
+
+    // 🔧 简化的代码清理函数
+    const avoidVariableConflicts = (jsCode: string): string => {
+      if (!jsCode) return '';
+      
+      // 只进行最基本的清理，保持代码原样
+      return jsCode.trim();
+    };
+
+    const cleanedJsContent = cleanJsContent(jsFile?.content || '');
+    const cleanedCssContent = cleanCssContent(cssFile?.content || '');
+    
+    // 🔧 处理变量冲突
+    const conflictFreeJsContent = avoidVariableConflicts(cleanedJsContent);
+
+    // 🔧 最终安全处理JS内容
+    const safeJsContent = conflictFreeJsContent
+      ? conflictFreeJsContent
+          .replace(/<\/script/gi, '<\\/script') // 转义script结束标签
+          .replace(/[\u00A0\u200B\u200E\u200F\u2028\u2029\uFEFF]/g, ' ') // 替换特殊空白字符
+          .replace(/[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g, '') // 移除控制字符
+      : '';
+    
+    // 🔧 清理HTML内容，移除外部script引用
+    const cleanHtmlContent = (content: string) => {
+      if (!content) return '';
+      
+      let cleaned = content.toString().trim();
+      
+      // 移除外部script标签引用
+      cleaned = cleaned.replace(/<script[^>]*src=["'][^"']*\.js["'][^>]*><\/script>/gi, '');
+      cleaned = cleaned.replace(/<script[^>]*src=[^>]*\.js[^>]*><\/script>/gi, '');
+      
+      // 移除内联script标签（因为我们会单独处理JS）
+      cleaned = cleaned.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, '');
+      
+      console.log('🔧 Cleaned HTML content, original length:', content.length, 'cleaned length:', cleaned.length);
+      
+      return cleaned;
+    };
+
+    const cleanedHtmlContent = cleanHtmlContent(htmlFile?.content || '');
+
+    // 添加消息处理器确保游戏结束消息能被正确传递
+    const messageHandler = `
+      console.log('🔧 Game iframe loaded, setting up communication');
+      
+      // Forward messages from child frames
+      window.addEventListener('message', function(event) {
+        var t = event && event.data && event.data.type;
+        if (t === 'GAME_END' || t === 'GAME END') {
+          var n = parseInt(event && event.data ? event.data.score : 0);
+          var safeScore = isNaN(n) ? 0 : n;
+          console.log('🔧 Forwarding GAME_END message with score:', safeScore);
+          window.parent.postMessage({ type: 'GAME_END', score: safeScore, timestamp: Date.now() }, '*');
+        }
+      });
+      
+      // Safe game end message sender
+      window.sendGameEndMessage = function(score) {
+        try {
+          var safeScore = typeof score === 'number' ? score : parseInt(score) || 0;
+          var gameData = {
+            type: 'GAME_END',
+            score: safeScore,
+            timestamp: Date.now()
+          };
+          console.log('🔧 Sending GAME_END message:', gameData);
+          window.parent.postMessage(gameData, '*');
+        } catch (error) {
+          console.warn('Failed to send game end message:', error);
+        }
+      };
+
+      // Auto-detect game end conditions
+      setTimeout(function() {
+        // Look for common game over elements and hook them
+        var gameOverElements = document.querySelectorAll('[id*="gameOver"], [class*="game-over"], [id*="game-over"]');
+        console.log('🔧 Found game over elements:', gameOverElements.length);
+        
+        // Hook common game end functions
+        if (typeof window.endGame === 'function') {
+          var originalEndGame = window.endGame;
+          window.endGame = function() {
+            var result = originalEndGame.apply(this, arguments);
+            var __scEl = document.getElementById('score'); var __scText = __scEl ? (__scEl.textContent || __scEl.innerText || '') : ''; var __m = __scText.match(/\\d+/); var score = (__m && __m[0]) ? __m[0] : 0;
+            window.sendGameEndMessage(parseInt(score) || 0);
+            return result;
+          };
+        }
+
+        // Hook alert for game over messages
+        var originalAlert = window.alert;
+        window.alert = function(message) {
+          if (message && (message.includes('Game Over') || message.includes('Final Score') || 
+                         message.includes('游戏结束') || message.includes('最终得分'))) {
+            var __mm = message.match(/\\d+/); var score = (__mm && __mm[0]) ? __mm[0] : 0;
+            window.sendGameEndMessage(parseInt(score) || 0);
+          }
+          return originalAlert.apply(this, arguments);
+        };
+      }, 1000);
+    `;
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>${msg.gameType || 'Game'} Preview</title>
+          <style>${cleanedCssContent}</style>
+          ${(msg.blockchainFeatures && msg.blockchainFeatures.length > 0) ? '<script src="https://cdn.jsdelivr.net/npm/web3@4.16.0/dist/web3.min.js"></script>' : ''}
+        </head>
+        <body>
+          ${(function(){
+            const hasGrid = /id=["']gridContainer["']/.test(cleanedHtmlContent || '');
+            const hasScore = /id=["']score["']/.test(cleanedHtmlContent || '');
+            const hasStart = /id=["']startBtn["']/.test(cleanedHtmlContent || '');
+            const placeholders = [
+              hasGrid ? '' : '<div id="gridContainer"></div>',
+              hasScore ? '' : '<div id="score"></div>',
+              hasStart ? '' : '<button id="startBtn" style="display:none"></button>'
+            ].join('');
+            return (cleanedHtmlContent || '') + placeholders || '<div id="gridContainer"></div><div id="score"></div><button id="startBtn" style="display:none"></button>';
+          })()}
+          <script>
+            console.log('🔧 GamePreview iframe loaded');
+          </script>
+          ${safeJsContent ? `<script>
+            console.log('🔧 Loading game JavaScript...');
+            try {
+              // 直接执行游戏代码
+              ${safeJsContent}
+              console.log('✅ Game JavaScript loaded successfully');
+            } catch (error) {
+              console.error('❌ Game JavaScript execution failed:', error);
+              
+              // 显示用户友好的错误信息
+              const errorDiv = document.createElement('div');
+              errorDiv.style.cssText = 'position: fixed; top: 20px; left: 20px; right: 20px; background: #ff4444; color: white; padding: 15px; border-radius: 8px; z-index: 1000; font-family: monospace;';
+              errorDiv.innerHTML = '<strong>⚠️ 游戏加载失败</strong><br/>请尝试重新生成游戏代码。<br/><small>错误: ' + error.message + '</small><button onclick="this.remove()" style="float: right; margin-top: 5px; padding: 2px 8px;">✖</button>';
+              document.body.appendChild(errorDiv);
+            }
+          </script>` : '<script>console.log("⚠️ No JavaScript content found");</script>'}
+        </body>
+      </html>
+    `;
+  };
+
+  const handleDeploy = () => {
+    // 检查gameCode和files是否存在
+    if (!gameCode || !gameCode.files || !Array.isArray(gameCode.files)) {
+      message.error('No game files found to deploy');
+      return;
+    }
+    
+    // 🔧 修复：检查所有类型的合约文件
+    const contractFile = gameCode.files.find((f: any) => 
+      f.language === 'solidity' || 
+      f.language === 'rust' ||
+      f.name?.toLowerCase().includes('.sol') ||
+      f.name?.toLowerCase().includes('.rs') ||
+      f.type === 'contract' ||
+      f.type === 'solidity' ||
+      f.type === 'solana-anchor'
+    );
+    
+    if (!contractFile) {
+      message.error('No contract file found to deploy');
+      return;
+    }
+    
+    // 🔧 修复：直接使用后端设置的合约类型
+    const contractType = contractFile.type || 'solidity'; // 后端应该已经设置了正确的类型
+    console.log('🔧 GamePreview handleDeploy: Using contract type from backend:', contractType);
+    
+    // 使用找到的合约文件和类型
+    addContract(contractFile.name, contractFile.content, contractType);
+    setDeployModalVisible(true);
+  };
+
+  const claimReward = async () => {
+    const web3 = getWeb3Instance();
+    
+    if (!web3 || !gameCode?.contractAddress || currentScore === null || currentScore === undefined) {
+      message.error('No score available or web3 not initialized');
+      return;
+    }
+    if (!gameCode?.contractABI|| !Array.isArray(gameCode.contractABI)) {
+      message.error('Smart contract ABI is missing or invalid.');
+      console.error('Missing ABI:', gameCode?.contractABI);
+      return;
+    }
+
+    if (!gameCode?.contractAddress || !gameCode.contractAddress.startsWith('0x')) {
+      message.error('Smart contract address is missing or invalid.');
+      console.error('Missing Contract Address:', gameCode?.contractAddress);
+      return;
+    }
+
+    
+    try {
+      const contract = new web3.eth.Contract(gameCode.contractABI, gameCode.contractAddress);
+        
+        // 使用统一的 endGame 方法名
+        await contract.methods.endGame(currentScore).send({
+          from: currentAccount
+        });
+    
+        message.success('Reward claimed successfully!');
+        setIsGameEnded(false);
+        setCurrentScore(0);
+    } catch (error: any) {
+      message.error(`Failed to claim reward: ${error.message}`);
+      console.error('Failed to claim reward:', error.message);
+    }
+  };
+
+  // 🔧 EVM奖励处理逻辑
+  const claimEVMReward = async () => {
+    const web3 = getWeb3Instance();
+    
+    if (!web3) {
+      throw new Error('Web3 instance not available');
+    }
+
+    if (!gameCode?.contractABI || !Array.isArray(gameCode.contractABI)) {
+      throw new Error('Smart contract ABI is missing or invalid');
+    }
+
+    if (!gameCode?.contractAddress?.startsWith('0x') || gameCode.contractAddress.length !== 42) {
+      throw new Error('Invalid EVM contract address');
+    }
+
+    console.log('🔧 Creating EVM contract instance:', {
+      address: gameCode.contractAddress,
+      abi: gameCode.contractABI.length + ' methods'
+    });
+
+    const contract = new web3.eth.Contract(gameCode.contractABI, gameCode.contractAddress);
+        
+        // 使用统一的 endGame 方法名
+    const tx = await contract.methods.endGame(currentScore).send({
+          from: currentAccount
+        });
+    
+    console.log('🔧 EVM transaction completed:', tx.transactionHash);
+  };
+
+  // 🔧 Solana奖励处理逻辑
+  const claimSolanaReward = async () => {
+    const connection = getSolanaConnection();
+    
+    if (!connection) {
+      throw new Error('Solana connection not available');
+    }
+
+    if (!gameCode?.contractAddress || gameCode.contractAddress.startsWith('0x')) {
+      throw new Error('Invalid Solana program ID');
+    }
+
+    console.log('🔧 Processing Solana reward claim:', {
+      programId: gameCode.contractAddress,
+      player: currentAccount,
+      score: currentScore
+    });
+
+    try {
+      // 创建程序ID
+      const programId = new PublicKey(gameCode.contractAddress);
+      const playerPublicKey = new PublicKey(currentAccount!);
+      
+      // 获取Phantom wallet
+      const provider = window.solana;
+      if (!provider || !provider.isConnected) {
+        throw new Error('Phantom wallet not connected');
+      }
+
+      // 创建游戏结束指令数据
+      const instructionData = Buffer.alloc(8 + 8); // 8 bytes for instruction discriminator + 8 bytes for score
+      instructionData.writeUInt8(1, 0); // endGame instruction discriminator (假设为1)
+      instructionData.writeBigUInt64LE(BigInt(currentScore), 8);
+
+      // 查找或创建游戏状态PDA
+      const [gameStatePDA] = PublicKey.findProgramAddressSync(
+        [Buffer.from('game_state'), playerPublicKey.toBuffer()],
+        programId
+      );
+
+      console.log('🔧 Solana PDA found:', gameStatePDA.toString());
+
+      // 创建交易指令
+      const instruction = new TransactionInstruction({
+        keys: [
+          { pubkey: playerPublicKey, isSigner: true, isWritable: false },
+          { pubkey: gameStatePDA, isSigner: false, isWritable: true },
+          { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+        ],
+        programId,
+        data: instructionData,
+      });
+
+      // 创建交易
+      const transaction = new Transaction().add(instruction);
+      
+      // 获取最新的区块哈希
+      const { blockhash } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = playerPublicKey;
+
+      console.log('🔧 Sending Solana transaction...');
+
+      // 使用Phantom签名并发送交易
+      const signedTransaction = await provider.signTransaction(transaction);
+      const txId = await connection.sendRawTransaction(signedTransaction.serialize());
+      
+      // 确认交易
+      await connection.confirmTransaction(txId, 'confirmed');
+      
+      console.log('🔧 Solana transaction completed:', txId);
+    } catch (error: any) {
+      // 如果是Solana特定的错误，提供更友好的错误信息
+      if (error.message.includes('Invalid public key')) {
+        throw new Error('Invalid Solana address format');
+      } else if (error.message.includes('Program account does not exist')) {
+        throw new Error('Game program not found on Solana network');
+      } else if (error.message.includes('Transaction simulation failed')) {
+        throw new Error('Game program rejected the transaction. Make sure you have a valid score.');
+      }
+      throw error;
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
+  // 游戏开始时记录游戏统计信息
+  const startGameSession = async () => {
+    if (!isAuthenticated) {
+      message.warning('Please login to preview the game');
+      return;
+    }
+    if (!gameCode) {
+      // 不再提前打开空白预览窗口，直接构建内容
+      // setIsModalVisible(true);
+      // return;
+    }
+
+    // 移除重复窗口检查，允许正常打开游戏预览
+
+    try {
+      // 如果没有gameId，创建一个临时ID
+      if (!gameCode?.gameId) {
+        console.log('Game ID not found, using session for statistics');
+      } else {
+        // 增加游戏播放次数，并传入玩家地址
+        await gameService.incrementPlayCount(gameCode.gameId, currentAccount);
+        console.log('Game play count incremented for ID:', gameCode.gameId);
+      }
+
+      // Use local game content builder
+      console.log('🔧 Building game content locally');
+      const gameContent = buildGameContent();
+      setAssembledHtml(gameContent);
+    } catch (error) {
+      console.error('Failed to assemble game html:', error);
+      // 在错误情况下也使用相同的构建方法，但添加错误标记
+      const errorHtml = buildGameContent();
+      setAssembledHtml(errorHtml);
+    }
+    
+    // 打开游戏预览
+    setIsModalVisible(true);
+  };
+
+  // 打开发布游戏表单
+  const showPublishModal = () => {
+    // 预填表单数据，确保 msg.gameType 的安全处理
+    const defaultType = msg.gameType || 'game';
+    form.setFieldsValue({
+      title: msg.gameType ? `${msg.gameType} Game` : 'My Game',
+      description: msg.blockchainFeatures?.length > 0 
+        ? `A blockchain-enabled ${defaultType} game` 
+        : `A fun ${defaultType} game`,
+      category: mapGameTypeToCategory(msg.gameType),
+      price: 0,
+      currency: 'ETH'
+    });
+    
+    setIsPublishModalVisible(true);
+  };
+
+  // 映射游戏类型到类别
+  const mapGameTypeToCategory = (gameType: string) => {
+    const categoryMap: {[key: string]: string} = {
+      'SHOOTER': 'Action',
+      'PLATFORM': 'Arcade',
+      'PUZZLE': 'Puzzle'
+    };
+    
+    return categoryMap[gameType] || 'Arcade';
+  };
+
+  // 提交游戏上架表单
+  const handlePublishGame = async (values: any) => {
+    setIsPublishing(true);
+    try {
+      console.log("Publishing game with values:", values);
+      
+      if (!gameCode) {
+        throw new Error('No game code available');
+      }
+      
+      // 使用现有的 gameId 或者生成一个新的（如果不存在）
+      const gameId = gameCode.gameId || uuidv4();
+      
+      // 构建游戏元数据对象
+      const metadata: GameMetadata = {
+        gameId,
+        title: values.title,
+        description: values.description || `A fun ${msg.gameType} game`,
+        thumbnailUrl: values.thumbnailUrl || '',
+        price: 0, // 强制设置为免费游戏
+        currency: 'FREE', // 强制设置为免费
+        category: values.category || 'Arcade',
+        tags: values.tags?.split(',').map((tag: string) => tag.trim()) || [],
+        contractAddress: gameCode.contractAddress || '',
+        contractAbi: gameCode.contractABI || [],
+        gameType: msg.gameType || 'custom'
+        // Note: creator_id will be added by the server using req.userId
+      };
+      
+      console.log("Game metadata prepared:", metadata);
+      
+      // 检查必要的游戏信息
+      if (!metadata.title) {
+        throw new Error('Game title is required');
+      }
+      
+      // 保存源码元数据
+      console.log("Saving game source metadata...");
+      const sourceMetadataResult = await saveGameSourceMetadata({
+        gameId,
+        sourceCodeType: msg.gameType || 'custom',
+        compilerVersion: '1.0.0',
+        hasEndGameNotification: true,
+        marketplaceStatus: 'draft'
+      });
+      console.log("Source metadata save result:", sourceMetadataResult);
+      
+      if (!sourceMetadataResult.success) {
+        console.warn("Warning: Source metadata save issue:", sourceMetadataResult.error);
+        // 继续执行，不要因为元数据问题阻止发布
+      }
+      
+      // 保存游戏元数据
+      console.log("Saving game metadata...");
+      const gameMetadataResult = await saveGameMetadata(metadata);
+      console.log("Game metadata save result:", gameMetadataResult);
+      
+      if (!gameMetadataResult.success) {
+        console.warn("Warning: Game metadata save issue:", gameMetadataResult.error);
+        // 继续执行，不要因为元数据问题阻止发布
+      }
+      
+      // 最后发布到市场
+      console.log("Publishing game to market...");
+      const result = await gameService.publishGameToMarket(gameId, metadata);
+      console.log("Publish to market result:", result);
+      
+      if (result.success) {
+        message.success('Game published to marketplace successfully!');
+        // 持久化游戏源码文件到数据库
+        await saveGameFiles(
+          gameId,
+          gameCode.files.map((f: any) => ({ name: f.name, content: f.content, type: f.type })),
+          msg.gameType || 'custom'
+        );
+        // 更新上下文中的 gameId，使后续操作可以正确引用
+        setGameCode({
+          ...gameCode,
+          gameId
+        });
+        setIsPublishModalVisible(false);
+        form.resetFields();
+      } else {
+        throw new Error(result.error || result.message || 'Failed to publish game');
+      }
+    } catch (error: any) {
+      console.error('Game publish error details:', {
+        message: error.message,
+        stack: error.stack,
+        response: error.response?.data
+      });
+      message.error(`Failed to publish game: ${error.message}`);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  // 🔧 添加调试日志
+  console.log('🔧 GamePreview render - gameCode?.contractAddress:', gameCode?.contractAddress);
+  console.log('🔧 GamePreview render - findcontract():', findcontract());
+
+  return (
+    <div className="game-preview">
+      <Card title="🎮 Game Preview" className="preview-card">
+        {/* 需要合约部署后才能预览游戏 */}
+        {!gameCode?.contractAddress ? (
+          <>
+            <Alert
+              message="⚠️ Smart Contract Deployment Required"
+              description="Your game is ready! Deploy the smart contract below to start playing and earning blockchain rewards."
+              type="warning"
+              showIcon
+              style={{ marginBottom: '16px' }}
+            />
+            {/* 🔧 修复：使用专门的样式类确保部署按钮不被遮挡 */}
+            {findcontract() && (
+              <div className="contract-deploy-section">
+                <p style={{ 
+                  color: '#28a745', 
+                  fontWeight: 'bold', 
+                  marginBottom: '16px',
+                  fontSize: '16px'
+                }}>
+                  📋 Smart Contract Ready for Deployment
+                </p>
+                <Button 
+                  type="primary" 
+                  size="large"
+                  onClick={handleDeploy}
+                  className="contract-deploy-button"
+                >
+                  🚀 Deploy Smart Contract
+                </Button>
+                <p style={{ 
+                  color: '#6c757d', 
+                  fontSize: '14px', 
+                  marginTop: '12px',
+                  marginBottom: '0'
+                }}>
+                  Deploy your contract to start playing and earning rewards
+                </p>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+        {/* 🔧 修复：2行垂直布局 - 第1行按钮，第2行文件列表 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* 第1行：游戏控制按钮 */}
+          <div>
+            {isAuthenticated ? (
+              <Button type="primary" onClick={startGameSession}>
+                Open Game Preview
+              </Button>
+            ) : (
+              <Button disabled>
+                Please login to preview game
+              </Button>
+            )}
+          </div>
+          
+          {/* 第2行：文件下载区域 */}
+          {msg.files && msg.files.length > 0 && (
+            <div>
+              <h4 style={{ 
+                marginBottom: '8px', 
+                fontSize: '14px', 
+                color: '#666', 
+                marginTop: '0'
+              }}>
+                Generated Files:
+              </h4>
+              <Space wrap>
+                {msg.files.map((file: any, index: number) => (
+                  <Button 
+                    key={index}
+                    size="small"
+                    onClick={() => {
+                      const blob = new Blob([file.content], { type: 'text/plain' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = file.name;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    type={file.type === 'contract' ? 'primary' : 'default'}
+                    style={{ marginBottom: '4px' }}
+                  >
+                    📄 {file.name}
+                  </Button>
+                ))}
+              </Space>
+            </div>
+          )}
+        </div>
+        <Modal
+            title="🎮 Game Preview"
+            open={isModalVisible}
+            onCancel={closeModal}
+            footer={isGameEnded && currentScore > 0 ? (
+              <Space>
+                <span style={{ marginRight: 8 }}>Score: {currentScore}</span>
+                <Button className="Claim-Button" type="primary" onClick={claimReward}>
+                  Claim Reward
+                </Button>
+              </Space>
+            ) : null}
+            width={1000}
+          >
+           <iframe
+               ref={iframeRef}
+               srcDoc={assembledHtml}
+               sandbox="allow-scripts allow-same-origin allow-modals"
+               className="game-iframe"
+               title="Game Preview"
+               width="960"
+               height="760"
+               onLoad={() => console.log('🔧 Game iframe loaded')}
+             />
+          </Modal>
+          </>
+        )}
+
+        {/* 🔧 修复：恢复原来的显示逻辑 */}
+        {(() => { console.log('🔧 Render check - isGameEnded:', isGameEnded, 'currentScore:', currentScore); return null; })()}
+        {isGameEnded && currentScore > 0 && (
+          <Alert
+            message={`Game Ended! Score: ${currentScore}`}
+            type="success"
+            className="Claim-Alert"
+            action={
+              <Button className="Claim-Button" type="primary" onClick={claimReward}>
+                Claim Reward
+              </Button>
+            }
+          />
+        )}
+
+      </Card>
+      {/* 🔧 修复：只在合约部署后显示发布和下载按钮 */}
+      {gameCode?.contractAddress && (
+        <div className="action-buttons-section" style={{ marginTop: '16px' }}>
+          <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+            <Button 
+              type="primary" 
+              size="large"
+              onClick={showPublishModal}
+              style={{ minWidth: '200px' }}
+            >
+              📢 Publish Game to Marketplace
+            </Button>
+            
+
+          </Space>
+        </div>
+      )}
+
+      {/* 游戏上架表单 */}
+      <Modal
+        title="Publish Game to Marketplace"
+        open={isPublishModalVisible}
+        onCancel={() => setIsPublishModalVisible(false)}
+        footer={null}
+        width={600}
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handlePublishGame}
+        >
+          <Form.Item
+            name="title"
+            label="Game Title"
+            rules={[{ required: true, message: 'Please enter a title' }]}
+          >
+            <Input placeholder="Enter game title" />
+          </Form.Item>
+          
+          <Form.Item
+            name="description"
+            label="Game Description"
+            rules={[{ required: true, message: 'Please enter a description' }]}
+          >
+            <Input.TextArea placeholder="Describe your game" rows={4} />
+          </Form.Item>
+          
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: 'Please select a category' }]}
+          >
+            <Select>
+              <Select.Option value="Action">Action</Select.Option>
+              <Select.Option value="Arcade">Arcade</Select.Option>
+              <Select.Option value="Puzzle">Puzzle</Select.Option>
+              <Select.Option value="Strategy">Strategy</Select.Option>
+              <Select.Option value="Educational">Educational</Select.Option>
+              <Select.Option value="Blockchain">Blockchain</Select.Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item
+            name="tags"
+            label="Tags"
+            help="Separate tags with commas"
+          >
+            <Input placeholder="e.g. shooter, blockchain, nft" />
+          </Form.Item>
+          
+          <Form.Item
+            name="thumbnailUrl"
+            label="Thumbnail URL"
+          >
+            <Input placeholder="Enter image URL for game thumbnail" />
+          </Form.Item>
+          
+          <Form.Item
+            name="price"
+            label="Price"
+            extra="Payment functionality is temporarily not supported. All games are currently free."
+          >
+            <InputNumber 
+              min={0} 
+              step={0.01} 
+              style={{ width: '100%' }} 
+              disabled={true}
+              value={0}
+              placeholder="Free"
+            />
+          </Form.Item>
+          
+          <Form.Item
+            name="currency"
+            label="Currency"
+            initialValue="FREE"
+            extra="Only free games are supported at this time."
+          >
+            <Select disabled={true}>
+              <Select.Option value="FREE">FREE</Select.Option>
+            </Select>
+          </Form.Item>
+          
+          <Form.Item>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <Button onClick={() => setIsPublishModalVisible(false)}>
+                Cancel
+              </Button>
+              <Button type="primary" htmlType="submit" loading={isPublishing}>
+                Publish Game
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
+
+export default GamePreview;

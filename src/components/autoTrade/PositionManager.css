@@ -1,0 +1,238 @@
+/* 持仓管理器样式 */
+
+.position-manager {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.position-manager.loading,
+.position-manager.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.loading-spinner {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.empty-state {
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.empty-state p {
+  font-size: 14px;
+}
+
+.position-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.position-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.btn-refresh {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-refresh:hover {
+  background: #e5e7eb;
+}
+
+.positions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.position-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.position-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.position-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.token-info h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+
+.chain-badge {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.pnl {
+  text-align: right;
+}
+
+.pnl.profit {
+  color: #22c55e;
+}
+
+.pnl.loss {
+  color: #ef4444;
+}
+
+.pnl {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.pnl-percent {
+  display: block;
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.position-details {
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+}
+
+.detail-row .label {
+  color: #6b7280;
+}
+
+.detail-row .value {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.current-price {
+  font-weight: 600;
+  color: #6366f1;
+}
+
+.price-targets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.target-item {
+  text-align: center;
+}
+
+.target-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.target-item.stop-loss .target-label {
+  color: #ef4444;
+}
+
+.target-item.take-profit .target-label {
+  color: #22c55e;
+}
+
+.target-value {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 2px;
+}
+
+.target-distance {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.position-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.position-time {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.btn-exit {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-exit:hover {
+  background: #dc2626;
+  transform: scale(1.05);
+}

@@ -1,0 +1,931 @@
+// 添加window类型扩
+
+import { Buffer } from 'buffer';
+import axios from 'axios';
+import Web3 from 'web3';
+import { Connection, Transaction, SystemProgram, Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
+// MCP types will be imported when needed
+
+// 动态根据当前域名设置API地址，支持本地和测试网
+const host = window.location.host;
+let API_URL = '';
+if (host.includes('testai.gameland.network')) {
+  API_URL = 'https://testaiservice.gameland.network/api';
+} else if (host.includes('localhost')) {
+  API_URL = 'http://localhost:8080/api';
+} else {
+  // 默认使用相对路径，依赖前端proxy或生产配置
+  API_URL = 'https://galeon.gameland.network/api';
+}
+const baseURL = API_URL;
+
+export const api = axios.create({
+  baseURL,
+  timeout: 60000, // 60 seconds timeout for blockchain operations
+  // baseURL:'https://testnet-api.gameland.network'
+});
+
+api.interceptors.request.use((config: any) => {
+  // 如果已经设置了 Authorization header（比如 Privy token），不要覆盖
+  if (!config.headers['Authorization']) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+export interface Agent {
+  id: number;
+  name: string;
+  description: string;
+  type: string;
+  model?: string;
+  is_public: boolean;
+  owner: string;
+  imageUrl?: string;
+  agentid: number;
+  chainid: number;
+  mcp_enabled?: boolean;
+  custom_prompt?: string;
+  trainingData?: {
+    ipfsHash: string;
+    trained_at: string;
+    userAddress: string;
+  }[];
+  price?: number;
+  total_calls?: number;
+  total_earnings?: number;
+  average_rating?: number;
+  rating_count?: number;
+}
+
+interface CompileContractInput {
+  source: string;
+}
+
+interface CompileContractResult {
+  success: boolean;
+  contractName?: string;
+  abi?: any[];
+  bytecode?: string;
+  error?: string;
+  warnings?: string[];
+}
+
+export interface ContractVerificationRequest {
+  address: string;
+  source: string;
+  network: string;
+  contractType: string;
+  constructorArguments?: string[];
+}
+
+export interface ContractVerificationResponse {
+  success: boolean;
+  message: string;
+  details?: string;
+}
+
+
+export interface CreditInfo {
+  creditBalance: number;
+  buyBalance: number;
+  lastUsedAt?: string;
+  lastResetAt?: string;
+}
+
+export const sendMessage = async (
+  message: string,
+  chainid: number,
+  agentId?: number,
+  conversationId?: string,
+  walletInfo?: any,
+  files?: Array<{name: string, type: string, data: string, size: number}>  // 📎 新增参数
+) => {
+  const response = await api.post('/chat', { message, agentId, conversationId, chainid, walletInfo, files });
+  return response.data;
+};
+
+export const createMultiAgentTeam = async (teamName: string, agentIds: number[]) => {
+  const response = await api.post('/agents/multi-agent-team', { teamName, agentIds });
+  return response.data;
+};
+
+export const getMultiAgentTeams = async () => {
+  const response = await api.get('/agents/multi-agent-teams');
+  return response.data;
+};
+
+export const getConversationHistory = async (conversationId: string) => {
+  const response = await api.get(`/chat/history/${conversationId}`);
+  return response.data;
+};
+
+export const clearConversation = async () => {
+  const response = await api.delete('/chat/history');
+  return response.data;
+};
+
+export const getAgents = async (address: any) => {
+  const response = await api.get(`/agents/where/${address}`);
+  return response.data;
+};
+
+export const createAgent = async (agentData: any) => {
+  const response = await api.post('/agents', agentData);
+  return response.data;
+};
+
+export const finalizeAgentCreation = async (agentData: any) => {
+  const response = await api.post('/agents/finalize', agentData);
+  return response.data;
+};
+
+export const getMarketplaceAgents = async () => {
+  const response = await api.get('/agents/marketplace');
+  return response.data;
+};
+
+export const toggleAgentPublicity = async (agentId: number, chainid: number) => {
+  const response = await api.put(`/agents/${agentId}/toggle-publicity`);
+  return response.data;
+};
+
+export const getAgentDetails = async (agentId: number, chainId: number): Promise<Agent> => {
+  const response = await api.get(`/agents/${agentId}`);
+  return response.data;
+};
+
+export const getAgentResponse = async (agentId: number, message: string, context: any[] = [], instruction?: string) => {
+  const response = await api.post(`/chat/agent/${agentId}/responses`, { message, context, instruction });
+  return response.data;
+};
+
+export const updateAgent = async (agentId: number, agentData: Partial<Agent>) => {
+  const response = await api.put(`/agents/${agentId}`, agentData);
+  return response.data;
+};
+
+export const updateAgentHash = async (agentId: number, agentData: any) => {
+  const response = await api.put(`/agents/${agentId}/updateHash`, agentData);
+  return response.data;
+};
+
+export const deleteAgent = async (agentId: number) => {
+  const response = await api.delete(`/agents/${agentId}`);
+  return response.data;
+};
+
+export const trainAgent = async (agentId: number, trainingData: string, userAddress: string, trainingType: string, chainid: number) => {
+  const response = await api.post(`/agents/${agentId}/train`, { trainingData, userAddress, trainingType, chainid });
+  return response.data;
+};
+
+// ============ Enhanced Agent API (仅保留必要的增强功能) ============
+
+export const getAgentEnhancedInfo = async (agentId: number) => {
+  const response = await api.get(`/agents/enhanced/${agentId}/info`);
+  return response.data;
+};
+
+export const connectWallet = async (address: string, chainId: number, message: string, signature: string) => {
+  const response = await api.post('/users/connect', { address, chainId, message, signature });
+  localStorage.setItem('token', response.data.token);
+  return response.data;
+};
+
+export const getAgentKnowledge = async (agentId: number, chainid: number) => {
+  const response = await api.get(`/agents/${agentId}/knowledge`);
+  return response.data;
+};
+
+export const createTeam = async (teamData: any) => {
+  console.log('createTeam Data:',teamData)
+  const response = await api.post('/teams', teamData);
+  return response.data;
+};
+
+export const getTeams = async () => {
+  const response = await api.get('/teams');
+  return response.data;
+};
+
+export const getTeamById = async (teamId: string) => {
+  const response = await api.get(`/teams/${teamId}`);
+  return response.data;
+};
+
+export const updateTeam = async (teamId: string, teamData: any) => {
+  const response = await api.put(`/teams/${teamId}`, teamData);
+  return response.data;
+};
+
+export const deleteTeam = async (teamId: string) => {
+  const response = await api.delete(`/teams/${teamId}`);
+  return response.data;
+};
+
+export const sendTeamMessage = async (
+  teamId: string,
+  message: string,
+  conversationId: string,
+  chainid: number,
+  files?: Array<{name: string, type: string, data: string, size: number}>  // 📎 新增参数
+) => {
+  const response = await api.post(`/chat/team/${teamId}`, { message, conversationId, chainid, files });
+  return response.data;
+};
+
+export const continueWorkflow = async (workflowId: string) => {
+  const response = await api.post('/chat/continue-workflow', { workflowId });
+  return response.data;
+};
+
+export const communicateWithAgent = async (senderId: number, receiverId: number, message: string, conversationId: string) => {
+  const response = await api.post('/agents/communicate', { senderId, receiverId, message, conversationId });
+  return response.data;
+};
+
+export const updateAgentRoleAndGoal = async (agentId: number, role: string, goal: string) => {
+  const response = await api.put(`/agents/${agentId}/role-goal`, { role, goal });
+  return response.data;
+};
+
+export const decomposeTask = async (task: string) => {
+  const response = await api.post('/chat/decompose-task', { task });
+  return response.data;
+};
+
+export const processSpecificAgentMessage = async (agentId: number, message: string, workflowId: string | null) => {
+  const response = await api.post('/chat/specific-agent', { agentId, message, workflowId });
+  return response.data;
+};
+
+export const refineTaskDecomposition = async (conversationId: string, taskDecomposition: any) => {
+  const response = await api.post(`/chat/refine-task-decomposition/${conversationId}`, { taskDecomposition });
+  return response.data;
+};
+
+export const completeTaskDecomposition = async (conversationId: string) => {
+  const response = await api.post(`/chat/complete-task-decomposition/${conversationId}`);
+  return response.data;
+};
+
+export const getTaskDecomposition = async (conversationId: string) => {
+  const response = await api.get(`/chat/task-decomposition/${conversationId}`);
+  return response.data;
+};
+
+export const verifyAgent = async (agentId: number, prompt: string) => {
+  const response = await api.post(`/agents/${agentId}/verify`, { prompt });
+  return response.data;
+};
+
+export const updateTeamAgentRoles = async (teamId: string, agentRoles: { agentId: number; role: string, chainid: number }[]) => {
+  const response = await api.put(`/teams/${teamId}/agent-roles`, { agentRoles });
+  return response.data;
+};
+
+export const executeLangChainTeamTask = async (teamId: string, task: string) => {
+  const response = await api.post(`/teams/${teamId}/execute-langchain-task`, { task });
+  return response.data;
+};
+
+export const downloadFile = (filename: any) => {
+  return api.get(`/download/${filename}`, {
+    responseType: 'blob',
+  });
+};
+
+export const getContractBytecode = async (contractId: string) => {
+  try {
+    const response = await api.get(`/contract/bytecode/${contractId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching contract bytecode:', error);
+    throw error;
+  }
+};
+
+export const compileContract = async (input: CompileContractInput & { compilerVersion?: string }): Promise<CompileContractResult> => {
+  try {
+    const response = await api.post('/compile', {
+      ...input,
+      compilerVersion: input.compilerVersion || '0.8.25' // 默认使用最新0.8.25版本，也可以指定其他版本
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error('Compilation error:', error);
+    throw error;
+  }
+};
+
+export const getContractABI = async (address: string) => {
+  const response = await api.get(`/contract/${address}/abi`);
+  return response.data;
+};
+
+export interface EIP1559GasPrice {
+  maxFeePerGas: string;
+  maxPriorityFeePerGas: string;
+  gasPrice: string;  // 确保gasPrice属性存在
+  isEIP1559Supported: boolean;
+}
+
+export type GasPriceType = string | EIP1559GasPrice;
+
+export const getGasPrice = async (networkId: number): Promise<EIP1559GasPrice> => {
+  const web3 = new Web3(window.ethereum);
+  
+  try {
+    // 尝试获取EIP-1559费用估算
+    const feeData = await web3.eth.getFeeHistory(4, 'latest', [25, 50, 75]);
+    
+    // 计算优先级费用的中位数
+    const priorityFeePercentile = feeData.reward ? 
+      BigInt(feeData.reward[1][1].toString()) : // 确保使用BigInt
+      BigInt(1000000000); // 默认1 Gwei
+    
+    // 获取当前基础费用
+    const block = await web3.eth.getBlock('latest');
+    // 确保baseFee是BigInt类型
+    const baseFee = block.baseFeePerGas ? BigInt(block.baseFeePerGas.toString()) : BigInt(0);
+    
+    // 现在两个操作数都是BigInt类型
+    const maxPriorityFeePerGas = priorityFeePercentile;
+    const maxFeePerGas = baseFee + maxPriorityFeePerGas;
+    
+    return {
+      maxFeePerGas: maxFeePerGas.toString(),
+      maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+      gasPrice: (baseFee + maxPriorityFeePerGas).toString(), // 兼容旧版本
+      isEIP1559Supported: true
+    };
+  } catch (error) {
+    console.warn('EIP-1559 fee estimation failed, falling back to legacy gas price', error);
+    // 回退到传统gas price
+    const gasPrice = await web3.eth.getGasPrice();
+    return {
+      gasPrice: (BigInt(gasPrice.toString()) * BigInt(120) / BigInt(100)).toString(), // 增加20%
+      maxFeePerGas: "0", // 添加这些属性确保返回类型一致
+      maxPriorityFeePerGas: "0",
+      isEIP1559Supported: false
+    };
+  }
+};
+
+export const deployContract = async (
+  abi: any[], 
+  bytecode: string, 
+  params: any[], 
+  from: string,
+  networkId: number,
+  gasPrice: GasPriceType
+) => {
+  if (!window.ethereum) {
+    throw new Error('No web3 provider found');
+  }
+
+  const web3 = new Web3(window.ethereum);
+  
+  // 切换到正确的网络
+  await window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: web3.utils.toHex(networkId) }]
+  });
+  
+  // 创建合约实例
+  const contract = new web3.eth.Contract(abi);
+  
+  // 处理字节码格式
+  let processedBytecode = bytecode;
+  
+  // 确保字节码以 0x 开头
+  if (!processedBytecode.startsWith('0x')) {
+    processedBytecode = '0x' + processedBytecode;
+  }
+  
+  // 确保字节码长度是偶数
+  if (processedBytecode.length % 2 !== 0) {
+    processedBytecode = processedBytecode + '0';
+  }
+  
+  // 验证字节码格式
+  const compilerVersionMatch = processedBytecode.match(/^0x(?:[0-9a-fA-F][0-9a-fA-F])*$/);
+  if (!compilerVersionMatch) {
+    console.error('Invalid bytecode format:', processedBytecode);
+    throw new Error('Invalid bytecode format. Please ensure the bytecode is a valid hexadecimal string starting with 0x');
+  }
+  
+  // 准备部署交易
+  const deploy = contract.deploy({
+    data: processedBytecode,
+    arguments: params
+  });
+  
+  // 特殊网络可能需要更高的gas限制
+  const isZkEVM = networkId === 1101 || networkId === 2442;
+  const gasMultiplier = isZkEVM ? 1.2 : 1.1;
+  
+  // 估算 gas
+  const gas = await deploy.estimateGas({ from });
+  const gasLimit = BigInt(Math.round(Number(gas) * gasMultiplier));
+  
+  // 检查是否支持EIP-1559
+  let txParams: any = {
+    from,
+    gas: gasLimit
+  };
+  
+  // 根据是否支持EIP-1559设置不同的gas参数
+  if (typeof gasPrice === 'object' && gasPrice.isEIP1559Supported) {
+    // 使用EIP-1559交易类型
+    txParams.maxFeePerGas = BigInt(gasPrice.maxFeePerGas);
+    txParams.maxPriorityFeePerGas = BigInt(gasPrice.maxPriorityFeePerGas);
+  } else {
+    // 使用传统交易类型
+    if (typeof gasPrice === 'string') {
+      txParams.gasPrice = BigInt(gasPrice);
+    } else {
+      txParams.gasPrice = gasPrice.gasPrice ? BigInt(gasPrice.gasPrice) : BigInt(0);
+    }
+  }
+
+  try {
+    // 发送部署交易
+    const deployedContract = await deploy.send(txParams);
+    return deployedContract.options.address;
+  } catch (error: any) {
+    console.error('Deployment error:', error);
+    throw new Error(`Failed to deploy contract: ${error.message}`);
+  }
+};
+
+export const compileSolanaProgram = async (data: any) => {
+  try {
+    const response = await api.post('/solana/compile', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error compiling Solana program:', error);
+    throw error;
+  }
+};
+
+export const estimateSolanaFee = async (instructions: Uint8Array) => {
+  try {
+    const response = await api.post('/estimate/solana-fee', { instructions: Buffer.from(instructions).toString('hex') });
+    return response.data.estimatedFee;
+  } catch (error) {
+    console.error('Error estimating Solana fee:', error);
+    throw error;
+  }
+};
+
+export const deploySolanaContract = async (
+  data: { rustFiles: { name: string; content: string }[]; network: string; deploymentId?: string }
+) => {
+  try {
+    // 检查Solana钱包是否已连接
+    const provider = (window as any).solana;
+    if (!provider) {
+      throw new Error('No Solana wallet found. Please install Phantom wallet.');
+    }
+    
+    if (!provider.isConnected) {
+      await provider.connect();
+    }
+
+    // 编译程序获取二进制数据
+    const compileResponse = await api.post('/solana/compile', data);
+    const { programBinaryHex } = compileResponse.data;
+    
+    if (!programBinaryHex) {
+      throw new Error('Failed to compile Solana program');
+    }
+
+    // 连接到Solana网络
+    const endpoint = data.network === 'mainnet-beta' 
+      ? 'https://api.mainnet-beta.solana.com'
+      : 'https://api.devnet.solana.com';
+    const connection = new Connection(endpoint, 'confirmed');
+
+    // 获取用户的公钥
+    const userPublicKey = provider.publicKey;
+    if (!userPublicKey) {
+      throw new Error('Wallet not connected properly');
+    }
+
+    // 生成程序密钥对
+    const programKeypair = Keypair.generate();
+    const programId = programKeypair.publicKey;
+
+    console.log('Generated Program ID:', programId.toString());
+
+    // 将十六进制字符串转换为 Buffer
+    const programData = Buffer.from(programBinaryHex, 'hex');
+
+    // 🔧 修复：使用旧的getRecentBlockhash方法（与api2.ts保持一致）
+    const { blockhash } = await connection.getRecentBlockhash();
+
+    // 创建交易
+    const transaction = new Transaction({
+      recentBlockhash: blockhash,
+      feePayer: userPublicKey
+    });
+
+    // 计算程序所需空间和租金
+    const programSpace = programData.length;
+    const rentExemptionAmount = await connection.getMinimumBalanceForRentExemption(programSpace);
+
+    // 🔧 修复：只创建程序账户，不在交易中包含程序数据以避免超出大小限制
+    console.log(`Program data size: ${programData.length} bytes`);
+
+    // 使用较小的基础空间来创建程序账户
+    const baseAccountSpace = 1024; // 1KB基础空间
+    const baseRentExemptionAmount = await connection.getMinimumBalanceForRentExemption(baseAccountSpace);
+
+    const createAccountInstruction = SystemProgram.createAccount({
+      fromPubkey: userPublicKey,
+      newAccountPubkey: programId,
+      lamports: baseRentExemptionAmount,
+      space: baseAccountSpace,
+      programId: new PublicKey('BPFLoaderUpgradeab1e11111111111111111111111')
+    });
+
+    // 🔧 修复：移除程序数据写入指令，因为这会导致交易过大
+    // 在实际的Solana部署中，程序数据应该通过BPF Loader的部署流程处理
+    // 这里我们只创建账户作为部署的演示
+
+    transaction.add(createAccountInstruction);
+
+    console.log('🔧 Transaction created without program data to avoid size limit');
+
+    // 程序密钥对签名
+    transaction.partialSign(programKeypair);
+
+    // 🔧 修复：使用Phantom官方推荐的signAndSendTransaction方法
+    const result = await provider.signAndSendTransaction(transaction);
+    const signature = result.signature;
+    
+    // 等待交易确认
+    await connection.confirmTransaction(signature);
+
+    // 保存部署记录到后端
+    const deploymentId = data.deploymentId || `${Date.now()}-${Math.random().toString(36).substr(2, 16)}`;
+    try {
+      await api.post('/solana/save-deployment', {
+        contractAddress: programId.toString(),
+        deploymentSignature: signature,
+        network: data.network,
+        deploymentId
+      });
+    } catch (saveError) {
+      console.warn('Failed to save deployment record:', saveError);
+    }
+
+    return {
+      programId: programId.toString(),        // 🔧 修改：contractAddress → programId
+      deploymentId,
+      signature: signature,                   // 🔧 修改：transactionSignature → signature
+      network: data.network,
+      success: true
+    };
+
+  } catch (error: any) {
+    console.error('Error deploying Solana contract:', error);
+    throw error;
+  }
+};
+
+export const getUserCredit = async (): Promise<CreditInfo> => {
+  const response = await api.get('/credits');
+  return response.data;
+};
+
+export const getUserInfo = async () => {
+  const response = await api.get(`/usersInfo`)
+  return response.data;
+}
+
+export const updataUserInfo = async () => {
+  const response = await api.put(`/usersInfo/updata`)
+  return response.data;
+}
+
+export const updataUserCredit = async (data: any) => {
+  const response = await api.put('/credits', data);
+  return response.data;
+};
+
+// 新增：同步合约Credits到数据库
+export const syncUserCreditsWithContract = async (data: {
+  credits: number;
+  transactionHash: string;
+  planId: string;
+  price: number;
+}) => {
+  const response = await api.put('/credits/sync', data);
+  return response.data;
+};
+
+export const sendGameRequest = async (
+  message: string,
+  teamId: string,
+  conversationId: string,
+  files?: Array<{name: string, type: string, data: string, size: number}>  // 📎 新增参数
+) => {
+  const response = await api.post('/chat/game', {
+    message,
+    teamId,
+    conversationId,
+    type: 'game',  // 标识这是游戏请求
+    files
+  });
+  return response.data;
+};
+
+export const verifyContract = async (
+  verificationData: ContractVerificationRequest
+): Promise<ContractVerificationResponse> => {
+  try {
+    const response = await api.post('/contract/verify', verificationData);
+    return response.data;
+  } catch (error: any) {
+    console.error('Contract verification error:', error);
+    throw new Error(error.response?.data?.error || 'Contract verification failed');
+  }
+};
+
+export const saveContractConfig = async (config: any) => {
+  try {
+    const response = await api.post('/contract-config', config);
+    return response.data.configId;
+  } catch (error) {
+    console.error('Error saving contract config:', error);
+    throw error;
+  }
+};
+
+// Game publishing metadata types and API calls
+export interface GameMetadata {
+  gameId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  price: number;
+  currency: string;
+  category: string;
+  tags: string[];
+  contractAddress: string;
+  contractAbi: any[];
+  gameType: string;
+}
+
+// Save game source metadata (POST /game/source/metadata)
+export const saveGameSourceMetadata = async (data: {
+  gameId: string;
+  sourceCodeType: string;
+  compilerVersion: string;
+  hasEndGameNotification: boolean;
+  marketplaceStatus: string;
+}) => {
+  const response = await api.post('/game/source/metadata', data);
+  return response.data;
+};
+
+// Save game metadata (POST /game/metadata)
+export const saveGameMetadata = async (metadata: GameMetadata) => {
+  const response = await api.post('/game/metadata', metadata);
+  return response.data;
+};
+
+// Save game source code (POST /game/source)
+export const saveGameSourceCode = async (
+  gameId: string,
+  sourceCode: string,
+  gameType: string
+) => {
+  const response = await api.post('/game/source', { gameId, sourceCode, gameType });
+  return response.data;
+};
+
+// Fetch game source code (GET /game/source/:gameId)
+export const getGameSourceCode = async (gameId: string) => {
+  const response = await api.get(`/game/source/${gameId}`);
+  return response.data;
+};
+
+// Save game files (POST /game/files)
+export const saveGameFiles = async (
+  gameId: string,
+  files: Array<{ name: string; content: string; type: string }>,
+  gameType: string
+) => {
+  const response = await api.post('/game/files', { gameId, files, gameType });
+  return response.data;
+};
+
+// Assemble final runnable HTML from files
+export const assembleGameHtml = async (files: Array<{ name: string; content: string; type?: string; language?: string }>, opts?: { blockchainFeatures?: any; title?: string }) => {
+  const response = await api.post('/game/assemble', {
+    files,
+    blockchainFeatures: opts?.blockchainFeatures,
+    title: opts?.title
+  });
+  return response.data;
+};
+
+// MCP related API calls
+export const getAvailableMCPServices = async (chainId?: number) => {
+  const response = await api.get(`/mcp/services${chainId ? `?chainId=${chainId}` : ''}`);
+  return response.data;
+};
+
+export const getAgentMCPCapabilities = async (agentId: number) => {
+  const response = await api.get(`/mcp/agents/${agentId}/capabilities`);
+  return response.data;
+};
+
+export const updateAgentMCPCapabilities = async (agentId: number, capabilities: any[]) => {
+  const response = await api.put(`/mcp/agents/${agentId}/capabilities`, { capabilities });
+  return response.data;
+};
+
+// 新增：使用后端Anchor部署Solana程序
+export const deploySolanaContractBackend = async (
+  data: { rustFiles: { name: string; content: string }[]; network: string; deploymentId?: string }
+) => {
+  try {
+    console.log('🚀 Starting backend Anchor deployment...');
+
+    // 调用后端的部署API
+    const response = await api.post('/solana/deploy', data);
+
+    console.log('✅ Backend deployment completed:', response.data);
+
+    return {
+      programId: response.data.programId,
+      signature: response.data.signature,
+      logs: response.data.logs
+    };
+
+  } catch (error: any) {
+    console.error('Backend deployment failed:', error);
+    throw new Error(error.response?.data?.error || 'Failed to deploy Solana program via backend');
+  }
+};
+
+// ============ Agent定价系统API ============
+
+/**
+ * 设置Agent价格 (Owner Only)
+ * @param agentId Agent ID
+ * @param price 价格 (credits)
+ */
+export const setAgentPrice = async (agentId: number, price: number) => {
+  const response = await api.post(`/agents/${agentId}/price`, { price });
+  return response.data;
+};
+
+/**
+ * 获取Agent价格
+ * @param agentId Agent ID
+ */
+export const getAgentPrice = async (agentId: number) => {
+  const response = await api.get(`/agents/${agentId}/price`);
+  return response.data;
+};
+
+/**
+ * 获取Agent统计信息 (调用次数、收益)
+ * @param agentId Agent ID
+ */
+export const getAgentStats = async (agentId: number) => {
+  const response = await api.get(`/agents/${agentId}/stats`);
+  return response.data;
+};
+
+/**
+ * 获取创建者总收益
+ */
+export const getCreatorEarnings = async () => {
+  const response = await api.get('/credits/creator/earnings');
+  return response.data;
+};
+
+/**
+ * 提现收益到buyBalance
+ * @param amount 提现金额 (credits)
+ */
+export const withdrawEarnings = async (amount: number) => {
+  const response = await api.post('/credits/creator/withdraw', { amount });
+  return response.data;
+};
+
+// ============ Agent Rating System API ============
+
+/**
+ * Rate an agent
+ * @param agentId Agent ID
+ * @param rating Rating value (1-5)
+ * @param comment Optional comment
+ */
+export const rateAgent = async (agentId: number, rating: number, comment?: string) => {
+  const response = await api.post(`/agents/${agentId}/rating`, { rating, comment });
+  return response.data;
+};
+
+/**
+ * Get agent ratings
+ * @param agentId Agent ID
+ * @param limit Number of ratings to fetch
+ */
+export const getAgentRatings = async (agentId: number, limit: number = 10) => {
+  const response = await api.get(`/agents/${agentId}/ratings?limit=${limit}`);
+  return response.data;
+};
+
+/**
+ * Get user's rating for an agent
+ * @param agentId Agent ID
+ */
+export const getUserRating = async (agentId: number) => {
+  const response = await api.get(`/agents/${agentId}/user-rating`);
+  return response.data;
+};
+
+// ============ Credit兑换USDT API ============
+
+/**
+ * User submit withdrawal request
+ */
+export const requestWithdrawal = async (amount: number, walletAddress: string, chain: 'Polygon' | 'BSC' | 'ETH') => {
+  const response = await api.post('/credits/withdrawal/request', { amount, walletAddress, chain });
+  return response.data;
+};
+
+/**
+ * 获取用户提现历史
+ */
+export const getWithdrawalHistory = async () => {
+  const response = await api.get('/credits/withdrawal/history');
+  return response.data;
+};
+
+/**
+ * 管理员获取待处理提现申请
+ */
+export const getAdminWithdrawals = async () => {
+  const response = await api.get('/credits/admin/withdrawals');
+  return response.data;
+};
+
+/**
+ * 管理员完成提现
+ */
+export const completeWithdrawal = async (withdrawalId: string, txHash: string) => {
+  const response = await api.post('/credits/admin/withdrawal/complete', { withdrawalId, txHash });
+  return response.data;
+};
+
+/**
+ * 管理员获取购买记录
+ */
+export const getAdminPurchases = async (params?: {
+  page?: number;
+  limit?: number;
+  days?: number;
+  chain?: string;
+  search?: string;
+}) => {
+  const response = await api.get('/credits/admin/purchases', { params });
+  return response.data;
+};
+
+/**
+ * 自动交易账户提现 (支持 USDT/BNB/ETH)
+ * POST /api/auto-trade/withdraw
+ */
+export const withdrawAutoTradeUsdt = async (
+  userId: string,
+  toAddress: string,
+  amount: string,
+  chain: string = 'BSC',
+  token: string = 'USDT',
+  accessToken?: string
+) => {
+  const response = await api.post('/auto-trade/withdraw', {
+    userId,
+    toAddress,
+    amount: parseFloat(amount),
+    chain,
+    token
+  }, {
+    headers: accessToken ? {
+      'Authorization': `Bearer ${accessToken}`
+    } : {}
+  });
+  return response.data;
+};

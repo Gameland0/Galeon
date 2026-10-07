@@ -1,0 +1,143 @@
+.main-layout-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main-layout-nav-left {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.main-layout-logo {
+  height: 36px;
+  width: auto;
+  cursor: pointer;
+  display: block;
+  object-fit: contain;
+}
+
+.main-layout-links {
+  display: flex;
+  gap: 8px;
+}
+
+.main-layout-links a {
+  text-decoration: none;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.main-layout-links a:hover {
+  color: #6366f1;
+  background: #f0efff;
+}
+
+.main-layout-links a.active {
+  color: #6366f1;
+  background: #f0efff;
+}
+
+.main-layout-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.main-layout-btn-connect {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.main-layout-btn-connect:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+
+.main-layout-wallet {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.main-layout-wallet-addr {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  background: #f0efff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.main-layout-wallet-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.main-layout-btn-disconnect {
+  background: none;
+  border: 1px solid rgba(0,0,0,0.08);
+  color: #94a3b8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.main-layout-btn-disconnect:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: #fef2f2;
+}
+
+.main-layout-content {
+  padding-top: 64px;
+  background: #f7f9fc;
+  min-height: 100vh;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .main-layout-nav {
+    padding: 0 20px;
+  }
+
+  .main-layout-links {
+    display: none;
+  }
+
+  .main-layout-wallet-addr {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}

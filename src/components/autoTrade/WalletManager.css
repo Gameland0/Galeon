@@ -1,0 +1,583 @@
+/* 钱包管理器样式 */
+
+.wallet-manager {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.wallet-card {
+  /* 渐变背景卡片 */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.wallet-card:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+}
+
+/* 未连接状态 */
+.wallet-manager.disconnected .wallet-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  text-align: center;
+  color: white;
+}
+
+.wallet-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.wallet-card h3 {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.wallet-card p {
+  font-size: 8px;
+  opacity: 0.9;
+  margin-bottom: 24px;
+}
+
+.btn-connect,
+.btn-generate {
+  background: white;
+  color: #6366f1;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-connect:hover,
+.btn-generate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-generate:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.features-list,
+.info-box {
+  margin-top: 24px;
+  text-align: left;
+}
+
+.feature-item,
+.info-box p {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.feature-icon {
+  font-size: 20px;
+}
+
+/* 已连接状态 */
+.wallet-manager.connected .wallet-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.wallet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-logout:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.wallet-address-section {
+  margin-bottom: 24px;
+}
+
+.address-label {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.address-value {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.address-value:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.copy-hint {
+  opacity: 0.6;
+  font-size: 14px;
+}
+
+.balance-section {
+  margin-bottom: 24px;
+}
+
+.balance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.balance-header h4 {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.btn-refresh-small {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-refresh-small:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-refresh-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.balance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.balance-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.balance-card.primary {
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.balance-label {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.balance-amount {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.balance-network {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-action.deposit {
+  background: white;
+  color: #667eea;
+}
+
+.btn-action.withdraw {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-icon {
+  font-size: 20px;
+}
+
+.gas-warning {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(251, 191, 36, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.warning-icon {
+  font-size: 20px;
+}
+
+.warning-text {
+  flex: 1;
+  font-size: 13px;
+}
+
+.warning-text strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* 弹窗样式 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #1f2937;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: #9ca3af;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.modal-close:hover {
+  color: #374151;
+}
+
+.modal-body {
+  padding: 24px;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* 充值弹窗 */
+.deposit-instruction {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.address-display {
+  background: #f9fafb;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.address-text {
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  word-break: break-all;
+  flex: 1;
+  color: #1f2937;
+}
+
+.copy-btn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: background 0.3s;
+}
+
+.copy-btn:hover {
+  background: #4f46e5;
+}
+
+.copy-btn.copied {
+  background: #22c55e;
+}
+
+.qr-placeholder {
+  margin-bottom: 24px;
+}
+
+.qr-box {
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  color: #9ca3af;
+}
+
+.qr-note {
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.deposit-warnings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.warning-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #ef4444;
+}
+
+/* 提现弹窗 */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.balance-info {
+  font-size: 13px;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.input-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.amount-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.amount-input-group .input-field {
+  flex: 1;
+}
+
+.btn-max {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn-max:hover {
+  background: #e5e7eb;
+}
+
+.error-message {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.withdraw-summary {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.summary-row.total {
+  border-top: 2px solid #e5e7eb;
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background: #6366f1;
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #4f46e5;
+}
+
+.btn-secondary {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #f9fafb;
+}

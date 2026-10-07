@@ -1,0 +1,898 @@
+// 添加window类型扩
+
+import { Buffer } from 'buffer';
+import axios from 'axios';
+import Web3 from 'web3';
+import { Connection, Transaction, SystemProgram, Keypair, PublicKey, TransactionInstruction } from '@solana/web3.js';
+
+// 动态根据当前域名设置API地址，支持本地和测试网
+const host = window.location.host;
+let API_URL = '';
+if (host.includes('testai.gameland.network')) {
+  API_URL = 'https://testaiservice.gameland.network/api';
+} else if (host.includes('localhost')) {
+  API_URL = 'http://localhost:8080/api';
+} else {
+  // 默认使用相对路径，依赖前端proxy或生产配置
+  API_URL = 'https://galeon.gameland.network/api';
+}
+const baseURL = API_URL;
+
+export const api = axios.create({
+  baseURL,
+  // baseURL:'https://testnet-api.gameland.network'
+});
+
+api.interceptors.request.use((config: any) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export interface Agent {
+  id: number;
+  name: string;
+  description: string;
+  type: string;
+  is_public: boolean;
+  owner: string;
+  imageUrl?: string;
+  agentid: number;
+  chainid: number;
+  trainingData?: {
+    ipfsHash: string;
+    trained_at: string;
+    userAddress: string;
+  }[];
+}
+
+interface CompileContractInput {
+  source: string;
+}
+
+interface CompileContractResult {
+  success: boolean;
+  contractName?: string;
+  abi?: any[];
+  bytecode?: string;
+  error?: string;
+  warnings?: string[];
+}
+
+export interface ContractVerificationRequest {
+  address: string;
+  source: string;
+  network: string;
+  contractType: string;
+  constructorArguments?: string[];
+}
+
+export interface ContractVerificationResponse {
+  success: boolean;
+  message: string;
+  details?: string;
+}
+
+
+export interface CreditInfo {
+  creditBalance: number;
+  buyBalance: number;
+  lastUsedAt?: string;
+  lastResetAt?: string;
+}
+
+export const sendMessage = async (message: string, chainid: number, agentId?: number, conversationId?: string) => {
+  const response = await api.post('/chat', { message, agentId, conversationId, chainid });
+  return response.data;
+};
+
+export const createMultiAgentTeam = async (teamName: string, agentIds: number[]) => {
+  const response = await api.post('/agents/multi-agent-team', { teamName, agentIds });
+  return response.data;
+};
+
+export const getMultiAgentTeams = async () => {
+  const response = await api.get('/agents/multi-agent-teams');
+  return response.data;
+};
+
+export const getConversationHistory = async (conversationId: string) => {
+  const response = await api.get(`/chat/history/${conversationId}`);
+  return response.data;
+};
+
+export const clearConversation = async () => {
+  const response = await api.delete('/chat/history');
+  return response.data;
+};
+
+export const getAgents = async (address: any) => {
+  const response = await api.get(`/agents/where/${address}`);
+  return response.data;
+};
+
+export const createAgent = async (agentData: any) => {
+  const response = await api.post('/agents', agentData);
+  return response.data;
+};
+
+export const finalizeAgentCreation = async (agentData: any) => {
+  const response = await api.post('/agents/finalize', agentData);
+  return response.data;
+};
+
+export const getMarketplaceAgents = async () => {
+  const response = await api.get('/agents/marketplace');
+  return response.data;
+};
+
+export const toggleAgentPublicity = async (agentId: number, chainid: number) => {
+  const response = await api.put(`/agents/${agentId}/toggle-publicity`);
+  return response.data;
+};
+
+export const getAgentDetails = async (agentId: number, chainId: number): Promise<Agent> => {
+  const response = await api.get(`/agents/${agentId}`);
+  return response.data;
+};
+
+export const getAgentResponse = async (agentId: number, message: string, context: any[] = [], instruction?: string) => {
+  const response = await api.post(`/chat/agent/${agentId}/responses`, { message, context, instruction });
+  return response.data;
+};
+
+export const updateAgent = async (agentId: number, agentData: Partial<Agent>) => {
+  const response = await api.put(`/agents/${agentId}`, agentData);
+  return response.data;
+};
+
+export const updateAgentHash = async (agentId: number, agentData: any) => {
+  const response = await api.put(`/agents/${agentId}/updateHash`, agentData);
+  return response.data;
+};
+
+export const deleteAgent = async (agentId: number) => {
+  const response = await api.delete(`/agents/${agentId}`);
+  return response.data;
+};
+
+export const trainAgent = async (agentId: number, trainingData: string, userAddress: string, trainingType: string, chainid: number) => {
+  const response = await api.post(`/agents/${agentId}/train`, { trainingData, userAddress, trainingType, chainid });
+  return response.data;
+};
+
+export const connectWallet = async (address: string, chainId: number, message: string, signature: string) => {
+  const response = await api.post('/users/connect', { address, chainId, message, signature });
+  localStorage.setItem('token', response.data.token);
+  return response.data;
+};
+
+export const getAgentKnowledge = async (agentId: number, chainid: number) => {
+  const response = await api.get(`/agents/${agentId}/knowledge`);
+  return response.data;
+};
+
+export const createTeam = async (teamData: any) => {
+  console.log('createTeam Data:',teamData)
+  const response = await api.post('/teams', teamData);
+  return response.data;
+};
+
+export const getTeams = async () => {
+  const response = await api.get('/teams');
+  return response.data;
+};
+
+export const getTeamById = async (teamId: string) => {
+  const response = await api.get(`/teams/${teamId}`);
+  return response.data;
+};
+
+export const updateTeam = async (teamId: string, teamData: any) => {
+  const response = await api.put(`/teams/${teamId}`, teamData);
+  return response.data;
+};
+
+export const deleteTeam = async (teamId: string) => {
+  const response = await api.delete(`/teams/${teamId}`);
+  return response.data;
+};
+
+export const sendTeamMessage = async (teamId: string, message: string, conversationId: string, chainid: number) => {
+  const response = await api.post(`/chat/team/${teamId}`, { message, conversationId, chainid });
+  return response.data;
+};
+
+export const continueWorkflow = async (workflowId: string) => {
+  const response = await api.post('/chat/continue-workflow', { workflowId });
+  return response.data;
+};
+
+export const communicateWithAgent = async (senderId: number, receiverId: number, message: string, conversationId: string) => {
+  const response = await api.post('/agents/communicate', { senderId, receiverId, message, conversationId });
+  return response.data;
+};
+
+export const updateAgentRoleAndGoal = async (agentId: number, role: string, goal: string) => {
+  const response = await api.put(`/agents/${agentId}/role-goal`, { role, goal });
+  return response.data;
+};
+
+export const decomposeTask = async (task: string) => {
+  const response = await api.post('/chat/decompose-task', { task });
+  return response.data;
+};
+
+export const processSpecificAgentMessage = async (agentId: number, message: string, workflowId: string | null) => {
+  const response = await api.post('/chat/specific-agent', { agentId, message, workflowId });
+  return response.data;
+};
+
+export const refineTaskDecomposition = async (conversationId: string, taskDecomposition: any) => {
+  const response = await api.post(`/chat/refine-task-decomposition/${conversationId}`, { taskDecomposition });
+  return response.data;
+};
+
+export const completeTaskDecomposition = async (conversationId: string) => {
+  const response = await api.post(`/chat/complete-task-decomposition/${conversationId}`);
+  return response.data;
+};
+
+export const getTaskDecomposition = async (conversationId: string) => {
+  const response = await api.get(`/chat/task-decomposition/${conversationId}`);
+  return response.data;
+};
+
+export const verifyAgent = async (agentId: number, prompt: string) => {
+  const response = await api.post(`/agents/${agentId}/verify`, { prompt });
+  return response.data;
+};
+
+export const updateTeamAgentRoles = async (teamId: string, agentRoles: { agentId: number; role: string, chainid: number }[]) => {
+  const response = await api.put(`/teams/${teamId}/agent-roles`, { agentRoles });
+  return response.data;
+};
+
+export const executeLangChainTeamTask = async (teamId: string, task: string) => {
+  const response = await api.post(`/teams/${teamId}/execute-langchain-task`, { task });
+  return response.data;
+};
+
+export const downloadFile = (filename: any) => {
+  return api.get(`/download/${filename}`, {
+    responseType: 'blob',
+  });
+};
+
+export const getContractBytecode = async (contractId: string) => {
+  try {
+    const response = await api.get(`/contract/bytecode/${contractId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching contract bytecode:', error);
+    throw error;
+  }
+};
+
+export const compileContract = async (input: CompileContractInput & { compilerVersion?: string }): Promise<CompileContractResult> => {
+  try {
+    const response = await api.post('/compile', {
+      ...input,
+      compilerVersion: input.compilerVersion || '0.8.25' // 默认使用最新0.8.25版本，也可以指定其他版本
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error('Compilation error:', error);
+    throw error;
+  }
+};
+
+export const getContractABI = async (address: string) => {
+  const response = await api.get(`/contract/${address}/abi`);
+  return response.data;
+};
+
+export interface EIP1559GasPrice {
+  maxFeePerGas: string;
+  maxPriorityFeePerGas: string;
+  gasPrice: string;  // 确保gasPrice属性存在
+  isEIP1559Supported: boolean;
+}
+
+export type GasPriceType = string | EIP1559GasPrice;
+
+export const getGasPrice = async (networkId: number): Promise<EIP1559GasPrice> => {
+  const web3 = new Web3(window.ethereum);
+  
+  try {
+    // 尝试获取EIP-1559费用估算
+    const feeData = await web3.eth.getFeeHistory(4, 'latest', [25, 50, 75]);
+    
+    // 计算优先级费用的中位数
+    const priorityFeePercentile = feeData.reward ? 
+      BigInt(feeData.reward[1][1].toString()) : // 确保使用BigInt
+      BigInt(1000000000); // 默认1 Gwei
+    
+    // 获取当前基础费用
+    const block = await web3.eth.getBlock('latest');
+    // 确保baseFee是BigInt类型
+    const baseFee = block.baseFeePerGas ? BigInt(block.baseFeePerGas.toString()) : BigInt(0);
+    
+    // 现在两个操作数都是BigInt类型
+    const maxPriorityFeePerGas = priorityFeePercentile;
+    const maxFeePerGas = baseFee + maxPriorityFeePerGas;
+    
+    return {
+      maxFeePerGas: maxFeePerGas.toString(),
+      maxPriorityFeePerGas: maxPriorityFeePerGas.toString(),
+      gasPrice: (baseFee + maxPriorityFeePerGas).toString(), // 兼容旧版本
+      isEIP1559Supported: true
+    };
+  } catch (error) {
+    console.warn('EIP-1559 fee estimation failed, falling back to legacy gas price', error);
+    // 回退到传统gas price
+    const gasPrice = await web3.eth.getGasPrice();
+    return {
+      gasPrice: (BigInt(gasPrice.toString()) * BigInt(120) / BigInt(100)).toString(), // 增加20%
+      maxFeePerGas: "0", // 添加这些属性确保返回类型一致
+      maxPriorityFeePerGas: "0",
+      isEIP1559Supported: false
+    };
+  }
+};
+
+export const deployContract = async (
+  abi: any[], 
+  bytecode: string, 
+  params: any[], 
+  from: string,
+  networkId: number,
+  gasPrice: GasPriceType
+) => {
+  if (!window.ethereum) {
+    throw new Error('No web3 provider found');
+  }
+
+  const web3 = new Web3(window.ethereum);
+  
+  // 切换到正确的网络
+  await window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: web3.utils.toHex(networkId) }]
+  });
+  
+  // 创建合约实例
+  const contract = new web3.eth.Contract(abi);
+  
+  // 处理字节码格式
+  let processedBytecode = bytecode;
+  
+  // 确保字节码以 0x 开头
+  if (!processedBytecode.startsWith('0x')) {
+    processedBytecode = '0x' + processedBytecode;
+  }
+  
+  // 确保字节码长度是偶数
+  if (processedBytecode.length % 2 !== 0) {
+    processedBytecode = processedBytecode + '0';
+  }
+  
+  // 验证字节码格式
+  const compilerVersionMatch = processedBytecode.match(/^0x(?:[0-9a-fA-F][0-9a-fA-F])*$/);
+  if (!compilerVersionMatch) {
+    console.error('Invalid bytecode format:', processedBytecode);
+    throw new Error('Invalid bytecode format. Please ensure the bytecode is a valid hexadecimal string starting with 0x');
+  }
+  
+  // 准备部署交易
+  const deploy = contract.deploy({
+    data: processedBytecode,
+    arguments: params
+  });
+  
+  // 特殊网络可能需要更高的gas限制
+  const isZkEVM = networkId === 1101 || networkId === 2442;
+  const gasMultiplier = isZkEVM ? 1.2 : 1.1;
+  
+  // 估算 gas
+  const gas = await deploy.estimateGas({ from });
+  const gasLimit = BigInt(Math.round(Number(gas) * gasMultiplier));
+  
+  // 检查是否支持EIP-1559
+  let txParams: any = {
+    from,
+    gas: gasLimit
+  };
+  
+  // 根据是否支持EIP-1559设置不同的gas参数
+  if (typeof gasPrice === 'object' && gasPrice.isEIP1559Supported) {
+    // 使用EIP-1559交易类型
+    txParams.maxFeePerGas = BigInt(gasPrice.maxFeePerGas);
+    txParams.maxPriorityFeePerGas = BigInt(gasPrice.maxPriorityFeePerGas);
+  } else {
+    // 使用传统交易类型
+    if (typeof gasPrice === 'string') {
+      txParams.gasPrice = BigInt(gasPrice);
+    } else {
+      txParams.gasPrice = gasPrice.gasPrice ? BigInt(gasPrice.gasPrice) : BigInt(0);
+    }
+  }
+
+  try {
+    // 发送部署交易
+    const deployedContract = await deploy.send(txParams);
+    return deployedContract.options.address;
+  } catch (error: any) {
+    console.error('Deployment error:', error);
+    throw new Error(`Failed to deploy contract: ${error.message}`);
+  }
+};
+
+export const compileSolanaProgram = async (data: any) => {
+  try {
+    const response = await api.post('/solana/compile', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error compiling Solana program:', error);
+    throw error;
+  }
+};
+
+export const estimateSolanaFee = async (instructions: Uint8Array) => {
+  try {
+    const response = await api.post('/estimate/solana-fee', { instructions: Buffer.from(instructions).toString('hex') });
+    return response.data.estimatedFee;
+  } catch (error) {
+    console.error('Error estimating Solana fee:', error);
+    throw error;
+  }
+};
+
+export const deploySolanaContract = async (
+  data: { rustFiles: { name: string; content: string }[]; network: string; deploymentId?: string }
+) => {
+  try {
+    // 检查Solana钱包是否已连接
+    const provider = (window as any).solana;
+    if (!provider) {
+      throw new Error('No Solana wallet found. Please install Phantom wallet.');
+    }
+    
+    if (!provider.isConnected) {
+      // 尝试连接钱包
+      await provider.connect();
+    }
+
+    // 首先编译程序获取二进制数据
+    const compileResponse = await api.post('/solana/compile', data);
+    const { programBinaryHex, idlJson } = compileResponse.data;
+    
+    if (!programBinaryHex) {
+      throw new Error('Failed to compile Solana program');
+    }
+
+    // 🔧 修复：添加备用RPC端点，提高连接稳定性
+    const getRpcEndpoint = (network: string) => {
+      const endpoints = {
+        'mainnet-beta': [
+          'https://api.mainnet-beta.solana.com',
+          'https://solana-api.projectserum.com',
+          'https://rpc.ankr.com/solana'
+        ],
+        'devnet': [
+          'https://api.devnet.solana.com',
+          'https://devnet.helius-rpc.com/?api-key=demo',
+          'https://rpc.ankr.com/solana_devnet'
+        ],
+        'testnet': [
+          'https://api.testnet.solana.com',
+          'https://testnet.solana.com'
+        ]
+      };
+      return endpoints[network] || endpoints['devnet'];
+    };
+
+    const networkEndpoints = getRpcEndpoint(data.network);
+    console.log('🔧 Available RPC endpoints:', networkEndpoints);
+    
+    // 尝试连接到可用的RPC端点
+    let connection: Connection | null = null;
+    let workingEndpoint = '';
+    
+    for (const endpoint of networkEndpoints) {
+      try {
+        console.log('🔧 Trying RPC endpoint:', endpoint);
+        const testConnection = new Connection(endpoint, 'confirmed');
+        
+        // 测试连接是否正常工作
+        await testConnection.getLatestBlockhash('finalized');
+        connection = testConnection;
+        workingEndpoint = endpoint;
+        console.log('✅ Successfully connected to:', endpoint);
+        break;
+      } catch (error) {
+        console.warn('❌ Failed to connect to:', endpoint, error);
+        continue;
+      }
+    }
+    
+    if (!connection) {
+      throw new Error('Unable to connect to Solana network. All RPC endpoints are unavailable. Please check your internet connection and try again later.');
+    }
+
+    // 获取用户的公钥
+    const userPublicKey = provider.publicKey;
+    if (!userPublicKey) {
+      throw new Error('Wallet not connected properly');
+    }
+
+    // 🔧 修复：使用传入的唯一标识符或生成新的
+    const deploymentId = data.deploymentId || `${Date.now()}-${Math.random().toString(36).substr(2, 16)}`;
+    console.log('🔧 Deployment ID:', deploymentId);
+    
+    let programKeypair = Keypair.generate();
+    let programId = programKeypair.publicKey;
+
+    console.log('🔧 Generated unique program ID:', programId.toString());
+
+    // 将十六进制字符串转换为 Buffer
+    const programData = Buffer.from(programBinaryHex, 'hex');
+
+    // 🔧 修复：获取最新的区块哈希并添加重试机制
+    let blockhash: string;
+    let lastValidBlockHeight: number;
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    while (retryCount < maxRetries) {
+      try {
+        const latestBlockhash = await connection.getLatestBlockhash('finalized');
+        blockhash = latestBlockhash.blockhash;
+        lastValidBlockHeight = latestBlockhash.lastValidBlockHeight;
+        break;
+      } catch (error) {
+        retryCount++;
+        if (retryCount >= maxRetries) {
+          throw new Error(`Failed to get blockhash after ${maxRetries} attempts: ${error}`);
+        }
+        // 等待1秒后重试
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+
+    // 🔧 修复：增强唯一性检查，避免重复部署
+    try {
+      const existingAccount = await connection.getAccountInfo(programId);
+      if (existingAccount) {
+        console.log('Program account already exists, generating new ID...');
+        // 如果账户已存在，重新生成一个新的程序密钥对
+        programKeypair = Keypair.generate();
+        programId = programKeypair.publicKey;
+        console.log('🔧 Generated new program ID:', programId.toString());
+        
+        // 检查新的程序ID是否也存在（极小概率）
+        const newAccountCheck = await connection.getAccountInfo(programId);
+        if (newAccountCheck) {
+          throw new Error('Unable to generate unique program ID. Please try again later.');
+        }
+      }
+    } catch (error: any) {
+      if (!error.message.includes('Program account already exists') && 
+          !error.message.includes('Unable to generate unique')) {
+        // 如果不是账户存在错误，继续部署流程
+        console.log('Account check failed (this is normal for new programs):', error.message);
+      } else {
+        throw error;
+      }
+    }
+
+    // 创建交易
+    const transaction = new Transaction({
+      recentBlockhash: blockhash,
+      feePayer: userPublicKey
+    });
+
+    // 🔧 修复：添加唯一的memo指令，确保每个交易都是唯一的
+    const extraEntropy = Math.random().toString(36).substr(2, 12);
+    const memoText = `GameLand-Deploy-${deploymentId}-${extraEntropy}-${Date.now()}`;
+    const memoInstruction = new TransactionInstruction({
+      keys: [],
+      programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
+      data: Buffer.from(memoText, 'utf8')
+    });
+    
+    console.log('🔧 Adding unique memo:', memoText);
+    transaction.add(memoInstruction);
+
+    // 计算程序账户所需的租金
+    const rentExemptionAmount = await connection.getMinimumBalanceForRentExemption(programData.length);
+
+    // 对于真实的程序部署，我们需要使用Anchor部署流程
+    // 这里简化为创建一个程序账户作为演示
+    const createAccountInstruction = SystemProgram.createAccount({
+      fromPubkey: userPublicKey,
+      newAccountPubkey: programId,
+      lamports: rentExemptionAmount,
+      space: programData.length,
+      programId: new PublicKey('BPFLoaderUpgradeab1e11111111111111111111111')
+    });
+
+    transaction.add(createAccountInstruction);
+
+    // 部分签名（程序密钥对签名）
+    transaction.partialSign(programKeypair);
+
+    console.log('🔧 Requesting wallet signature for transaction...');
+
+    // 请求用户钱包签名
+    const signedTransaction = await provider.signTransaction(transaction);
+    
+    console.log('🔧 Transaction signed, sending to network...');
+
+    // 🔧 修复：增强的交易发送和确认机制，包含网络错误重试
+    let rawTransaction = signedTransaction.serialize();
+    let signature = '';
+    let sendRetries = 0;
+    const maxSendRetries = 3;
+    
+    // 重试发送交易
+    while (sendRetries < maxSendRetries) {
+      try {
+        console.log(`🔧 Attempt ${sendRetries + 1}/${maxSendRetries} to send transaction...`);
+        signature = await connection.sendRawTransaction(rawTransaction, {
+          skipPreflight: false,
+          preflightCommitment: 'confirmed',
+          maxRetries: 2
+        });
+        console.log('🔧 Transaction sent with signature:', signature);
+        break;
+      } catch (error: any) {
+        sendRetries++;
+        console.warn(`❌ Send attempt ${sendRetries} failed:`, error.message);
+        
+        // 🔧 修复：如果是blockhash相关错误，重新获取blockhash并重建交易
+        if (error.message.includes('Blockhash not found') || 
+            error.message.includes('blockhash') ||
+            error.message.includes('block hash')) {
+          console.log('🔧 Blockhash expired, getting fresh blockhash...');
+          
+          try {
+            // 重新获取最新的blockhash
+            const freshBlockhash = await connection.getLatestBlockhash('finalized');
+            blockhash = freshBlockhash.blockhash;
+            lastValidBlockHeight = freshBlockhash.lastValidBlockHeight;
+            
+            // 重新构建交易
+            const freshTransaction = new Transaction({
+              recentBlockhash: blockhash,
+              feePayer: userPublicKey
+            });
+            
+            // 添加部署指令
+            const deployInstruction = SystemProgram.createAccount({
+              fromPubkey: userPublicKey,
+              newAccountPubkey: programId,
+              lamports: await connection.getMinimumBalanceForRentExemption(programData.length),
+              space: programData.length,
+              programId: SystemProgram.programId,
+            });
+            
+            freshTransaction.add(deployInstruction);
+            
+            // 重新签名交易
+            const freshSignedTransaction = await provider.signTransaction(freshTransaction);
+            rawTransaction = freshSignedTransaction.serialize();
+            
+            console.log('🔧 Transaction rebuilt with fresh blockhash, retrying...');
+          } catch (blockhashError) {
+            console.error('❌ Failed to refresh blockhash:', blockhashError);
+          }
+        }
+        
+        if (sendRetries >= maxSendRetries) {
+          if (error.message.includes('Failed to fetch') || 
+              error.message.includes('ERR_CONNECTION_RESET') ||
+              error.message.includes('Network request failed')) {
+            throw new Error(`Network connection failed after ${maxSendRetries} attempts. Please check your internet connection and try again.`);
+          }
+          throw error;
+        }
+        
+        // 等待递增的时间后重试
+        await new Promise(resolve => setTimeout(resolve, 1000 * sendRetries));
+      }
+    }
+
+    // 🔧 修复：增强的确认机制，包含网络错误重试
+    let confirmRetries = 0;
+    const maxConfirmRetries = 5;
+    
+    while (confirmRetries < maxConfirmRetries) {
+      try {
+        console.log(`🔧 Attempt ${confirmRetries + 1}/${maxConfirmRetries} to confirm transaction...`);
+        const confirmationResult = await connection.confirmTransaction({
+          signature,
+          blockhash,
+          lastValidBlockHeight
+        }, 'confirmed');
+
+        if (confirmationResult.value.err) {
+          throw new Error(`Transaction failed: ${JSON.stringify(confirmationResult.value.err)}`);
+        }
+
+        console.log('🔧 Transaction confirmed successfully');
+        break;
+      } catch (error: any) {
+        confirmRetries++;
+        console.warn(`❌ Confirm attempt ${confirmRetries} failed:`, error.message);
+        
+        if (confirmRetries >= maxConfirmRetries) {
+          if (error.message.includes('Failed to fetch') || 
+              error.message.includes('ERR_CONNECTION_RESET') ||
+              error.message.includes('Network request failed')) {
+            throw new Error(`Transaction was sent but confirmation failed due to network issues. Signature: ${signature}. Please check the transaction status manually.`);
+          }
+          throw error;
+        }
+        
+        // 等待递增的时间后重试
+        await new Promise(resolve => setTimeout(resolve, 2000 * confirmRetries));
+      }
+    }
+
+    // 保存部署记录到后端
+    try {
+      await api.post('/solana/save-deployment', {
+        programId: programId.toString(),
+        signature,
+        network: data.network,
+        rustFiles: data.rustFiles
+      });
+    } catch (saveError) {
+      console.warn('Failed to save deployment record:', saveError);
+      // 不影响主要的部署流程
+    }
+
+    return {
+      programId: programId.toString(),
+      signature,
+      success: true
+    };
+
+  } catch (error: any) {
+    console.error('Error deploying Solana contract:', error);
+    
+    // 🔧 修复：提供更友好的错误信息
+    if (error.message && error.message.includes('Transaction simulation failed: This transaction has already been processed')) {
+      throw new Error(`Deployment conflict detected (${new Date().toLocaleTimeString()}). Please wait a moment and try again with a fresh deployment.`);
+    }
+    
+    if (error.message && error.message.includes('Program account already exists')) {
+      throw new Error('A program with this configuration already exists. Please refresh the page and try again.');
+    }
+    
+    if (error.message && (
+      error.message.includes('Failed to fetch') || 
+      error.message.includes('ERR_CONNECTION_RESET') ||
+      error.message.includes('Network request failed') ||
+      error.message.includes('Unable to connect to Solana network')
+    )) {
+      throw new Error('🌐 Network connection issue detected. This might be due to:\n• Temporary Solana RPC service interruption\n• Internet connectivity problems\n• Network firewall restrictions\n\nPlease try again in a few moments.');
+    }
+    
+    throw error;
+  }
+};
+
+export const getUserCredit = async (): Promise<CreditInfo> => {
+  const response = await api.get('/credits');
+  return response.data;
+};
+
+export const getUserInfo = async () => {
+  const response = await api.get(`/usersInfo`)
+  return response.data;
+}
+
+export const updataUserInfo = async () => {
+  const response = await api.put(`/usersInfo/updata`)
+  return response.data;
+}
+
+export const updataUserCredit = async (data: any) => {
+  const response = await api.put('/credits', data);
+  return response.data;
+};
+
+export const sendGameRequest = async (message: string, teamId: string, conversationId: string) => {
+  const response = await api.post('/chat/game', { 
+    message, 
+    teamId, 
+    conversationId,
+    type: 'game'  // 标识这是游戏请求
+  });
+  return response.data;
+};
+
+export const verifyContract = async (
+  verificationData: ContractVerificationRequest
+): Promise<ContractVerificationResponse> => {
+  try {
+    const response = await api.post('/contract/verify', verificationData);
+    return response.data;
+  } catch (error: any) {
+    console.error('Contract verification error:', error);
+    throw new Error(error.response?.data?.error || 'Contract verification failed');
+  }
+};
+
+export const saveContractConfig = async (config: any) => {
+  try {
+    const response = await api.post('/contract-config', config);
+    return response.data.configId;
+  } catch (error) {
+    console.error('Error saving contract config:', error);
+    throw error;
+  }
+};
+
+// Game publishing metadata types and API calls
+export interface GameMetadata {
+  gameId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  price: number;
+  currency: string;
+  category: string;
+  tags: string[];
+  contractAddress: string;
+  contractAbi: any[];
+  gameType: string;
+}
+
+// Save game source metadata (POST /game/source/metadata)
+export const saveGameSourceMetadata = async (data: {
+  gameId: string;
+  sourceCodeType: string;
+  compilerVersion: string;
+  hasEndGameNotification: boolean;
+  marketplaceStatus: string;
+}) => {
+  const response = await api.post('/game/source/metadata', data);
+  return response.data;
+};
+
+// Save game metadata (POST /game/metadata)
+export const saveGameMetadata = async (metadata: GameMetadata) => {
+  const response = await api.post('/game/metadata', metadata);
+  return response.data;
+};
+
+// Save game source code (POST /game/source)
+export const saveGameSourceCode = async (
+  gameId: string,
+  sourceCode: string,
+  gameType: string
+) => {
+  const response = await api.post('/game/source', { gameId, sourceCode, gameType });
+  return response.data;
+};
+
+// Fetch game source code (GET /game/source/:gameId)
+export const getGameSourceCode = async (gameId: string) => {
+  const response = await api.get(`/game/source/${gameId}`);
+  return response.data;
+};
+
+// Save game files (POST /game/files)
+export const saveGameFiles = async (
+  gameId: string,
+  files: Array<{ name: string; content: string; type: string }>,
+  gameType: string
+) => {
+  const response = await api.post('/game/files', { gameId, files, gameType });
+  return response.data;
+};

@@ -1,0 +1,16 @@
+/* 🔧 修复：导入全局样式，包含代码高亮样式 */
+@import './styles/global.css';
+@import './styles/ChatMessages.css';
+@import './styles/markdown.css';
+
+body {
+    margin: 0;
+    font-family: Times New Roman;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  code {
+    font-family: Times New Roman;
+  }
+  

@@ -1,0 +1,376 @@
+/* Twitter KOL Configuration Styles - 全新亮色柔光设计 */
+
+.twitter-kol-config {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px);
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.twitter-kol-config .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.twitter-kol-config .section-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.twitter-kol-config .btn-view-signals {
+  background: linear-gradient(to right, #A782FF 0%, #6F4BFF 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(140, 90, 255, 0.3);
+}
+
+.twitter-kol-config .btn-view-signals:hover:not(:disabled) {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(140, 90, 255, 0.4);
+}
+
+.twitter-kol-config .btn-view-signals:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Alerts */
+.twitter-kol-config .alert {
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.twitter-kol-config .alert-error {
+  background: rgba(255, 110, 110, 0.15);
+  border: 1px solid rgba(255, 110, 110, 0.3);
+  color: #D64545;
+}
+
+.twitter-kol-config .alert-success {
+  background: rgba(72, 220, 160, 0.15);
+  border: 1px solid rgba(72, 220, 160, 0.3);
+  color: #2FBF7A;
+}
+
+/* Add KOL Form */
+.twitter-kol-config .add-kol-form {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.twitter-kol-config .add-kol-form h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.twitter-kol-config .form-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
+.twitter-kol-config .form-row .form-group:first-child {
+  flex: 1 1 300px;
+  min-width: 220px;
+}
+
+.twitter-kol-config .form-row .form-group:nth-child(2) {
+  flex: 1 1 320px;
+  min-width: 240px;
+}
+
+.twitter-kol-config .form-row .btn-add-kol {
+  flex: 0 0 140px;
+  margin-bottom: 0;
+  align-self: flex-end;
+}
+
+@media (max-width: 900px) {
+  .twitter-kol-config .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .twitter-kol-config .form-row .form-group:first-child,
+  .twitter-kol-config .form-row .form-group:nth-child(2) {
+    width: 100%;
+  }
+}
+
+.twitter-kol-config .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0 !important;
+}
+
+.twitter-kol-config .form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.twitter-kol-config .form-group input,
+.twitter-kol-config .form-group select {
+  width: 100% !important;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(230, 230, 230, 0.7);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #1A1A1A;
+  font-size: 14px;
+  transition: all 0.3s;
+  box-sizing: border-box;
+}
+
+.twitter-kol-config .form-group input::placeholder {
+  color: #999;
+}
+
+.twitter-kol-config .form-group input:focus,
+.twitter-kol-config .form-group select:focus {
+  outline: none;
+  border-color: #1D6CF2;
+  background: #E5F0FF;
+  box-shadow: 0 0 0 3px rgba(29, 108, 242, 0.1);
+}
+
+.twitter-kol-config .form-group input:disabled,
+.twitter-kol-config .form-group select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.twitter-kol-config .btn-add-kol {
+  background: linear-gradient(135deg, #48DCA0 0%, #2FBF7A 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.twitter-kol-config .btn-add-kol:hover:not(:disabled) {
+  transform: scale(1.03);
+  box-shadow: 0 6px 16px rgba(47, 191, 122, 0.3);
+}
+
+.twitter-kol-config .btn-add-kol:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.twitter-kol-config .trust-mode-info {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(220, 235, 255, 0.6);
+  border: 1px solid rgba(160, 200, 255, 0.6);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.twitter-kol-config .trust-mode-info .info-item {
+  font-size: 13px;
+  color: #3D3D3D;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.twitter-kol-config .trust-mode-info .info-item:last-child {
+  margin-bottom: 0;
+}
+
+.twitter-kol-config .trust-mode-info strong {
+  color: #1463FF;
+  font-weight: 600;
+}
+
+/* KOL List */
+.twitter-kol-config .kol-list h4 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.twitter-kol-config .empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.twitter-kol-config .kol-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* KOL Card */
+.twitter-kol-config .kol-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(230, 230, 230, 0.5);
+  border-radius: 14px;
+  padding: 16px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.twitter-kol-config .kol-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  border-color: rgba(160, 200, 255, 0.6);
+}
+
+.twitter-kol-config .kol-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.twitter-kol-config .kol-info h5 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+.twitter-kol-config .trust-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.twitter-kol-config .trust-badge.strict {
+  background: rgba(255, 110, 110, 0.12);
+  color: #D64545;
+}
+
+.twitter-kol-config .trust-badge.full_trust {
+  background: rgba(72, 220, 160, 0.12);
+  color: #2FBF7A;
+}
+
+.twitter-kol-config .btn-remove {
+  background: #FF6464;
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(255, 100, 100, 0.3);
+}
+
+.twitter-kol-config .btn-remove:hover:not(:disabled) {
+  background: #E53E3E;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 100, 100, 0.4);
+}
+
+.twitter-kol-config .btn-remove:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.twitter-kol-config .kol-stats {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(230, 230, 230, 0.5);
+}
+
+.twitter-kol-config .kol-stats .stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.twitter-kol-config .kol-stats .label {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.twitter-kol-config .kol-stats .value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.twitter-kol-config .kol-stats .value.positive {
+  color: #2FBF7A;
+}
+
+.twitter-kol-config .kol-stats .value.negative {
+  color: #FF6464;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .twitter-kol-config .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .twitter-kol-config .form-row .form-group:first-child,
+  .twitter-kol-config .form-row .form-group:nth-child(2) {
+    width: 100%;
+  }
+
+  .twitter-kol-config .kol-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .twitter-kol-config .section-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .twitter-kol-config .btn-view-signals {
+    width: 100%;
+  }
+}

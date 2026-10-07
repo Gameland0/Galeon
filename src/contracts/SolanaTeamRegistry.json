@@ -1,0 +1,620 @@
+{
+  "version": "0.1.0",
+  "name": "solana_team_registry",
+  "docs": [
+    "Solana团队Agent注册合约",
+    "功能：团队创建、管理和Agent关联",
+    "对应EVM的TeamRegistry.ts（主要功能部分）"
+  ],
+  "instructions": [
+    {
+      "name": "initializeTeamRegistry",
+      "docs": [
+        "初始化团队注册表"
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "teamRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "registerTeam",
+      "docs": [
+        "注册新团队（对应EVM的registerTeam）"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "teamRegistry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "team",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "teamUuid",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "agents",
+          "type": {
+            "vec": {
+              "defined": "AgentRole"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "updateTeam",
+      "docs": [
+        "更新团队信息（对应EVM的updateTeam）"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "team",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "name": "agents",
+          "type": {
+            "vec": {
+              "defined": "AgentRole"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "addAgentToTeam",
+      "docs": [
+        "添加Agent到团队"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "team",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "teamAgent",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "agentId",
+          "type": "u64"
+        },
+        {
+          "name": "role",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "removeAgentFromTeam",
+      "docs": [
+        "从团队移除Agent"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "team",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "teamAgent",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "agentId",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "updateAgentRole",
+      "docs": [
+        "更新Agent在团队中的角色"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "team",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "teamAgent",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newRole",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "toggleTeamStatus",
+      "docs": [
+        "激活/停用团队"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "team",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "getTeam",
+      "docs": [
+        "获取团队信息（只读查询）"
+      ],
+      "accounts": [
+        {
+          "name": "team",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "returns": {
+        "defined": "TeamInfo"
+      }
+    }
+  ],
+  "accounts": [
+    {
+      "name": "TeamRegistry",
+      "docs": [
+        "团队注册表"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "teamCounter",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Team",
+      "docs": [
+        "团队账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "teamUuid",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "agentCount",
+            "type": "u8"
+          },
+          {
+            "name": "maxAgents",
+            "type": "u8"
+          },
+          {
+            "name": "isActive",
+            "type": "bool"
+          },
+          {
+            "name": "createdAt",
+            "type": "i64"
+          },
+          {
+            "name": "updatedAt",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TeamAgent",
+      "docs": [
+        "团队Agent关联"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "teamId",
+            "type": "u64"
+          },
+          {
+            "name": "agentId",
+            "type": "u64"
+          },
+          {
+            "name": "role",
+            "type": "string"
+          },
+          {
+            "name": "addedAt",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "AgentRole",
+      "docs": [
+        "Agent角色结构"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "role",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TeamInfo",
+      "docs": [
+        "团队信息返回结构"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "id",
+            "type": "u64"
+          },
+          {
+            "name": "teamUuid",
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "agentCount",
+            "type": "u8"
+          },
+          {
+            "name": "maxAgents",
+            "type": "u8"
+          },
+          {
+            "name": "isActive",
+            "type": "bool"
+          },
+          {
+            "name": "createdAt",
+            "type": "i64"
+          },
+          {
+            "name": "updatedAt",
+            "type": "i64"
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "TeamRegistered",
+      "fields": [
+        {
+          "name": "teamId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "teamUuid",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "agentCount",
+          "type": "u8",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TeamUpdated",
+      "fields": [
+        {
+          "name": "teamId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "agentCount",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "updatedAt",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AgentAddedToTeam",
+      "fields": [
+        {
+          "name": "teamId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "agentId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AgentRemovedFromTeam",
+      "fields": [
+        {
+          "name": "teamId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "agentId",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AgentRoleUpdated",
+      "fields": [
+        {
+          "name": "teamId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "agentId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "oldRole",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "newRole",
+          "type": "string",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TeamStatusToggled",
+      "fields": [
+        {
+          "name": "teamId",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "isActive",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "TeamUuidTooLong",
+      "msg": "Team UUID is too long (max 36 characters)"
+    },
+    {
+      "code": 6001,
+      "name": "NameTooLong",
+      "msg": "Name is too long (max 64 characters)"
+    },
+    {
+      "code": 6002,
+      "name": "DescriptionTooLong",
+      "msg": "Description is too long (max 200 characters)"
+    },
+    {
+      "code": 6003,
+      "name": "RoleTooLong",
+      "msg": "Role is too long (max 32 characters)"
+    },
+    {
+      "code": 6004,
+      "name": "InsufficientAgents",
+      "msg": "Insufficient agents (minimum 2 required)"
+    },
+    {
+      "code": 6005,
+      "name": "TooManyAgents",
+      "msg": "Too many agents (maximum 5 allowed)"
+    },
+    {
+      "code": 6006,
+      "name": "TeamFull",
+      "msg": "Team is full (maximum 5 agents)"
+    },
+    {
+      "code": 6007,
+      "name": "MinimumAgentsRequired",
+      "msg": "Minimum 2 agents required in team"
+    },
+    {
+      "code": 6008,
+      "name": "UnauthorizedOwner",
+      "msg": "Unauthorized: not the team owner"
+    },
+    {
+      "code": 6009,
+      "name": "TeamNotActive",
+      "msg": "Team is not active"
+    }
+  ]
+}

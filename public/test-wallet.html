@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Wallet Test</title>
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+</head>
+<body>
+    <h1>Solana Wallet Connection Test</h1>
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="testDeploy">Test Deploy (Wallet Signature)</button>
+    <div id="status"></div>
+    <div id="logs"></div>
+
+    <script>
+        const status = document.getElementById('status');
+        const logs = document.getElementById('logs');
+        
+        function log(message) {
+            console.log(message);
+            logs.innerHTML += '<p>' + message + '</p>';
+        }
+
+        document.getElementById('connectWallet').addEventListener('click', async () => {
+            try {
+                const provider = window.solana;
+                if (!provider) {
+                    log('❌ No Solana wallet found. Please install Phantom wallet.');
+                    return;
+                }
+                
+                log('🔍 Solana wallet detected');
+                
+                if (!provider.isConnected) {
+                    await provider.connect();
+                    log('✅ Wallet connected successfully');
+                } else {
+                    log('✅ Wallet already connected');
+                }
+                
+                log('📍 Wallet address: ' + provider.publicKey.toString());
+                status.innerHTML = 'Connected: ' + provider.publicKey.toString();
+                
+            } catch (error) {
+                log('❌ Error connecting wallet: ' + error.message);
+            }
+        });
+
+        document.getElementById('testDeploy').addEventListener('click', async () => {
+            try {
+                const provider = window.solana;
+                if (!provider || !provider.isConnected) {
+                    log('❌ Please connect wallet first');
+                    return;
+                }
+
+                log('🚀 Starting deployment test...');
+                
+                // Test data
+                const testData = {
+                    rustFiles: [{
+                        name: 'lib.rs',
+                        content: `use anchor_lang::prelude::*;
+declare_id!("11111111111111111111111111111111");
+#[program]
+pub mod my_program {
+    use super::*;
+    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+        Ok(())
+    }
+}
+#[derive(Accounts)]
+pub struct Initialize {}`
+                    }],
+                    network: 'devnet'
+                };
+
+                // Call the frontend deploy function
+                const response = await fetch('/api/solana/compile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Compilation failed');
+                }
+
+                const compileResult = await response.json();
+                log('✅ Compilation successful');
+                log('📦 Program binary length: ' + compileResult.programBinaryHex.length);
+
+                // Now test wallet signing
+                const { Connection, Transaction, SystemProgram, Keypair, PublicKey } = solanaWeb3;
+                const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
+
+                const programKeypair = Keypair.generate();
+                const programId = programKeypair.publicKey;
+                const userPublicKey = new PublicKey(provider.publicKey.toString());
+
+                log('🔑 Generated program ID: ' + programId.toString());
+
+                const programData = new Uint8Array(Buffer.from(compileResult.programBinaryHex, 'hex'));
+                const rentExemptionAmount = await connection.getMinimumBalanceForRentExemption(programData.length);
+
+                log('💰 Rent exemption amount: ' + rentExemptionAmount + ' lamports');
+
+                const { blockhash } = await connection.getLatestBlockhash();
+                const transaction = new Transaction({
+                    recentBlockhash: blockhash,
+                    feePayer: userPublicKey
+                });
+
+                const createAccountInstruction = SystemProgram.createAccount({
+                    fromPubkey: userPublicKey,
+                    newAccountPubkey: programId,
+                    lamports: rentExemptionAmount,
+                    space: programData.length,
+                    programId: new PublicKey('BPFLoaderUpgradeab1e11111111111111111111111')
+                });
+
+                transaction.add(createAccountInstruction);
+                transaction.partialSign(programKeypair);
+
+                log('📝 Transaction created, requesting wallet signature...');
+                log('🔐 This should open your wallet for signing!');
+
+                // This should trigger the wallet popup
+                const signedTransaction = await provider.signTransaction(transaction);
+                
+                log('✅ Transaction signed successfully!');
+                log('🎉 Wallet signature test completed successfully!');
+                
+            } catch (error) {
+                log('❌ Error during deployment test: ' + error.message);
+                console.error('Full error:', error);
+            }
+        });
+
+        // Check if wallet is already connected on page load
+        window.addEventListener('load', () => {
+            if (window.solana && window.solana.isConnected) {
+                status.innerHTML = 'Connected: ' + window.solana.publicKey.toString();
+                log('✅ Wallet already connected on page load');
+            }
+        });
+    </script>
+</body>
+</html> 

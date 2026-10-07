@@ -1,0 +1,320 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* background: #f7fafc; */ /* 删除背景色，让背景图片显示 */
+  padding: 20px;
+}
+
+.login-card {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid #e5e7eb;
+}
+
+.login-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #1f2937;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 32px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.error-message {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+/* 成功状态样式 */
+.success-info {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #E7FFED 0%, #F0FFF4 100%);
+  border-radius: 12px;
+  border: 2px solid #B8EFC5;
+  margin-bottom: 20px;
+}
+
+.success-message {
+  margin-bottom: 20px;
+}
+
+.success-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.success-message h3 {
+  color: #2E8B57;
+  font-size: 24px;
+  margin: 0;
+  font-weight: bold;
+}
+
+.wallet-details {
+  background: #F8FFFA;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.wallet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.wallet-type {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2E8B57;
+}
+
+.wallet-address {
+  font-family: 'Monaco', 'Menlo', monospace;
+  color: #41D263;
+  font-size: 14px;
+  background: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #B8EFC5;
+  align-self: center;
+}
+
+.credit-info {
+  color: #2E8B57;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.redirect-message {
+  color: #6b7280;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* 已连接状态样式 */
+.connected-info {
+  text-align: center;
+  padding: 20px;
+  background: #f0fdf4;
+  border: 2px solid #22c55e;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.connected-info .wallet-info {
+  margin-bottom: 20px;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-success {
+  background: #22c55e;
+  color: white;
+}
+
+.btn-success:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+/* 钱包选项样式 */
+.wallet-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.wallet-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.wallet-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.wallet-btn:hover::before {
+  left: 100%;
+}
+
+.wallet-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.wallet-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.wallet-btn.loading {
+  border-color: #3b82f6;
+}
+
+/* MetaMask 特定样式 */
+.metamask-btn {
+  background: linear-gradient(135deg, #fff5e6 0%, #ffffff 100%);
+  border-color: #f59e0b;
+}
+
+.metamask-btn:hover {
+  border-color: #d97706;
+  background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+  box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.2);
+}
+
+.metamask-btn.loading {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fef3c7 0%, #ffffff 100%);
+}
+
+/* Phantom 特定样式 */
+.phantom-btn {
+  background: linear-gradient(135deg, #f8f6ff 0%, #ffffff 100%);
+  border-color: #8b5cf6;
+}
+
+.phantom-btn:hover {
+  border-color: #7c3aed;
+  background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%);
+  box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.2);
+}
+
+.phantom-btn.loading {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%);
+}
+
+.wallet-btn-content {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.wallet-icon {
+  font-size: 32px;
+  margin-right: 16px;
+}
+
+.wallet-info {
+  flex: 1;
+  text-align: left;
+}
+
+.wallet-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.wallet-desc {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e5e7eb;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.login-footer {
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.login-footer a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 24px;
+    margin: 10px;
+  }
+  
+  .login-title {
+    font-size: 1.6rem;
+  }
+  
+  .wallet-btn-content {
+    gap: 12px;
+  }
+  
+  .wallet-icon {
+    font-size: 2rem;
+    min-width: 40px;
+  }
+  
+  .wallet-name {
+    font-size: 1.1rem;
+  }
+  
+  .wallet-desc {
+    font-size: 0.8rem;
+  }
+} 

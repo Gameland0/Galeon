@@ -1,0 +1,397 @@
+.alpha-signal-card {
+  /* 半透明白色 + 毛玻璃效果 */
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: none;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  color: #1E1E1E;
+}
+
+.alpha-signal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* Header */
+.signal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.signal-title {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.token-symbol {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1E1E1E;
+  margin: 0;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.signal-type-badge,
+.risk-badge,
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Confidence */
+.signal-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.confidence {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.confidence-label {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.confidence-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.confidence-bar {
+  width: 100px;
+  height: 6px;
+  background: #2d3548;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+  transition: width 0.5s ease;
+}
+
+.time-info {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* Current Price */
+.current-price-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e2432;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.current-price-section .label {
+  font-size: 14px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.current-price-section .price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+/* Trading Plan */
+.trading-plan {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plan-item {
+  background: #1e2432;
+  padding: 14px 16px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.plan-item:hover {
+  background: #252b3b;
+  transform: translateX(4px);
+}
+
+.plan-item.entry-zone {
+  border-left-color: #3b82f6;
+}
+
+.plan-item.stop-loss {
+  border-left-color: #ef4444;
+}
+
+.plan-item.take-profit {
+  border-left-color: #22c55e;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.item-label {
+  font-size: 14px;
+  color: #d1d5db;
+  font-weight: 500;
+}
+
+.item-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.item-value.success {
+  color: #22c55e;
+}
+
+.item-value.danger {
+  color: #ef4444;
+}
+
+.item-meta {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+/* Market Data */
+.market-data {
+  margin-bottom: 20px;
+}
+
+.data-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.data-item {
+  background: #1e2432;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.data-label {
+  font-size: 12px;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.data-value {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.data-value.positive {
+  color: #22c55e;
+}
+
+.data-value.negative {
+  color: #ef4444;
+}
+
+/* Reasoning */
+.reasoning-section {
+  margin-bottom: 20px;
+}
+
+.reasoning-text {
+  background: #1e2432;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #d1d5db;
+  margin: 0;
+  border-left: 3px solid #3b82f6;
+}
+
+/* Actions */
+.signal-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.copy-btn,
+.details-btn {
+  flex: 1;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
+}
+
+.copy-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.details-btn {
+  background: #2d3548;
+  color: #ffffff;
+}
+
+.details-btn:hover {
+  background: #3d4556;
+}
+
+/* Footer */
+.signal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid #2d3548;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Compact Mode */
+.alpha-signal-card.compact {
+  padding: 16px;
+  background: #1e2432;
+}
+
+.alpha-signal-card.compact .signal-header {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #2d3548;
+}
+
+.alpha-signal-card.compact .token-symbol {
+  font-size: 20px;
+}
+
+.alpha-signal-card.compact .confidence-value {
+  font-size: 24px;
+}
+
+.signal-summary {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.price-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-info .label {
+  font-size: 11px;
+  color: #9ca3af;
+  text-transform: uppercase;
+}
+
+.price-info .value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.expand-btn {
+  width: 100%;
+  padding: 8px;
+  background: #2d3548;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.expand-btn:hover {
+  background: #3d4556;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alpha-signal-card {
+    padding: 16px;
+  }
+
+  .token-symbol {
+    font-size: 22px;
+  }
+
+  .confidence-value {
+    font-size: 24px;
+  }
+
+  .current-price-section .price {
+    font-size: 20px;
+  }
+
+  .signal-actions {
+    flex-direction: column;
+  }
+
+  .data-grid {
+    grid-template-columns: 1fr;
+  }
+}

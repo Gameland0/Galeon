@@ -1,0 +1,144 @@
+/* 游戏市场页面样式 */
+.game-marketplace {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* 页面标题样式 */
+.marketplace-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.marketplace-header h1 {
+  font-size: 2.2rem;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.marketplace-header p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* 筛选区域样式 */
+.marketplace-filters {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-input {
+  width: 100%;
+}
+
+/* 游戏卡片样式 */
+.game-card {
+  margin-bottom: 16px;
+  transition: all 0.3s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.game-thumbnail {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.game-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+
+.game-card:hover .game-thumbnail img {
+  transform: scale(1.05);
+}
+
+.game-price {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.game-price.free {
+  background-color: #52c41a;
+}
+
+.blockchain-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+/* 游戏信息样式 */
+.game-description {
+  margin-bottom: 10px;
+  color: #666;
+  height: 60px;
+  overflow: hidden;
+}
+
+.game-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #888;
+}
+
+.game-tags {
+  margin-bottom: 10px;
+}
+
+.game-date {
+  font-size: 0.8rem;
+  color: #999;
+  text-align: right;
+}
+
+/* 加载和空状态样式 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.empty-state {
+  padding: 40px 0;
+}
+
+/* 分页容器样式 */
+.pagination-container {
+  text-align: center;
+  margin-top: 40px;
+  padding-bottom: 20px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .marketplace-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .game-card {
+    margin-bottom: 20px;
+  }
+} 
