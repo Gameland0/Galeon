@@ -1,0 +1,231 @@
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { downloadFile } from '../services/api';
+import { Web3Context } from '../contexts/Web3Context';
+import { ChatContext } from './ChatContext';
+import { Alert, Button, Card, message, Space } from 'antd';
+
+const GAME_EVENTS = {
+  START: 'gameStart',
+  END: 'gameEnd',
+  SCORE_UPDATE: 'scoreUpdate'
+};
+
+
+interface GamePreviewProps {
+  msg: {
+    content: string;
+    blockchainFeatures: any;
+    gameType: any;
+    files: {
+      name: string;
+      path: string;
+      content: string;
+    }[];
+  };
+}
+
+const GamePreview: React.FC<GamePreviewProps> = ({ msg }) => {
+  const { account, web3 } = useContext(Web3Context);
+  const { gameCode, setDeployModalVisible, addContract } = useContext(ChatContext);
+  const [currentScore, setCurrentScore] = useState<number>(0);
+  const [isGameEnded, setIsGameEnded] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+
+  const findcontract = () => {
+    const contractFile = gameCode.files.find((f: any) => f.language === 'solidity');
+    return contractFile
+  }
+  
+  useEffect(() => {
+    // 监听 postMessage 消息
+    const handleGameMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'GAME_END' && typeof event.data.score === 'number') {
+        setCurrentScore(event.data.score); // 更新分数
+        setIsGameEnded(true);              // 更新结束状态
+      }
+    };
+
+    window.addEventListener('message', handleGameMessage);
+
+    return () => {
+      // 清理监听器
+      window.removeEventListener('message', handleGameMessage);
+    };
+  }, []);
+
+
+
+  const handleFileDownload = async (file: any) => {
+    try {
+        const blob = new Blob([file.content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      message.success(`Downloaded ${file.name}`);
+    } catch (error) {
+      console.error('Download failed:', error);
+      message.error(`Failed to download ${file.name}`);
+    }
+  };
+
+  const buildGameContent = () => {
+    if (!gameCode?.originalCode) return '';
+
+    const htmlFile = gameCode.files.find((f: any) => f.name === 'game.html');
+    const jsFile = gameCode.files.find((f: any) => f.name === 'game.js');
+    const cssFile = gameCode.files.find((f: any) => f.name === 'game.css');
+
+    const messageHandler = `
+    window.addEventListener('message', function(event) {
+      if (event.data?.type === 'GAME_END') {
+        window.parent.postMessage(event.data, '*');
+      }
+    });
+  `;
+
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${msg.gameType || 'Game'} Preview</title>
+          <style>${cssFile?.content || ''}</style>
+          ${msg.blockchainFeatures?.length > 0 ? '<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>' : ''}
+        </head>
+        <body>
+          ${htmlFile?.content || ''}
+          <script>${messageHandler}</script>
+          <script>${jsFile?.content || ''}</script>
+        </body>
+      </html>
+    `;
+  };
+
+  const handleDeploy = () => {
+    addContract(findcontract().name, findcontract().content, findcontract().type);
+    setDeployModalVisible(true);
+  };
+
+  const claimReward = async () => {
+    if (!web3 || !gameCode?.contractAddress || !currentScore) {
+      message.error('No score available or web3 not initialized');
+      return;
+    }
+    if (!gameCode?.contractABI|| !Array.isArray(gameCode.contractABI)) {
+      message.error('Smart contract ABI is missing or invalid.');
+      console.error('Missing ABI:', gameCode?.contractABI);
+      return;
+    }
+
+    if (!gameCode?.contractAddress || !gameCode.contractAddress.startsWith('0x')) {
+      message.error('Smart contract address is missing or invalid.');
+      console.error('Missing Contract Address:', gameCode?.contractAddress);
+      return;
+    }
+
+    
+    try {
+      const contract = new web3.eth.Contract(gameCode.contractABI, gameCode.contractAddress);
+      
+      // 使用统一的 endGame 方法名
+      await contract.methods.endGame(currentScore).send({
+        from: account
+      });
+  
+      message.success('Reward claimed successfully!');
+      setIsGameEnded(false);
+      setCurrentScore(0);
+    } catch (error: any) {
+      message.error(`Failed to claim reward: ${error.message}`);
+      console.error('Failed to claim reward:', error.message);
+    }
+  };
+  
+  return (
+    <div className="game-preview">
+      <Card title="Game Preview" className="preview-card">
+        {!gameCode?.contractAddress ? (
+          <Alert
+            message="Contract Deployment Required"
+            description="Please deploy the contract to preview the game"
+            type="warning"
+            showIcon
+          />
+        ) : (
+          <iframe
+            srcDoc={buildGameContent()}
+            sandbox="allow-scripts allow-modals allow-forms allow-same-origin"
+            className="game-iframe"
+            title="Game Preview"
+            width="800"
+            height="600"
+          />
+        )}
+        {gameCode?.contractAddress ? (
+          <div className="files-section">
+            <h4>Generated Files</h4>
+            <Space wrap>
+              {gameCode?.files.map((file: any, index: any) => (
+                <Button
+                  key={index}
+                  onClick={() => handleFileDownload(file)}
+                  type={file.type === 'contract' ? 'primary' : 'default'}
+                >
+                  Download {file.name}
+                </Button>
+              ))}
+            </Space>
+          </div>
+        ):''}
+        {isGameEnded && currentScore > 0 && (
+          <Alert
+            message={`Game Ended! Score: ${currentScore}`}
+            type="success"
+            action={
+              <Button type="primary" onClick={claimReward}>
+                Claim Reward
+              </Button>
+            }
+          />
+        )}
+      </Card>
+      {!gameCode?.contractAddress && findcontract() ? (
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '16px',
+          margin: '16px 0',
+          background: '#f8f9fa',
+          borderRadius: '8px',
+          border: '2px dashed #28a745',
+          position: 'relative',
+          zIndex: 10
+        }}>
+          <Button 
+            type="primary"
+            size="large"
+            onClick={handleDeploy}
+            style={{ 
+              width: '80%',
+              minWidth: '200px',
+              height: '45px',
+              fontSize: '16px',
+              fontWeight: '600',
+              background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+              border: 'none',
+              boxShadow: '0 4px 15px rgba(40, 167, 69, 0.3)'
+            }}
+          >
+            🚀 Deploy Smart Contracts
+          </Button>
+        </div>
+      ) : ''}
+    </div>
+  );
+};
+
+export default GamePreview;

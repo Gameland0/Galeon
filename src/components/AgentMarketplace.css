@@ -1,0 +1,49 @@
+/* Marketplace Controls */
+.marketplace-controls {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.filter-group,
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-group label,
+.sort-group label {
+  font-weight: 600;
+  color: #a0a0a0;
+}
+
+.marketplace-controls select {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #e0e0e0;
+  cursor: pointer;
+}
+
+.marketplace-controls select:hover {
+  border-color: #3b82f6;
+}
+
+/* Agent Sections */
+.agent-section {
+  margin: 40px 0;
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+}

@@ -1,0 +1,622 @@
+/* Solana Agent Manager 样式文件 */
+
+.solana-agent-manager {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* ===== 头部样式 ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e1e5e9;
+}
+
+.header h2 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.wallet-info {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.wallet-info span {
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e1e5e9;
+}
+
+/* ===== 连接钱包样式 ===== */
+.connect-wallet {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.connect-wallet h2 {
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.connect-wallet p {
+  margin-bottom: 24px;
+  color: #666;
+  font-size: 16px;
+}
+
+.connect-wallet button {
+  padding: 12px 24px;
+  background: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.connect-wallet button:hover {
+  background: #0b5ed7;
+}
+
+/* ===== 标签页样式 ===== */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e1e5e9;
+}
+
+.tabs button {
+  padding: 12px 20px;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #666;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tabs button:hover {
+  color: #0d6efd;
+  background: #f8f9fa;
+}
+
+.tabs button.active {
+  color: #0d6efd;
+  border-bottom-color: #0d6efd;
+  background: #f8f9fa;
+}
+
+/* ===== 加载状态 ===== */
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 16px;
+  color: #666;
+}
+
+/* ===== 章节头部 ===== */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.section-header button {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.section-header button:hover:not(:disabled) {
+  background: #218838;
+}
+
+.section-header button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+
+/* ===== Agent网格布局 ===== */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.agent-card {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.agent-card:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.agent-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border: 2px solid #e1e5e9;
+}
+
+.agent-info h4 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.agent-info p {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.agent-type {
+  display: inline-block;
+  padding: 4px 8px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.agent-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.agent-actions button {
+  padding: 6px 12px;
+  border: 1px solid;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.agent-actions button.public {
+  background: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+}
+
+.agent-actions button.private {
+  background: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb;
+}
+
+.agent-actions button:hover {
+  opacity: 0.8;
+}
+
+.agent-date {
+  font-size: 12px;
+  color: #999;
+}
+
+/* ===== 团队网格布局 ===== */
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.team-card {
+  background: white;
+  border: 1px solid #e1e5e9;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.team-card:hover {
+  border-color: #28a745;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.team-info h4 {
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.team-info p {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.team-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.team-stats span {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.team-stats span:first-child {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.team-stats .active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.team-stats .inactive {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.team-date {
+  font-size: 12px;
+  color: #999;
+}
+
+/* ===== 空状态 ===== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border: 2px dashed #dee2e6;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* ===== 模态框样式 ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.modal.large {
+  max-width: 700px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 0 20px;
+  border-bottom: 1px solid #e1e5e9;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #1a1a1a;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-header button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.modal-header button:hover {
+  background: #f8f9fa;
+  color: #666;
+}
+
+.modal-body {
+  padding: 0 20px 20px 20px;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 20px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.modal-footer button {
+  padding: 10px 20px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.modal-footer button:first-child {
+  background: white;
+  color: #666;
+}
+
+.modal-footer button:first-child:hover:not(:disabled) {
+  background: #f8f9fa;
+}
+
+.modal-footer button:last-child {
+  background: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+.modal-footer button:last-child:hover:not(:disabled) {
+  background: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+.modal-footer button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ===== 表单样式 ===== */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* ===== Agent选择样式 ===== */
+.agent-selection {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.agent-select-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #e1e5e9;
+  transition: background-color 0.2s;
+}
+
+.agent-select-item:last-child {
+  border-bottom: none;
+}
+
+.agent-select-item:hover {
+  background: #f8f9fa;
+}
+
+.agent-select-item .agent-info {
+  flex: 1;
+}
+
+.agent-select-item .agent-name {
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.agent-select-item .agent-type {
+  color: #666;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.agent-select-item .agent-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.agent-select-item select {
+  width: 140px;
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.agent-select-item button {
+  padding: 4px 8px;
+  font-size: 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  background: white;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.agent-select-item button:hover {
+  background: #f8f9fa;
+  border-color: #0d6efd;
+  color: #0d6efd;
+}
+
+.selection-summary {
+  padding: 12px;
+  background: #f8f9fa;
+  border-top: 1px solid #e1e5e9;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 768px) {
+  .solana-agent-manager {
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .wallet-info {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .agents-grid,
+  .teams-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal {
+    margin: 10px;
+    max-height: calc(100vh - 20px);
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .agent-select-item {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .agent-select-item .agent-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs {
+    flex-direction: column;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

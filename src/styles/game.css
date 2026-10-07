@@ -1,0 +1,282 @@
+.web3-game-ui {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.web3-game-ui.loading {
+  padding: 40px;
+  text-align: center;
+}
+
+.web3-game-ui .ant-card-body {
+  padding: 24px;
+}
+
+.web3-game-ui .ant-tabs-nav {
+  margin-bottom: 24px;
+}
+
+/* Game Status Section */
+.game-status {
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.game-status p {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #333;
+}
+
+.game-status strong {
+  color: #1890ff;
+  margin-right: 8px;
+}
+
+.rewards-section {
+  margin-top: 20px;
+  padding: 16px;
+  background-color: #fff7e6;
+  border: 1px solid #ffd591;
+  border-radius: 8px;
+}
+
+.rewards-section h4 {
+  color: #d48806;
+  margin-bottom: 12px;
+}
+
+/* Inventory Section */
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.inventory-item {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.inventory-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.inventory-item h4 {
+  color: #262626;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.inventory-item p {
+  color: #595959;
+  margin-bottom: 12px;
+}
+
+/* Marketplace Section */
+.marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 16px;
+}
+
+.market-item {
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.market-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.market-item h4 {
+  color: #262626;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.market-item p {
+  color: #595959;
+  margin-bottom: 12px;
+}
+
+.market-item .price {
+  color: #1890ff;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Achievements Section */
+.achievements-list {
+  padding: 16px;
+}
+
+.achievement {
+  margin-bottom: 16px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.achievement.unlocked {
+  background-color: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.achievement.locked {
+  background-color: #f5f5f5;
+  opacity: 0.8;
+}
+
+.achievement h4 {
+  color: #262626;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.achievement p {
+  color: #595959;
+  margin-bottom: 8px;
+}
+
+.achievement .unlock-date {
+  color: #52c41a;
+  font-size: 14px;
+  font-style: italic;
+}
+
+/* Leaderboard Section */
+.leaderboard-list {
+  padding: 16px;
+}
+
+.leaderboard-entry {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.leaderboard-entry:hover {
+  background-color: #f0f0f0;
+}
+
+.leaderboard-entry .rank {
+  font-weight: bold;
+  color: #1890ff;
+  width: 40px;
+}
+
+.leaderboard-entry .address {
+  flex: 1;
+  color: #262626;
+  padding: 0 12px;
+}
+
+.leaderboard-entry .score {
+  font-weight: bold;
+  color: #52c41a;
+}
+
+/* Button Styles */
+.web3-game-ui .ant-btn {
+  border-radius: 6px;
+  height: 36px;
+  padding: 0 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.web3-game-ui .ant-btn-primary {
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+
+.web3-game-ui .ant-btn-primary:hover {
+  background-color: #40a9ff;
+  border-color: #40a9ff;
+}
+
+.web3-game-ui .ant-btn-primary:disabled {
+  background-color: #f5f5f5;
+  border-color: #d9d9d9;
+  color: #bfbfbf;
+}
+
+/* Loading State */
+.web3-game-ui .ant-spin {
+  margin-bottom: 16px;
+}
+
+.web3-game-ui .ant-spin-dot i {
+  background-color: #1890ff;
+}
+
+/* Alert Styles */
+.web3-game-ui .ant-alert {
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+/* Tab Styles */
+.web3-game-ui .ant-tabs-tab {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.web3-game-ui .ant-tabs-tab-active {
+  font-weight: 500;
+}
+
+.web3-game-ui .ant-tabs-ink-bar {
+  background-color: #1890ff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .inventory-grid,
+  .marketplace-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+
+  .web3-game-ui {
+    margin: 10px;
+  }
+
+  .web3-game-ui .ant-card-body {
+    padding: 16px;
+  }
+
+  .leaderboard-entry {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-grid,
+  .marketplace-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .web3-game-ui .ant-tabs-tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}

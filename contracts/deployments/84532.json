@@ -1,0 +1,11 @@
+{
+  "network": "baseTestnet",
+  "chainId": "84532",
+  "contractAddress": "0xE1E61ecdc2C98f22A83E22a9207b43Bf64e63f98",
+  "usdcAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+  "platformWallet": "0x28255623DC2743900A202Bfac6dd12974EAC2Ef1",
+  "reserveWallet": "0x28255623DC2743900A202Bfac6dd12974EAC2Ef1",
+  "guardian": "0x28255623DC2743900A202Bfac6dd12974EAC2Ef1",
+  "deployedAt": "2026-08-02T10:40:49.436Z",
+  "deployTx": "0xef132bc05f5db60bf0308f0146ff1ee9f238188d6b19968806add96b19751b2a"
+}

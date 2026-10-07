@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Market Overview v4 - Galeon</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #ffffff; color: #1a1a2e; }
+.ov-wrap { max-width: 1600px; margin: 0 auto; padding: 24px 32px; }
+
+/* ── Header ── */
+.ov-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 20px; border-bottom: 1px solid #e8e8ec; margin-bottom: 24px; }
+.ov-header h1 { font-size: 16px; font-weight: 700; color: #1a1a2e; font-family: 'JetBrains Mono', monospace; }
+.ov-header h1 span { color: #2563eb; }
+.ov-subtitle { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.ov-header-right { display: flex; align-items: center; gap: 12px; }
+.ov-tabs { display: flex; gap: 0; }
+.ov-tabs button { padding: 6px 16px; font-size: 11px; font-weight: 600; border: 1px solid #d1d5db; background: #fff; color: #64748b; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif; }
+.ov-tabs button:first-child { border-radius: 6px 0 0 6px; }
+.ov-tabs button:last-child { border-radius: 0 6px 6px 0; }
+.ov-tabs button:not(:first-child) { margin-left: -1px; }
+.ov-tabs button.active { background: #eff6ff; border-color: #2563eb; color: #2563eb; z-index: 1; position: relative; }
+.ov-refresh { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 14px; }
+.ov-live-dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; display: inline-block; margin-right: 6px; animation: ov-pulse 2s infinite; }
+@keyframes ov-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.ov-live-text { font-size: 11px; color: #94a3b8; }
+
+/* ── Environment ── */
+.ov-env { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.ov-env-card { flex: 1; min-width: 160px; background: #f8fafc; border: 1px solid #e8e8ec; border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+.ov-env-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; }
+.ov-env-icon.btc { background: #fef3c7; color: #d97706; }
+.ov-env-icon.regime { background: #ede9fe; color: #7c3aed; }
+.ov-env-icon.perf { background: #dcfce7; color: #16a34a; }
+.ov-env-icon.signals { background: #dbeafe; color: #2563eb; }
+.ov-env-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+.ov-env-value { font-size: 14px; font-weight: 700; color: #1a1a2e; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+.ov-env-value .up { color: #16a34a; }
+.ov-env-value .down { color: #dc2626; }
+.ov-env-sub { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+
+/* ── Sections ── */
+.ov-section { background: #fff; border: 1px solid #e8e8ec; border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+.ov-section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.ov-section-title { font-size: 13px; font-weight: 700; color: #1a1a2e; font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.5px; }
+.ov-section-badge { font-size: 10px; font-weight: 600; color: #2563eb; background: #eff6ff; padding: 3px 8px; border-radius: 4px; }
+
+/* ── Main Grid ── */
+.ov-grid { display: grid; grid-template-columns: 1fr 340px; gap: 20px; }
+
+/* ── Summary Section (Market > Sector > Pressure) ── */
+.ov-summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.ov-summary-card { background: #f8fafc; border: 1px solid #e8e8ec; border-radius: 10px; padding: 16px 18px; }
+.ov-summary-card-title { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.ov-summary-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; font-size: 12px; }
+.ov-summary-label { color: #64748b; }
+.ov-summary-val { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.ov-summary-val.up { color: #16a34a; }
+.ov-summary-val.down { color: #dc2626; }
+.ov-summary-val.neutral { color: #94a3b8; }
+.ov-data-source { font-size: 9px; color: #c0c7d0; margin-top: 8px; display: flex; justify-content: space-between; }
+.ov-data-missing { color: #f59e0b; font-weight: 600; }
+
+/* ── Pressure Banner ── */
+.ov-pressure { border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+.ov-pressure.low { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.ov-pressure.medium { background: #fefce8; border: 1px solid #fde68a; }
+.ov-pressure.high { background: #fef2f2; border: 1px solid #fecaca; }
+.ov-pressure-icon { font-size: 20px; }
+.ov-pressure-text { font-size: 12px; color: #1a1a2e; }
+.ov-pressure-text b { font-weight: 700; }
+.ov-pressure-sub { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+/* ── Filters ── */
+.ov-filters { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+.ov-filter-group { display: flex; gap: 0; }
+.ov-filter-group button { padding: 4px 10px; font-size: 10px; font-weight: 600; border: 1px solid #e2e8f0; background: #fff; color: #94a3b8; cursor: pointer; transition: all 0.12s; font-family: 'Inter', sans-serif; }
+.ov-filter-group button:first-child { border-radius: 4px 0 0 4px; }
+.ov-filter-group button:last-child { border-radius: 0 4px 4px 0; }
+.ov-filter-group button:not(:first-child) { margin-left: -1px; }
+.ov-filter-group button.active { background: #1a1a2e; border-color: #1a1a2e; color: #fff; z-index: 1; position: relative; }
+.ov-filter-sep { width: 1px; height: 16px; background: #e2e8f0; margin: 0 4px; }
+
+/* ── Table ── */
+.ov-table { width: 100%; border-collapse: collapse; }
+.ov-table th { font-size: 10px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; padding: 0 8px 10px; text-align: left; border-bottom: 1px solid #e8e8ec; white-space: nowrap; }
+.ov-table th.r { text-align: right; }
+.ov-table th.c { text-align: center; }
+.ov-table td { padding: 10px 8px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.ov-table tr.main-row { cursor: pointer; }
+.ov-table tr.main-row:hover { background: #f8fafc; }
+
+/* Token */
+.ov-token { display: flex; align-items: center; gap: 8px; }
+.ov-token-icon { width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #64748b; }
+.ov-token-name { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+.ov-token-sub { display: flex; align-items: center; gap: 6px; margin-top: 1px; }
+.ov-token-price { font-size: 11px; color: #94a3b8; }
+.ov-token-chg { font-size: 10px; font-weight: 600; }
+.ov-token-chg.up { color: #16a34a; }
+.ov-token-chg.down { color: #dc2626; }
+
+/* Status */
+.ov-status { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+.ov-status.entry { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+.ov-status.ready { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+.ov-status.watch { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
+.ov-status-dot { width: 5px; height: 5px; border-radius: 50%; }
+.ov-status.entry .ov-status-dot { background: #16a34a; animation: ov-pulse 2s infinite; }
+.ov-status.ready .ov-status-dot { background: #d97706; animation: ov-pulse 2s infinite; }
+.ov-status.watch .ov-status-dot { background: #94a3b8; }
+
+/* Signal */
+.ov-signal { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.ov-signal.long { background: #dcfce7; color: #16a34a; }
+.ov-signal.short { background: #fee2e2; color: #dc2626; }
+.ov-signal.neutral { background: #f1f5f9; color: #94a3b8; }
+
+/* Score */
+.ov-score-cell { text-align: right; }
+.ov-score { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.ov-score.pos { color: #16a34a; }
+.ov-score.neg { color: #dc2626; }
+.ov-score-change { font-size: 10px; font-weight: 500; }
+.ov-wr { font-size: 9px; color: #94a3b8; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+.ov-wr b { color: #1a1a2e; }
+
+/* Sparkline */
+.ov-sparkline { text-align: center; }
+
+/* Targets */
+.ov-targets { font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.6; }
+.ov-target-row { display: flex; align-items: center; gap: 4px; }
+.ov-target-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; min-width: 20px; }
+.ov-target-label.tp { color: #16a34a; }
+.ov-target-label.sl { color: #dc2626; }
+.ov-target-label.entry { color: #2563eb; }
+.ov-target-val { font-weight: 600; color: #1a1a2e; }
+.ov-target-pct { font-size: 9px; color: #94a3b8; margin-left: 2px; }
+
+/* R:R */
+.ov-rr { display: inline-flex; align-items: center; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; }
+.ov-rr.good { color: #16a34a; }
+.ov-rr.ok { color: #d97706; }
+.ov-rr-bar { width: 36px; height: 4px; border-radius: 2px; background: #e2e8f0; overflow: hidden; display: inline-block; vertical-align: middle; }
+.ov-rr-fill { height: 100%; border-radius: 2px; }
+.ov-rr.good .ov-rr-fill { background: #16a34a; width: 80%; }
+.ov-rr.ok .ov-rr-fill { background: #d97706; width: 55%; }
+
+/* Star */
+.ov-star { width: 24px; height: 24px; border: none; background: transparent; cursor: pointer; font-size: 14px; border-radius: 4px; transition: all 0.15s; color: #d1d5db; }
+.ov-star:hover { background: #fef3c7; color: #f59e0b; }
+.ov-star.active { color: #f59e0b; }
+
+/* ═══ EXPANDED ROW: Research Report ═══ */
+.ov-expand-row { display: none; }
+.ov-expand-row.open { display: table-row; }
+.ov-expand-row td { padding: 0 8px 16px; background: #fafbfc; }
+.ov-expand-wrap { padding: 16px; border-radius: 10px; border: 1px solid #e8e8ec; background: #fff; }
+
+/* Report header */
+.ov-rpt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+.ov-rpt-title { font-size: 14px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.ov-rpt-meta { font-size: 10px; color: #94a3b8; display: flex; gap: 12px; }
+.ov-rpt-meta-item { display: flex; align-items: center; gap: 4px; }
+.ov-rpt-meta-dot { width: 4px; height: 4px; border-radius: 50%; background: #d1d5db; }
+
+/* Report grid */
+.ov-rpt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+
+/* Dimension card (inside report) */
+.ov-rpt-card { background: #f8fafc; border-radius: 8px; padding: 14px 16px; border: 1px solid #f1f5f9; }
+.ov-rpt-card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.ov-rpt-card-title { font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.3px; }
+.ov-rpt-card-score { font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.ov-rpt-card-score.pos { color: #16a34a; }
+.ov-rpt-card-score.neg { color: #dc2626; }
+.ov-rpt-card-score.zero { color: #94a3b8; }
+.ov-rpt-detail { font-size: 11px; color: #64748b; line-height: 1.6; }
+.ov-rpt-detail b { color: #1a1a2e; }
+.ov-rpt-data-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; }
+.ov-rpt-data-label { color: #94a3b8; }
+.ov-rpt-data-val { font-weight: 600; color: #1a1a2e; font-family: 'JetBrains Mono', monospace; }
+
+/* Pattern + Prediction */
+.ov-rpt-pattern { background: #f8fafc; border-radius: 8px; padding: 14px 16px; border: 1px solid #f1f5f9; margin-bottom: 16px; display: flex; gap: 20px; }
+.ov-rpt-pattern-left { flex: 1; }
+.ov-rpt-pattern-name { font-size: 13px; font-weight: 700; color: #1a1a2e; }
+.ov-rpt-pattern-detail { font-size: 11px; color: #64748b; line-height: 1.6; margin-top: 6px; }
+.ov-rpt-pattern-right { text-align: right; min-width: 160px; }
+.ov-rpt-pattern-target-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; }
+.ov-rpt-pattern-target-val { font-size: 18px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
+.ov-rpt-pattern-target-basis { font-size: 10px; color: #94a3b8; margin-top: 4px; font-style: italic; }
+
+.ov-outlook-tag { display: inline-block; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 3px; }
+.ov-outlook-tag.bullish { background: #dcfce7; color: #16a34a; }
+.ov-outlook-tag.bearish { background: #fee2e2; color: #dc2626; }
+.ov-outlook-tag.neutral { background: #f1f5f9; color: #64748b; }
+
+/* ═══ BEAR CASE / RISK ASSESSMENT (the key addition) ═══ */
+.ov-rpt-assess { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.ov-rpt-bull, .ov-rpt-bear { border-radius: 8px; padding: 14px 16px; }
+.ov-rpt-bull { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.ov-rpt-bear { background: #fef2f2; border: 1px solid #fecaca; }
+.ov-rpt-case-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+.ov-rpt-bull .ov-rpt-case-title { color: #16a34a; }
+.ov-rpt-bear .ov-rpt-case-title { color: #dc2626; }
+.ov-rpt-case-list { list-style: none; padding: 0; }
+.ov-rpt-case-list li { font-size: 11px; color: #1a1a2e; padding: 3px 0; padding-left: 14px; position: relative; line-height: 1.5; }
+.ov-rpt-case-list li::before { content: ''; position: absolute; left: 0; top: 10px; width: 6px; height: 6px; border-radius: 50%; }
+.ov-rpt-bull .ov-rpt-case-list li::before { background: #16a34a; }
+.ov-rpt-bear .ov-rpt-case-list li::before { background: #dc2626; }
+
+/* Risk metrics row */
+.ov-rpt-risk { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px; }
+.ov-rpt-risk-item { background: #f8fafc; border-radius: 6px; padding: 10px 12px; text-align: center; border: 1px solid #f1f5f9; }
+.ov-rpt-risk-label { font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.3px; }
+.ov-rpt-risk-val { font-size: 15px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-top: 4px; color: #1a1a2e; }
+.ov-rpt-risk-val.up { color: #16a34a; }
+.ov-rpt-risk-val.down { color: #dc2626; }
+.ov-rpt-risk-note { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+
+/* Action Summary */
+.ov-rpt-action { background: #f8fafc; border-radius: 8px; padding: 14px 16px; border: 1px solid #e8e8ec; }
+.ov-rpt-action-title { font-size: 11px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px; }
+.ov-rpt-action-row { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; font-size: 12px; }
+.ov-rpt-action-icon { font-size: 12px; flex-shrink: 0; }
+.ov-rpt-action-text { color: #1a1a2e; line-height: 1.5; }
+.ov-rpt-action-text b { font-weight: 700; }
+.ov-rpt-action-text .muted { color: #94a3b8; font-size: 11px; }
+
+/* Data source footer */
+.ov-rpt-footer { display: flex; justify-content: space-between; margin-top: 14px; padding-top: 10px; border-top: 1px solid #f1f5f9; font-size: 9px; color: #c0c7d0; }
+.ov-rpt-footer .missing { color: #f59e0b; font-weight: 600; }
+
+/* ── Signal Feed ── */
+.ov-feed { max-height: 900px; overflow-y: auto; }
+.ov-feed-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+.ov-feed-item:last-child { border-bottom: none; }
+.ov-feed-time { font-size: 10px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; min-width: 42px; padding-top: 2px; }
+.ov-feed-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.ov-feed-dot.direction { background: #f59e0b; }
+.ov-feed-dot.score { background: #2563eb; }
+.ov-feed-dot.new { background: #16a34a; }
+.ov-feed-dot.blocked { background: #dc2626; }
+.ov-feed-dot.dim { background: #7c3aed; }
+.ov-feed-content { flex: 1; }
+.ov-feed-title { font-size: 12px; font-weight: 600; color: #1a1a2e; }
+.ov-feed-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+.ov-feed-tag { display: inline-block; font-size: 9px; font-weight: 600; padding: 1px 6px; border-radius: 3px; margin-top: 4px; }
+.ov-feed-tag.warn { background: #fef3c7; color: #d97706; }
+.ov-feed-tag.info { background: #dbeafe; color: #2563eb; }
+.ov-feed-tag.danger { background: #fee2e2; color: #dc2626; }
+.ov-feed-tag.success { background: #dcfce7; color: #16a34a; }
+
+/* Chevron */
+.chevron { transition: transform 0.2s; display: inline-block; font-size: 10px; color: #94a3b8; margin-left: 4px; }
+.chevron.open { transform: rotate(90deg); }
+
+/* Responsive */
+@media (max-width: 1200px) { .ov-grid { grid-template-columns: 1fr; } .ov-summary-grid { grid-template-columns: 1fr; } .ov-rpt-grid { grid-template-columns: 1fr; } .ov-rpt-assess { grid-template-columns: 1fr; } .ov-rpt-risk { grid-template-columns: repeat(3, 1fr); } }
+</style>
+</head>
+<body>
+<div class="ov-wrap">
+
+  <!-- Header -->
+  <div class="ov-header">
+    <div>
+      <h1><span>AI</span> Market Overview</h1>
+      <div class="ov-subtitle">Real-time AI signal analysis across crypto &amp; RWA markets</div>
+    </div>
+    <div class="ov-header-right">
+      <span><span class="ov-live-dot"></span><span class="ov-live-text">Live - Updated 30s ago</span></span>
+      <div class="ov-tabs">
+        <button class="active">All Signals</button>
+        <button>My Watchlist</button>
+      </div>
+      <button class="ov-refresh" title="Refresh">&#x21bb;</button>
+    </div>
+  </div>
+
+  <!-- ═══ Layer 1: Market Environment ═══ -->
+  <div class="ov-env">
+    <div class="ov-env-card">
+      <div class="ov-env-icon btc">&#x20bf;</div>
+      <div>
+        <div class="ov-env-label">BTC Trend</div>
+        <div class="ov-env-value"><span class="up">BULL</span> &#x2197;</div>
+        <div class="ov-env-sub">$67,420 | +2.3% 24h</div>
+      </div>
+    </div>
+    <div class="ov-env-card">
+      <div class="ov-env-icon regime">R</div>
+      <div>
+        <div class="ov-env-label">Market Regime</div>
+        <div class="ov-env-value">TREND_LONG</div>
+        <div class="ov-env-sub">Edge: BTC_PUMP archetype</div>
+      </div>
+    </div>
+    <div class="ov-env-card">
+      <div class="ov-env-icon perf">&#x2713;</div>
+      <div>
+        <div class="ov-env-label">AI Today</div>
+        <div class="ov-env-value"><span class="up">6W</span> / 2L</div>
+        <div class="ov-env-sub">WR 75% | PnL <span style="color:#16a34a;font-weight:600">+$420</span></div>
+      </div>
+    </div>
+    <div class="ov-env-card">
+      <div class="ov-env-icon signals">#</div>
+      <div>
+        <div class="ov-env-label">Active Signals</div>
+        <div class="ov-env-value">14 <span style="font-size:11px;color:#94a3b8;font-weight:400">tokens</span></div>
+        <div class="ov-env-sub">3 Entry | 4 Ready | 7 Watch</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Layer 2: Sector & Stress Overview ═══ -->
+  <div class="ov-summary-grid">
+    <div class="ov-summary-card">
+      <div class="ov-summary-card-title">Sector Heatmap</div>
+      <div class="ov-summary-row"><span class="ov-summary-label">Layer 1 (ETH, SOL, AVAX)</span><span class="ov-summary-val up">+3.2% avg</span></div>
+      <div class="ov-summary-row"><span class="ov-summary-label">DeFi (LINK, UNI, AAVE)</span><span class="ov-summary-val up">+2.1% avg</span></div>
+      <div class="ov-summary-row"><span class="ov-summary-label">Meme (DOGE, PEPE, WIF)</span><span class="ov-summary-val down">-1.8% avg</span></div>
+      <div class="ov-summary-row"><span class="ov-summary-label">RWA (AAPL, TSLA, NVDA)</span><span class="ov-summary-val up">+1.2% avg</span></div>
+      <div class="ov-data-source">
+        <span>Source: Binance + HL | 14:30 UTC</span>
+      </div>
+    </div>
+    <div class="ov-summary-card">
+      <div class="ov-summary-card-title">On-chain Stress Indicators</div>
+      <div class="ov-summary-row"><span class="ov-summary-label">Avg Funding Rate</span><span class="ov-summary-val up">+0.012%</span></div>
+      <div class="ov-summary-row"><span class="ov-summary-label">Total OI Change (1h)</span><span class="ov-summary-val up">+2.4%</span></div>
+      <div class="ov-summary-row"><span class="ov-summary-label">Taker Buy/Sell</span><span class="ov-summary-val up">1.08</span></div>
+      <div class="ov-summary-row"><span class="ov-summary-label">Liquidation Bias (4h)</span><span class="ov-summary-val down">62% shorts liq'd</span></div>
+      <div class="ov-data-source">
+        <span>Source: Binance API | 14:30 UTC</span>
+        <span class="ov-data-missing">&#x26A0; Social data delayed 15min</span>
+      </div>
+    </div>
+    <div class="ov-summary-card">
+      <div class="ov-summary-card-title">What Changed (Last 1h)</div>
+      <div class="ov-summary-row" style="padding:3px 0"><span style="font-size:12px;color:#1a1a2e">&#x1F7E2; BTC broke $67k, trend confirmed BULL</span></div>
+      <div class="ov-summary-row" style="padding:3px 0"><span style="font-size:12px;color:#1a1a2e">&#x1F7E1; Meme sector weakening, SM exiting DOGE/WIF</span></div>
+      <div class="ov-summary-row" style="padding:3px 0"><span style="font-size:12px;color:#1a1a2e">&#x1F7E2; ETH/LINK building momentum, OI accumulating</span></div>
+      <div class="ov-summary-row" style="padding:3px 0"><span style="font-size:12px;color:#94a3b8">&#x26AA; RWA stocks steady, no abnormal pressure</span></div>
+    </div>
+  </div>
+
+  <!-- Stress Banner -->
+  <div class="ov-pressure low">
+    <div class="ov-pressure-icon">&#x1F7E2;</div>
+    <div>
+      <div class="ov-pressure-text"><b>Market Stress: Low</b> &#x2014; No abnormal pressure detected. Normal trading conditions.</div>
+      <div class="ov-pressure-sub">Short liquidation dominance (62%) suggests mild short squeeze. Funding positive but not extreme.</div>
+    </div>
+  </div>
+
+  <!-- ═══ Main Grid ═══ -->
+  <div class="ov-grid">
+
+    <!-- Left: Signal Ranking -->
+    <div class="ov-section" style="overflow-x:auto;">
+      <div class="ov-section-head">
+        <div class="ov-section-title">AI Signal Ranking</div>
+        <div class="ov-section-badge">Click row for full analysis</div>
+      </div>
+
+      <div class="ov-filters">
+        <div class="ov-filter-group"><button class="active">All</button><button>LONG</button><button>SHORT</button></div>
+        <div class="ov-filter-sep"></div>
+        <div class="ov-filter-group"><button class="active">All</button><button>Entry</button><button>Ready</button><button>Watch</button></div>
+        <div class="ov-filter-sep"></div>
+        <div class="ov-filter-group"><button class="active">All</button><button>Crypto</button><button>RWA</button></div>
+      </div>
+
+      <table class="ov-table">
+        <thead>
+          <tr>
+            <th style="width:24px"></th>
+            <th>Token</th>
+            <th>Status</th>
+            <th>Signal</th>
+            <th class="r">Score / WR</th>
+            <th class="c">Trend</th>
+            <th>Entry / TP / SL</th>
+            <th class="c">R:R</th>
+            <th style="width:28px"></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- ═══ ETH ═══ -->
+          <tr class="main-row" onclick="toggleExpand('eth')">
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">1</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">ETH</div>
+                <div>
+                  <div class="ov-token-name">ETH <span class="chevron" id="chev-eth">&#x25B8;</span></div>
+                  <div class="ov-token-sub"><span class="ov-token-price">$3,520</span><span class="ov-token-chg up">+4.2%</span></div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ov-status entry"><span class="ov-status-dot"></span>Entry</span></td>
+            <td><span class="ov-signal long">&#x25B2; LONG</span></td>
+            <td class="ov-score-cell">
+              <div class="ov-score pos">+12</div>
+              <div class="ov-score-change" style="color:#16a34a">&#x2191;+4</div>
+              <div class="ov-wr">Hist WR <b>72%</b></div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24"><polyline points="0,20 10,18 20,16 30,14 40,16 50,10 60,6 72,2" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="2" r="2" fill="#16a34a"/></svg>
+            </td>
+            <td>
+              <div class="ov-targets">
+                <div class="ov-target-row"><span class="ov-target-label entry">IN</span><span class="ov-target-val">3,480 - 3,530</span></div>
+                <div class="ov-target-row"><span class="ov-target-label tp">TP</span><span class="ov-target-val">3,720</span><span class="ov-target-pct">+5.7%</span></div>
+                <div class="ov-target-row"><span class="ov-target-label sl">SL</span><span class="ov-target-val">3,410</span><span class="ov-target-pct">-3.1%</span></div>
+              </div>
+            </td>
+            <td style="text-align:center"><div class="ov-rr good">1:1.8<span class="ov-rr-bar"><span class="ov-rr-fill"></span></span></div></td>
+            <td><button class="ov-star active" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+          <!-- ═══ ETH EXPANDED: Full Research Report ═══ -->
+          <tr class="ov-expand-row" id="expand-eth">
+            <td colspan="9">
+              <div class="ov-expand-wrap">
+
+                <!-- Report Header -->
+                <div class="ov-rpt-header">
+                  <div class="ov-rpt-title">&#x1F50D; ETH &#x2014; Full AI Analysis</div>
+                  <div class="ov-rpt-meta">
+                    <div class="ov-rpt-meta-item"><span class="ov-rpt-meta-dot"></span>Last scan: 14:30 UTC</div>
+                    <div class="ov-rpt-meta-item"><span class="ov-rpt-meta-dot"></span>Sources: Binance + Hyperliquid + On-chain</div>
+                    <div class="ov-rpt-meta-item" style="color:#f59e0b;font-weight:600">&#x26A0; Social data delayed 15min</div>
+                  </div>
+                </div>
+
+                <!-- 4 Dimension Cards -->
+                <div class="ov-rpt-grid">
+                  <div class="ov-rpt-card">
+                    <div class="ov-rpt-card-head">
+                      <div class="ov-rpt-card-title">Price Structure</div>
+                      <div class="ov-rpt-card-score pos">+4</div>
+                    </div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">K-line (4H)</span><span class="ov-rpt-data-val" style="color:#16a34a">BULL (str=3)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Position</span><span class="ov-rpt-data-val">62% (mid-range)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">EMA20/60</span><span class="ov-rpt-data-val" style="color:#16a34a">Bullish align</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Support</span><span class="ov-rpt-data-val">$3,410 (EMA60)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Resistance</span><span class="ov-rpt-data-val">$3,720 (prev high)</span></div>
+                  </div>
+
+                  <div class="ov-rpt-card">
+                    <div class="ov-rpt-card-head">
+                      <div class="ov-rpt-card-title">On-chain Flow</div>
+                      <div class="ov-rpt-card-score pos">+5</div>
+                    </div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Smart Money</span><span class="ov-rpt-data-val" style="color:#16a34a">+15 (strong inflow)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">OI</span><span class="ov-rpt-data-val" style="color:#16a34a">Expanding +8%</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Taker</span><span class="ov-rpt-data-val" style="color:#16a34a">1.12 (buyers)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Funding</span><span class="ov-rpt-data-val">+0.008% (normal)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Buy/Sell</span><span class="ov-rpt-data-val" style="color:#16a34a">BS=1.6 (net buying)</span></div>
+                  </div>
+
+                  <div class="ov-rpt-card">
+                    <div class="ov-rpt-card-head">
+                      <div class="ov-rpt-card-title">Market Sentiment</div>
+                      <div class="ov-rpt-card-score pos">+2</div>
+                    </div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Top Traders</span><span class="ov-rpt-data-val">TT=-1.2 (neutral)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Whale L/S</span><span class="ov-rpt-data-val" style="color:#16a34a">1.4 (adding longs)</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Retail L/S</span><span class="ov-rpt-data-val" style="color:#f59e0b">1.6 (mild chase) &#x26A0;</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Social</span><span class="ov-rpt-data-val">Normal volume</span></div>
+                  </div>
+
+                  <div class="ov-rpt-card">
+                    <div class="ov-rpt-card-head">
+                      <div class="ov-rpt-card-title">Environment</div>
+                      <div class="ov-rpt-card-score pos">+1</div>
+                    </div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">BTC Trend</span><span class="ov-rpt-data-val" style="color:#16a34a">BULL confirmed</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Regime</span><span class="ov-rpt-data-val">TREND_LONG</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">Archetype</span><span class="ov-rpt-data-val">BTC_PUMP</span></div>
+                    <div class="ov-rpt-data-row"><span class="ov-rpt-data-label">7D Trend</span><span class="ov-rpt-data-val" style="color:#16a34a">+8.4%</span></div>
+                  </div>
+                </div>
+
+                <!-- Pattern + 2D Prediction -->
+                <div class="ov-rpt-pattern">
+                  <div class="ov-rpt-pattern-left">
+                    <div class="ov-rpt-pattern-name">
+                      <span class="ov-outlook-tag bullish">Bullish</span> &nbsp;
+                      Bull Flag Breakout &#x2014; 4H Confirmed
+                    </div>
+                    <div class="ov-rpt-pattern-detail">
+                      Flagpole from $3,280 (+7.3%). Consolidation at $3,450-$3,520 with declining volume (3 candles).<br>
+                      Breakout above $3,530 with volume expansion. Measured move = flagpole height projected from breakout.<br>
+                      <b>Invalidation:</b> Close below $3,410 (EMA60) negates the pattern.
+                    </div>
+                  </div>
+                  <div class="ov-rpt-pattern-right">
+                    <div class="ov-rpt-pattern-target-label">2-Day Target</div>
+                    <div class="ov-rpt-pattern-target-val" style="color:#16a34a">$3,680 - $3,750</div>
+                    <div class="ov-rpt-pattern-target-basis">Basis: Flagpole measured move</div>
+                    <div style="font-size:10px;color:#94a3b8;margin-top:6px">Est. time to target: 18-36h</div>
+                  </div>
+                </div>
+
+                <!-- Bull Case vs Bear Case -->
+                <div class="ov-rpt-assess">
+                  <div class="ov-rpt-bull">
+                    <div class="ov-rpt-case-title">&#x25B2; Bull Case (Why go LONG)</div>
+                    <ul class="ov-rpt-case-list">
+                      <li><b>SM +15 strong inflow</b> &#x2014; Smart money actively entering, not just holding</li>
+                      <li><b>OI expanding +8%</b> &#x2014; New money entering, not just leverage rotation</li>
+                      <li><b>Bull flag confirmed</b> on 4H &#x2014; measured target $3,720</li>
+                      <li><b>BTC BULL</b> environment &#x2014; TREND_LONG regime historically 68% WR for longs</li>
+                      <li><b>Whales adding longs</b> &#x2014; Top trader L/S ratio 1.4 and rising</li>
+                    </ul>
+                  </div>
+                  <div class="ov-rpt-bear">
+                    <div class="ov-rpt-case-title">&#x25BC; Strongest Bear Argument</div>
+                    <ul class="ov-rpt-case-list">
+                      <li><b>Retail mild chasing</b> &#x2014; Retail L/S at 1.6, historically when >2.0 it's a contrarian sell signal. Not there yet but trending up.</li>
+                      <li><b>Funding turning positive</b> &#x2014; +0.008% is normal, but if it spikes to >0.03% the trade gets crowded fast</li>
+                      <li><b>$3,720 resistance</b> is previous high &#x2014; first test often rejects. If rejected, pullback to $3,450 is likely (-2%)</li>
+                      <li><b>BTC dependency</b> &#x2014; If BTC reverses from $68k, this bull flag breaks down instantly. ETH rarely rallies into BTC weakness.</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Risk Metrics -->
+                <div class="ov-rpt-risk">
+                  <div class="ov-rpt-risk-item">
+                    <div class="ov-rpt-risk-label">Upside</div>
+                    <div class="ov-rpt-risk-val up">+5.7%</div>
+                    <div class="ov-rpt-risk-note">to TP $3,720</div>
+                  </div>
+                  <div class="ov-rpt-risk-item">
+                    <div class="ov-rpt-risk-label">Downside</div>
+                    <div class="ov-rpt-risk-val down">-3.1%</div>
+                    <div class="ov-rpt-risk-note">to SL $3,410</div>
+                  </div>
+                  <div class="ov-rpt-risk-item">
+                    <div class="ov-rpt-risk-label">R:R Ratio</div>
+                    <div class="ov-rpt-risk-val up">1:1.8</div>
+                    <div class="ov-rpt-risk-note">favorable</div>
+                  </div>
+                  <div class="ov-rpt-risk-item">
+                    <div class="ov-rpt-risk-label">Est. Hold</div>
+                    <div class="ov-rpt-risk-val">18-36h</div>
+                    <div class="ov-rpt-risk-note">based on pattern</div>
+                  </div>
+                  <div class="ov-rpt-risk-item">
+                    <div class="ov-rpt-risk-label">Volatility</div>
+                    <div class="ov-rpt-risk-val">Medium</div>
+                    <div class="ov-rpt-risk-note">4H ATR: $85</div>
+                  </div>
+                </div>
+
+                <!-- Action Summary -->
+                <div class="ov-rpt-action">
+                  <div class="ov-rpt-action-title">&#x1F4CB; AI Conclusion</div>
+                  <div class="ov-rpt-action-row">
+                    <div class="ov-rpt-action-icon">&#x1F7E2;</div>
+                    <div class="ov-rpt-action-text"><b>Worth pursuing.</b> Strong confluence: SM inflow + OI expansion + bull flag + BTC BULL. R:R 1:1.8 meets threshold.</div>
+                  </div>
+                  <div class="ov-rpt-action-row">
+                    <div class="ov-rpt-action-icon">&#x26A0;&#xFE0F;</div>
+                    <div class="ov-rpt-action-text"><b>Watch for:</b> Retail L/S approaching 2.0 (contrarian trigger), funding spike above 0.03%, BTC rejection at $68k.</div>
+                  </div>
+                  <div class="ov-rpt-action-row">
+                    <div class="ov-rpt-action-icon">&#x23F3;</div>
+                    <div class="ov-rpt-action-text"><b>If waiting:</b> Better entry on retest of $3,480 breakout zone. <span class="muted">Retest improves R:R to 1:2.2</span></div>
+                  </div>
+                </div>
+
+                <!-- Data Source Footer -->
+                <div class="ov-rpt-footer">
+                  <span>Data: Binance API (funding, OI, L/S), Hyperliquid (SM, taker, fills), K-line analysis (4H, 1H) | Scan: 14:30 UTC Sep 15</span>
+                  <span class="missing">&#x26A0; Missing: Social sentiment (API delayed), on-chain whale wallet transfers</span>
+                </div>
+
+              </div>
+            </td>
+          </tr>
+
+          <!-- ═══ DOGE (collapsed) ═══ -->
+          <tr class="main-row" onclick="toggleExpand('doge')">
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">2</td>
+            <td>
+              <div class="ov-token">
+                <div class="ov-token-icon">DOGE</div>
+                <div>
+                  <div class="ov-token-name">DOGE <span class="chevron" id="chev-doge">&#x25B8;</span></div>
+                  <div class="ov-token-sub"><span class="ov-token-price">$0.1842</span><span class="ov-token-chg down">-2.8%</span></div>
+                </div>
+              </div>
+            </td>
+            <td><span class="ov-status entry"><span class="ov-status-dot"></span>Entry</span></td>
+            <td><span class="ov-signal short">&#x25BC; SHORT</span></td>
+            <td class="ov-score-cell">
+              <div class="ov-score neg">-9</div>
+              <div class="ov-score-change" style="color:#dc2626">&#x2193;-3</div>
+              <div class="ov-wr">Hist WR <b>68%</b></div>
+            </td>
+            <td class="ov-sparkline">
+              <svg width="72" height="24" viewBox="0 0 72 24"><polyline points="0,6 10,8 20,10 30,8 40,12 50,16 60,20 72,22" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="22" r="2" fill="#dc2626"/></svg>
+            </td>
+            <td>
+              <div class="ov-targets">
+                <div class="ov-target-row"><span class="ov-target-label entry">IN</span><span class="ov-target-val">0.183 - 0.186</span></div>
+                <div class="ov-target-row"><span class="ov-target-label tp">TP</span><span class="ov-target-val">0.168</span><span class="ov-target-pct">+8.7%</span></div>
+                <div class="ov-target-row"><span class="ov-target-label sl">SL</span><span class="ov-target-val">0.192</span><span class="ov-target-pct">-4.3%</span></div>
+              </div>
+            </td>
+            <td style="text-align:center"><div class="ov-rr good">1:2.0<span class="ov-rr-bar"><span class="ov-rr-fill"></span></span></div></td>
+            <td><button class="ov-star" onclick="event.stopPropagation()">&#x2606;</button></td>
+          </tr>
+
+          <!-- ═══ LINK ═══ -->
+          <tr class="main-row">
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">3</td>
+            <td>
+              <div class="ov-token"><div class="ov-token-icon">LINK</div><div><div class="ov-token-name">LINK</div><div class="ov-token-sub"><span class="ov-token-price">$18.75</span><span class="ov-token-chg up">+3.1%</span></div></div></div>
+            </td>
+            <td><span class="ov-status ready"><span class="ov-status-dot"></span>Ready</span></td>
+            <td><span class="ov-signal long">&#x25B2; LONG</span></td>
+            <td class="ov-score-cell"><div class="ov-score pos">+9</div><div class="ov-score-change" style="color:#16a34a">&#x2191;+2</div><div class="ov-wr">Hist WR <b>65%</b></div></td>
+            <td class="ov-sparkline"><svg width="72" height="24" viewBox="0 0 72 24"><polyline points="0,16 10,14 20,12 30,12 40,10 50,8 60,6 72,4" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="4" r="2" fill="#16a34a"/></svg></td>
+            <td><div class="ov-targets"><div class="ov-target-row"><span class="ov-target-label entry">IN</span><span class="ov-target-val">18.50 - 18.80</span></div><div class="ov-target-row"><span class="ov-target-label tp">TP</span><span class="ov-target-val">20.40</span><span class="ov-target-pct">+8.8%</span></div><div class="ov-target-row"><span class="ov-target-label sl">SL</span><span class="ov-target-val">17.80</span><span class="ov-target-pct">-5.1%</span></div></div></td>
+            <td style="text-align:center"><div class="ov-rr ok">1:1.7<span class="ov-rr-bar"><span class="ov-rr-fill"></span></span></div></td>
+            <td><button class="ov-star" onclick="event.stopPropagation()">&#x2606;</button></td>
+          </tr>
+
+          <!-- ═══ AAPL ═══ -->
+          <tr class="main-row">
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">4</td>
+            <td>
+              <div class="ov-token"><div class="ov-token-icon" style="background:#dbeafe;color:#2563eb">AAPL</div><div><div class="ov-token-name">AAPL <span style="font-size:9px;color:#2563eb;background:#eff6ff;padding:1px 5px;border-radius:3px;font-weight:600;margin-left:4px">RWA</span></div><div class="ov-token-sub"><span class="ov-token-price">$198.32</span><span class="ov-token-chg up">+1.5%</span></div></div></div>
+            </td>
+            <td><span class="ov-status ready"><span class="ov-status-dot"></span>Ready</span></td>
+            <td><span class="ov-signal long">&#x25B2; LONG</span></td>
+            <td class="ov-score-cell"><div class="ov-score pos">+7</div><div class="ov-score-change" style="color:#16a34a">&#x2191;+4</div><div class="ov-wr">Hist WR <b>63%</b></div></td>
+            <td class="ov-sparkline"><svg width="72" height="24" viewBox="0 0 72 24"><polyline points="0,18 10,16 20,14 30,16 40,12 50,10 60,8 72,6" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="6" r="2" fill="#16a34a"/></svg></td>
+            <td><div class="ov-targets"><div class="ov-target-row"><span class="ov-target-label entry">IN</span><span class="ov-target-val">196 - 199</span></div><div class="ov-target-row"><span class="ov-target-label tp">TP</span><span class="ov-target-val">210</span><span class="ov-target-pct">+5.9%</span></div><div class="ov-target-row"><span class="ov-target-label sl">SL</span><span class="ov-target-val">192</span><span class="ov-target-pct">-3.2%</span></div></div></td>
+            <td style="text-align:center"><div class="ov-rr ok">1:1.8<span class="ov-rr-bar"><span class="ov-rr-fill"></span></span></div></td>
+            <td><button class="ov-star active" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+          <!-- ═══ SOL (Watch) ═══ -->
+          <tr class="main-row">
+            <td style="color:#94a3b8;font-size:11px;font-weight:600">5</td>
+            <td>
+              <div class="ov-token"><div class="ov-token-icon">SOL</div><div><div class="ov-token-name">SOL</div><div class="ov-token-sub"><span class="ov-token-price">$178.90</span><span class="ov-token-chg down">-0.6%</span></div></div></div>
+            </td>
+            <td><span class="ov-status watch"><span class="ov-status-dot"></span>Watch</span></td>
+            <td><span class="ov-signal neutral">&#x25CF; WAIT</span></td>
+            <td class="ov-score-cell"><div class="ov-score" style="color:#64748b">+2</div><div class="ov-score-change" style="color:#dc2626">&#x2193;-7</div><div class="ov-wr">Hist WR <b>52%</b></div></td>
+            <td class="ov-sparkline"><svg width="72" height="24" viewBox="0 0 72 24"><polyline points="0,4 10,6 20,4 30,6 40,8 50,14 60,16 72,18" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="18" r="2" fill="#94a3b8"/></svg></td>
+            <td><div class="ov-targets" style="color:#94a3b8;"><div style="font-size:11px;">Signal too weak</div><div style="font-size:10px;margin-top:2px">Continue monitoring</div></div></td>
+            <td style="text-align:center;color:#94a3b8">&#x2014;</td>
+            <td><button class="ov-star active" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right: Signal Feed -->
+    <div class="ov-section">
+      <div class="ov-section-head">
+        <div class="ov-section-title">Signal Feed</div>
+        <div class="ov-section-badge">Live</div>
+      </div>
+      <div class="ov-feed">
+        <div class="ov-feed-item"><div class="ov-feed-time">14:30</div><div class="ov-feed-dot score"></div><div class="ov-feed-content"><div class="ov-feed-title">ETH &#x2192; Entry status</div><div class="ov-feed-desc">Score +8&#x2192;+12, bull flag confirmed, SM inflow +15</div><span class="ov-feed-tag success">Entry Signal</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">14:25</div><div class="ov-feed-dot direction"></div><div class="ov-feed-content"><div class="ov-feed-title">DOGE direction flip &#x2192; SHORT</div><div class="ov-feed-desc">Descending triangle breaking, SM exiting, R:R 1:2.0</div><span class="ov-feed-tag warn">Direction Flip</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">14:20</div><div class="ov-feed-dot dim"></div><div class="ov-feed-content"><div class="ov-feed-title">SOL downgraded to Watch</div><div class="ov-feed-desc">Score +9&#x2192;+2, whales reducing. Continue monitoring.</div><span class="ov-feed-tag info">Status Change</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">14:15</div><div class="ov-feed-dot new"></div><div class="ov-feed-content"><div class="ov-feed-title">PEPE volume spike detected</div><div class="ov-feed-desc">3x avg volume, price flat. Possible accumulation.</div><span class="ov-feed-tag success">New Signal</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">14:10</div><div class="ov-feed-dot score"></div><div class="ov-feed-content"><div class="ov-feed-title">AAPL score +3 &#x2192; +7</div><div class="ov-feed-desc">Double bottom neckline retest, upgrading to Ready</div><span class="ov-feed-tag success">Upgrading</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">14:05</div><div class="ov-feed-dot blocked"></div><div class="ov-feed-content"><div class="ov-feed-title">XRP signal blocked by AI</div><div class="ov-feed-desc">Position 92%, R:R below 1.0. Risk too high for entry.</div><span class="ov-feed-tag danger">Risk Block</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">14:00</div><div class="ov-feed-dot direction"></div><div class="ov-feed-content"><div class="ov-feed-title">BTC regime &#x2192; BULL</div><div class="ov-feed-desc">3 consecutive green candles, RSI recovery from 42</div><span class="ov-feed-tag warn">Regime Change</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">13:55</div><div class="ov-feed-dot score"></div><div class="ov-feed-content"><div class="ov-feed-title">LINK score +5 &#x2192; +9</div><div class="ov-feed-desc">OI expanding +12%, approaching Entry threshold</div><span class="ov-feed-tag success">Upgrading</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">13:45</div><div class="ov-feed-dot score"></div><div class="ov-feed-content"><div class="ov-feed-title">Previous ETH LONG hit TP</div><div class="ov-feed-desc">Entry $3,380 &#x2192; $3,480 (+2.9%) in 2h 15min &#x2713;</div><span class="ov-feed-tag success">TP Hit</span></div></div>
+        <div class="ov-feed-item"><div class="ov-feed-time">13:30</div><div class="ov-feed-dot dim"></div><div class="ov-feed-content"><div class="ov-feed-title">ARB retail chasing longs heavily</div><div class="ov-feed-desc">Retail L/S 1.2&#x2192;2.1, strong contrarian SHORT signal</div><span class="ov-feed-tag info">Dimension Alert</span></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleExpand(id) {
+  const row = document.getElementById('expand-' + id);
+  const chev = document.getElementById('chev-' + id);
+  if (!row) return;
+  row.classList.toggle('open');
+  if (chev) chev.classList.toggle('open');
+}
+</script>
+</body>
+</html>

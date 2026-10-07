@@ -1,0 +1,352 @@
+/* Smart Money Insight Section - Dark Theme */
+
+.smart-money-section {
+  background: #161B22;
+  border: 1px solid #30363D;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.smart-money-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.smart-money-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #E6EDF3;
+  margin: 0;
+}
+
+.smart-money-badge {
+  font-size: 10px;
+  padding: 3px 8px;
+  background: rgba(0, 211, 149, 0.15);
+  color: #00D395;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Smart Money Signal Banner */
+.sm-signal-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.sm-signal-banner.sm-buy {
+  background: rgba(0, 211, 149, 0.1);
+  border: 1px solid rgba(0, 211, 149, 0.3);
+}
+
+.sm-signal-banner.sm-sell {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.sm-signal-icon {
+  font-size: 24px;
+}
+
+.sm-signal-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sm-signal-text strong {
+  font-size: 14px;
+  color: #E6EDF3;
+}
+
+.sm-boost {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sm-boost.positive {
+  color: #00D395;
+}
+
+.sm-boost.negative {
+  color: #FF6B6B;
+}
+
+/* Holder Distribution */
+.holder-distribution {
+  margin-bottom: 16px;
+}
+
+.holder-distribution h4 {
+  font-size: 13px;
+  color: #8B949E;
+  margin: 0 0 10px 0;
+  font-weight: 500;
+}
+
+.holder-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.holder-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.holder-bar-row.warn .holder-bar-value {
+  color: #FF6B6B;
+}
+
+.holder-bar-label {
+  width: 90px;
+  font-size: 12px;
+  color: #8B949E;
+  flex-shrink: 0;
+}
+
+.holder-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #21262D;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.holder-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  min-width: 2px;
+}
+
+.holder-bar-value {
+  width: 55px;
+  font-size: 12px;
+  color: #E6EDF3;
+  text-align: right;
+  flex-shrink: 0;
+  font-family: 'SF Mono', monospace;
+}
+
+.holder-score-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.holder-risk-tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.holder-risk-tag.risk-low {
+  background: rgba(0, 211, 149, 0.15);
+  color: #00D395;
+}
+
+.holder-risk-tag.risk-medium {
+  background: rgba(247, 147, 26, 0.15);
+  color: #F7931A;
+}
+
+.holder-risk-tag.risk-high {
+  background: rgba(255, 107, 107, 0.15);
+  color: #FF6B6B;
+}
+
+.holder-risk-tag.risk-extreme {
+  background: rgba(255, 50, 50, 0.2);
+  color: #FF3232;
+}
+
+.holders-change {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.holders-change.positive {
+  color: #00D395;
+}
+
+.holders-change.negative {
+  color: #FF6B6B;
+}
+
+/* Binance Traders Card */
+.bn-traders-card {
+  background: #21262D;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.bn-traders-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #E6EDF3;
+}
+
+.bn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #F0B90B;
+  color: #000;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Smart Money Momentum */
+.sm-momentum-card {
+  background: #21262D;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.sm-momentum-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #8B949E;
+}
+
+.momentum-signal {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.momentum-signal.long {
+  background: rgba(0, 211, 149, 0.15);
+  color: #00D395;
+}
+
+.momentum-signal.short {
+  background: rgba(255, 107, 107, 0.15);
+  color: #FF6B6B;
+}
+
+.momentum-signal.neutral {
+  background: rgba(139, 148, 158, 0.15);
+  color: #8B949E;
+}
+
+.momentum-bar-container {
+  width: 100%;
+  height: 6px;
+  background: #161B22;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.momentum-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.momentum-bar.bullish {
+  background: linear-gradient(90deg, #00D395, #00F5A0);
+}
+
+.momentum-bar.bearish {
+  background: linear-gradient(90deg, #FF6B6B, #FF3232);
+}
+
+.momentum-bar.neutral {
+  background: #8B949E;
+}
+
+.momentum-description {
+  font-size: 11px;
+  color: #8B949E;
+  font-family: 'SF Mono', monospace;
+}
+
+/* Audit Tags */
+.audit-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.audit-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.audit-tag.safe {
+  background: rgba(0, 211, 149, 0.1);
+  color: #00D395;
+  border: 1px solid rgba(0, 211, 149, 0.2);
+}
+
+.audit-tag.danger {
+  background: rgba(255, 50, 50, 0.1);
+  color: #FF3232;
+  border: 1px solid rgba(255, 50, 50, 0.3);
+}
+
+/* Live Token Stats */
+.live-token-stats {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #30363D;
+}
+
+.live-token-stats h4 {
+  color: #E6EDF3;
+  font-size: 14px;
+  margin: 0 0 12px 0;
+}
+
+.holder-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.holder-stat-item {
+  background: rgba(48, 54, 61, 0.5);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.holder-stat-item .stat-label {
+  color: #8B949E;
+  font-size: 11px;
+}
+
+.holder-stat-item .stat-value {
+  color: #E6EDF3;
+  font-size: 16px;
+  font-weight: 600;
+}

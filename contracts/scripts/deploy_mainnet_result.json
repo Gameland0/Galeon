@@ -1,0 +1,12 @@
+{
+  "contract": "0x7127ea3c571D4e446d29E26953a3D6DdD9fF558f",
+  "owner": "0x330837C2a0D30Cb707e1576dFA4959FEE1427082",
+  "settler": "0x330837C2a0D30Cb707e1576dFA4959FEE1427082",
+  "guardian": "0x330837C2a0D30Cb707e1576dFA4959FEE1427082",
+  "platformWallet": "0xc34b4124794d0a2143b427804E0D9fEf2fFdDDF8",
+  "reserveWallet": "0x8DEb5Ae2BB574a199FD6c6A476aa437F4f062e02",
+  "usdc": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  "chain": "base-mainnet",
+  "chainId": 8453,
+  "deployedAt": "2026-08-06T02:52:34.386Z"
+}

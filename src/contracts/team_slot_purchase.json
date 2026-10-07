@@ -1,0 +1,377 @@
+{
+  "version": "0.1.0",
+  "name": "team_slot_purchase",
+  "docs": [
+    "Solana团队槽位购买系统 - 仅支持USDC支付",
+    "对应EVM的TeamRegistry.ts中的buyteamamount相关功能",
+    "",
+    "仅支持USDC支付，价格2 USDT等值",
+    "Devnet测试USDC: Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
+    "统一收款地址（USDC）: 8TcQfQY12sMweH9EkvrrXbcgSeB5KGLTUPA4Jmixpm74"
+  ],
+  "instructions": [
+    {
+      "name": "initializeSlotSystem",
+      "docs": [
+        "初始化Slot购买系统"
+      ],
+      "accounts": [
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "slotConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryUsdc",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "usdcMint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "slotPriceUsdc",
+          "type": "u64"
+        },
+        {
+          "name": "defaultTeamLimit",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "buyTeamSlotUsdc",
+      "docs": [
+        "使用USDC购买团队槽位"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "slotConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userLimit",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userUsdcAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "treasuryUsdcAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initializeUserLimit",
+      "docs": [
+        "初始化用户团队限制账户"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "slotConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "userLimit",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "incrementTeamCount",
+      "docs": [
+        "增加团队计数（当用户创建团队时调用）"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userLimit",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "decrementTeamCount",
+      "docs": [
+        "减少团队计数（当用户删除团队时调用）"
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "userLimit",
+          "isMut": true,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "setSlotPrice",
+      "docs": [
+        "管理员设置价格"
+      ],
+      "accounts": [
+        {
+          "name": "slotConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newUsdcPrice",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "toggleSystemStatus",
+      "docs": [
+        "管理员激活/停用系统"
+      ],
+      "accounts": [
+        {
+          "name": "slotConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "updateTreasuryAddress",
+      "docs": [
+        "管理员更新收款地址"
+      ],
+      "accounts": [
+        {
+          "name": "slotConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "newTreasuryUsdc",
+          "type": "publicKey"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "SlotConfig",
+      "docs": [
+        "系统配置账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "treasuryUsdc",
+            "type": "publicKey"
+          },
+          {
+            "name": "usdcMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "slotPriceUsdc",
+            "type": "u64"
+          },
+          {
+            "name": "defaultTeamLimit",
+            "type": "u8"
+          },
+          {
+            "name": "totalSlotsSold",
+            "type": "u64"
+          },
+          {
+            "name": "isActive",
+            "type": "bool"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserTeamLimit",
+      "docs": [
+        "用户团队限制账户"
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "publicKey"
+          },
+          {
+            "name": "teamLimit",
+            "type": "u8"
+          },
+          {
+            "name": "teamsCreated",
+            "type": "u8"
+          },
+          {
+            "name": "slotsPurchased",
+            "type": "u64"
+          },
+          {
+            "name": "totalSpentUsdc",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "name": "TeamSlotPurchased",
+      "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "amountPaid",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "newTeamLimit",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "transactionId",
+          "type": "i64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "SlotPriceUpdated",
+      "fields": [
+        {
+          "name": "usdcPrice",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "updatedBy",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "SystemNotActive",
+      "msg": "System is not active"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidPrice",
+      "msg": "Invalid price configuration"
+    },
+    {
+      "code": 6002,
+      "name": "TeamLimitExceeded",
+      "msg": "Team limit exceeded"
+    },
+    {
+      "code": 6003,
+      "name": "NoTeamsToDecrement",
+      "msg": "No teams to decrement"
+    }
+  ],
+  "metadata": {
+    "address": "3NGwXTcUZ2sECBiKZy9AphP9bALA9i37twVpkcMMZtPi"
+  }
+}

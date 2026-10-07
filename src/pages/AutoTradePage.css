@@ -1,0 +1,408 @@
+/* 自动交易页面样式 */
+
+.auto-trade-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.page-description {
+  font-size: 16px;
+  color: #6b7280;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 32px;
+  background: white;
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.tab {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.tab:hover {
+  background: #f9fafb;
+  color: #374151;
+}
+
+.tab.active {
+  background: #6366f1;
+  color: white;
+}
+
+.tab-icon {
+  font-size: 18px;
+}
+
+.tab .badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.page-content {
+  min-height: 500px;
+}
+
+/* 设置面板 */
+.settings-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.settings-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.auto-trade-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 开关样式 */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db;
+  transition: .3s;
+  border-radius: 28px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #22c55e;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.toggle-label.enabled {
+  color: #22c55e;
+}
+
+.toggle-label.disabled {
+  color: #6b7280;
+}
+
+.disabled-notice {
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.notice-icon {
+  font-size: 32px;
+}
+
+.disabled-notice p {
+  flex: 1;
+  font-size: 14px;
+  color: #92400e;
+}
+
+.settings-sections {
+  display: grid;
+  gap: 32px;
+}
+
+.settings-section {
+  padding-bottom: 32px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settings-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.setting-item {
+  margin-bottom: 24px;
+}
+
+.setting-item:last-child {
+  margin-bottom: 0;
+}
+
+.setting-item label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.setting-item input[type="number"],
+.setting-item select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.setting-item input[type="number"]:focus,
+.setting-item select:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.setting-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 6px;
+}
+
+.chain-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.checkbox-label:hover {
+  background: #f3f4f6;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.checkbox-label span {
+  font-size: 14px;
+  color: #374151;
+}
+
+.settings-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-save {
+  flex: 1;
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-save:hover {
+  background: #4f46e5;
+}
+
+.btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-reset {
+  background: white;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-reset:hover {
+  background: #f9fafb;
+}
+
+/* 统计信息 */
+.stats-summary {
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.stats-summary h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 20px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.stat-item {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.stat-value.profit {
+  color: #22c55e;
+}
+
+.stat-value.loss {
+  color: #ef4444;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .tabs {
+    flex-wrap: nowrap;
+  }
+
+  .tab {
+    min-width: 100px;
+  }
+
+  .tab span:not(.tab-icon):not(.badge) {
+    display: none;
+  }
+
+  .settings-panel {
+    padding: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

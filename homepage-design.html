@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeon - AI Trading Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0f0f0;
+    color: #1e293b;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+    padding: 0 48px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .logo {
+    font-size: 22px;
+    font-weight: 800;
+    color: #6366f1;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: #6366f1;
+    background: #f0efff;
+  }
+
+  .nav-links a.active {
+    color: #6366f1;
+    background: #f0efff;
+  }
+
+  .btn-connect {
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-connect:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 160px 48px 80px;
+    text-align: center;
+    background: linear-gradient(135deg, #fefcea 0%, #f7f9fc 50%, #f2f7ff 100%);
+  }
+
+  .hero h1 {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    line-height: 1.15;
+    color: #1e293b;
+    max-width: 720px;
+    margin: 0 auto 24px;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 18px;
+    color: #64748b;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .hero-cta {
+    display: inline-block;
+    background: #6366f1;
+    color: #fff;
+    padding: 16px 40px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(79,70,229,0.25);
+  }
+
+  .hero-cta:hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79,70,229,0.35);
+  }
+
+  .hero-sub {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-top: 14px;
+  }
+
+  /* ===== STATS BAR ===== */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    padding: 48px;
+    margin-top: 24px;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 40px;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: -1px;
+  }
+
+  .stat-value.green { color: #16a34a; }
+
+  .stat-label {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-top: 4px;
+    font-weight: 500;
+  }
+
+  .trust-line {
+    text-align: center;
+    font-size: 13px;
+    color: #94a3b8;
+    padding-bottom: 16px;
+  }
+
+  /* ===== FEATURES ===== */
+  .features {
+    padding: 56px 48px 80px;
+    background: #f7f9fc;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+
+  .section-subtitle {
+    text-align: center;
+    font-size: 16px;
+    color: #94a3b8;
+    margin-bottom: 56px;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .feature-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 16px;
+    padding: 40px 32px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(99,102,241,0.2);
+    box-shadow: 0 8px 32px rgba(99,102,241,0.08);
+    transform: translateY(-4px);
+  }
+
+  .feature-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+
+  .feature-icon.purple { background: #f0efff; color: #6366f1; }
+  .feature-icon.blue { background: #eff6ff; color: #2563eb; }
+  .feature-icon.green { background: #ecfdf5; color: #16a34a; }
+
+  .feature-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 12px;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    flex: 1;
+  }
+
+  .feature-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  .feature-stat {
+    display: inline-block;
+    background: #f0efff;
+    color: #6366f1;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+  }
+
+  .feature-stat.blue { background: #eff6ff; color: #2563eb; }
+  .feature-stat.green { background: #ecfdf5; color: #16a34a; }
+
+  .feature-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #6366f1;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: gap 0.2s;
+  }
+
+  .feature-link:hover { gap: 10px; }
+
+  /* ===== TOP SIGNALS ===== */
+  .signals {
+    padding: 80px 48px;
+    background: linear-gradient(135deg, #f2f7ff 0%, #fefcea 100%);
+  }
+
+  .signals-table {
+    max-width: 900px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    border: 1px solid rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  .signals-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1.2fr;
+    padding: 16px 32px;
+    background: #fafafe;
+    border-bottom: 1px solid #ededf5;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .signal-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1fr 1.2fr;
+    padding: 20px 32px;
+    border-bottom: 1px solid #f4f4f8;
+    align-items: center;
+    transition: background 0.15s;
+  }
+
+  .signal-row:last-child { border-bottom: none; }
+  .signal-row:hover { background: #fafafe; }
+
+  .signal-token {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .signal-token-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .signal-token-meta {
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  .signal-source {
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .signal-source-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .badge-alpha { background: #f0efff; color: #6366f1; }
+  .badge-meme { background: #eff6ff; color: #2563eb; }
+
+  .signal-price {
+    font-size: 13px;
+    color: #64748b;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .signal-return {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .return-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #16a34a;
+    min-width: 70px;
+  }
+
+  .return-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: #ecfdf5;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .return-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #16a34a, #22c55e);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  .signals-footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: #94a3b8;
+    border-top: 1px solid #f4f4f8;
+  }
+
+  /* ===== HOW IT WORKS ===== */
+  .how {
+    padding: 80px 48px;
+    background: #f7f9fc;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 36px;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: #ededf5;
+    z-index: 0;
+  }
+
+  .step {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .step-number {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #f0efff;
+    color: #6366f1;
+    font-size: 28px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    border: 4px solid #fff;
+    box-shadow: 0 2px 8px rgba(79,70,229,0.1);
+  }
+
+  .step h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+
+  .step p {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.6;
+  }
+
+  .how-cta {
+    text-align: center;
+    margin-top: 56px;
+  }
+
+  .how-cta a {
+    display: inline-block;
+    background: #6366f1;
+    color: #fff;
+    padding: 16px 40px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(79,70,229,0.25);
+  }
+
+  .how-cta a:hover {
+    background: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(79,70,229,0.35);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    background: rgba(255,255,255,0.6);
+  }
+
+  .footer-left {
+    font-size: 13px;
+    color: #94a3b8;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    text-decoration: none;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: #6366f1; }
+
+  /* ===== WALLET MODAL ===== */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal {
+    background: #ffffff;
+    border-radius: 20px;
+    width: 420px;
+    max-width: 90vw;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.12);
+    overflow: hidden;
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px 0;
+  }
+
+  .modal-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  .modal-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid #ededf5;
+    background: #fafafe;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #94a3b8;
+    transition: all 0.15s;
+  }
+
+  .modal-close:hover {
+    background: #f0efff;
+    color: #6366f1;
+    border-color: #d4d0ff;
+  }
+
+  .modal-subtitle {
+    padding: 8px 28px 24px;
+    font-size: 14px;
+    color: #94a3b8;
+  }
+
+  .modal-body {
+    padding: 0 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .wallet-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border: 1px solid #ededf5;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fafafe;
+  }
+
+  .wallet-option:hover {
+    border-color: #d4d0ff;
+    background: #f8f7ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(79,70,229,0.06);
+  }
+
+  .wallet-option-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .wallet-option-icon.metamask {
+    background: #fff3e0;
+    color: #e65100;
+  }
+
+  .wallet-option-icon.phantom {
+    background: #f3e5f5;
+    color: #7b1fa2;
+  }
+
+  .wallet-option-info {
+    flex: 1;
+  }
+
+  .wallet-option-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2px;
+  }
+
+  .wallet-option-desc {
+    font-size: 12px;
+    color: #94a3b8;
+  }
+
+  .wallet-option-arrow {
+    color: #c8c8d8;
+    font-size: 18px;
+    transition: transform 0.2s;
+  }
+
+  .wallet-option:hover .wallet-option-arrow {
+    color: #6366f1;
+    transform: translateX(3px);
+  }
+
+  .modal-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 4px 0;
+  }
+
+  .modal-divider::before,
+  .modal-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ededf5;
+  }
+
+  .modal-divider span {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+
+  .modal-footer {
+    padding: 16px 28px 24px;
+    text-align: center;
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* ===== CONNECTED STATE ===== */
+  .nav-wallet {
+    display: none;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-wallet.active {
+    display: flex;
+  }
+
+  .nav-wallet-addr {
+    font-size: 13px;
+    font-weight: 500;
+    color: #1e293b;
+    background: #f0efff;
+    padding: 8px 14px;
+    border-radius: 8px;
+  }
+
+  .nav-wallet-addr::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+    margin-right: 8px;
+  }
+
+  .btn-disconnect {
+    background: none;
+    border: 1px solid #ededf5;
+    color: #94a3b8;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-disconnect:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #fef2f2;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 120px 20px 60px; }
+    .hero h1 { font-size: 36px; }
+    .stats-bar { gap: 32px; flex-wrap: wrap; }
+    .stat-value { font-size: 28px; }
+    .features, .signals, .how { padding: 60px 20px; }
+    .feature-grid { grid-template-columns: 1fr; }
+    .signals-header, .signal-row { grid-template-columns: 1.5fr 1fr 1.5fr; }
+    .signal-price { display: none; }
+    .steps { grid-template-columns: 1fr; gap: 32px; }
+    .steps::before { display: none; }
+    footer { flex-direction: column; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <div class="logo">GALEON</div>
+    <div class="nav-links">
+      <a href="#" class="active">Home</a>
+      <a href="#">Alpha Signal</a>
+      <a href="#">Meme Radar</a>
+      <a href="#">Auto Trade</a>
+    </div>
+  </div>
+  <button class="btn-connect" onclick="openModal()">Connect Wallet</button>
+  <div class="nav-wallet" id="navWallet">
+    <div class="nav-wallet-addr" id="navAddr">0x1a2b...3f4d</div>
+    <button class="btn-disconnect" onclick="disconnect()">Disconnect</button>
+  </div>
+</nav>
+
+<!-- CONNECT WALLET MODAL -->
+<div class="modal-overlay" id="walletModal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Connect Wallet</h2>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-subtitle">Choose your preferred wallet to continue</div>
+    <div class="modal-body">
+      <div class="wallet-option" onclick="connectWallet('metamask')">
+        <div class="wallet-option-icon metamask">MM</div>
+        <div class="wallet-option-info">
+          <div class="wallet-option-name">MetaMask</div>
+          <div class="wallet-option-desc">Connect for BSC, Base, and Ethereum</div>
+        </div>
+        <div class="wallet-option-arrow">&rarr;</div>
+      </div>
+      <div class="modal-divider"><span>or</span></div>
+      <div class="wallet-option" onclick="connectWallet('phantom')">
+        <div class="wallet-option-icon phantom">PH</div>
+        <div class="wallet-option-info">
+          <div class="wallet-option-name">Phantom</div>
+          <div class="wallet-option-desc">Connect for Solana</div>
+        </div>
+        <div class="wallet-option-arrow">&rarr;</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      By connecting, you agree to Galeon's Terms of Service.
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <h1>Your <span>AI Trading Edge</span> in Web3</h1>
+  <p>AI agents discover opportunities, verify token safety, and execute trades on-chain — fully automated, so you don't have to.</p>
+  <a href="#" class="hero-cta">Start Trading</a>
+  <div class="hero-sub">No coding required. No manual trading.</div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-value">68.2%</div>
+      <div class="stat-label">Signal Win Rate</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">1,240+</div>
+      <div class="stat-label">Signals Generated</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value green">+312%</div>
+      <div class="stat-label">Best Signal Return</div>
+    </div>
+  </div>
+
+  <div class="trust-line">Supporting BSC, Base, Solana and Ethereum</div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="section-title">What Galeon Does For You</div>
+  <div class="section-subtitle">Three AI-powered modules working together to find and capture alpha</div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon purple">AS</div>
+      <h3>Alpha Signal</h3>
+      <p>AI scans Binance Alpha tokens every hour using 14-dimension analysis — technical indicators, smart money flows, funding rates, and social sentiment. Delivers precise entry, stop-loss, and take-profit targets.</p>
+      <div class="feature-bottom">
+        <div class="feature-stat">Win Rate: 68%</div>
+        <a href="#" class="feature-link">Explore Signals <span>&rarr;</span></a>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon blue">MR</div>
+      <h3>Meme Radar</h3>
+      <p>Detects early-stage meme tokens across 4 chains by tracking smart money, KOLs, and whale movements. Every token must pass a 10-point Golden Snipe safety check — filtering out scams before they reach you.</p>
+      <div class="feature-bottom">
+        <div class="feature-stat blue">Win Rate: 62%</div>
+        <a href="#" class="feature-link">Scan Memes <span>&rarr;</span></a>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon green">AT</div>
+      <h3>Auto Trade</h3>
+      <p>From signal to profit, fully automated. Choose your strategy, set risk parameters — AI handles entry, real-time monitoring, dynamic trailing stop-loss, laddered take-profit, and circuit breakers. 8 strategy types.</p>
+      <div class="feature-bottom">
+        <div class="feature-stat green">8 Strategy Types</div>
+        <a href="#" class="feature-link">Start Auto Trading <span>&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOP SIGNALS -->
+<section class="signals">
+  <div class="section-title">Recent Winning Signals</div>
+  <div class="section-subtitle">Real results generated by Galeon AI agents — verified on-chain</div>
+
+  <div class="signals-table">
+    <div class="signals-header">
+      <div>Token</div>
+      <div>Source</div>
+      <div>Signal Price</div>
+      <div>Peak Return</div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-token">
+        <div class="signal-token-name">LAB</div>
+        <div class="signal-token-meta">BSC &middot; Mar 15</div>
+      </div>
+      <div class="signal-source"><span class="signal-source-badge badge-alpha">Alpha Signal</span> BUY</div>
+      <div class="signal-price">$0.0042</div>
+      <div class="signal-return">
+        <div class="return-value">+312%</div>
+        <div class="return-bar-bg"><div class="return-bar" style="width:100%"></div></div>
+      </div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-token">
+        <div class="signal-token-name">PEPE2.0</div>
+        <div class="signal-token-meta">Solana &middot; Mar 22</div>
+      </div>
+      <div class="signal-source"><span class="signal-source-badge badge-meme">Meme Radar</span> STRONG_BUY</div>
+      <div class="signal-price">$0.000008</div>
+      <div class="signal-return">
+        <div class="return-value">+186%</div>
+        <div class="return-bar-bg"><div class="return-bar" style="width:60%"></div></div>
+      </div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-token">
+        <div class="signal-token-name">FOLKS</div>
+        <div class="signal-token-meta">BSC &middot; Mar 28</div>
+      </div>
+      <div class="signal-source"><span class="signal-source-badge badge-alpha">Alpha Signal</span> BUY</div>
+      <div class="signal-price">$0.032</div>
+      <div class="signal-return">
+        <div class="return-value">+94%</div>
+        <div class="return-bar-bg"><div class="return-bar" style="width:30%"></div></div>
+      </div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-token">
+        <div class="signal-token-name">AVL</div>
+        <div class="signal-token-meta">BSC &middot; Apr 01</div>
+      </div>
+      <div class="signal-source"><span class="signal-source-badge badge-alpha">Alpha Signal</span> LONG</div>
+      <div class="signal-price">$0.0156</div>
+      <div class="signal-return">
+        <div class="return-value">+67%</div>
+        <div class="return-bar-bg"><div class="return-bar" style="width:21%"></div></div>
+      </div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-token">
+        <div class="signal-token-name">BLESS</div>
+        <div class="signal-token-meta">Base &middot; Apr 05</div>
+      </div>
+      <div class="signal-source"><span class="signal-source-badge badge-meme">Meme Radar</span> BUY</div>
+      <div class="signal-price">$0.0231</div>
+      <div class="signal-return">
+        <div class="return-value">+52%</div>
+        <div class="return-bar-bg"><div class="return-bar" style="width:17%"></div></div>
+      </div>
+    </div>
+
+    <div class="signal-row">
+      <div class="signal-token">
+        <div class="signal-token-name">WOJAK</div>
+        <div class="signal-token-meta">BSC &middot; Apr 07</div>
+      </div>
+      <div class="signal-source"><span class="signal-source-badge badge-meme">Meme Radar</span> STRONG_BUY</div>
+      <div class="signal-price">$0.00034</div>
+      <div class="signal-return">
+        <div class="return-value">+41%</div>
+        <div class="return-bar-bg"><div class="return-bar" style="width:13%"></div></div>
+      </div>
+    </div>
+
+    <div class="signals-footer">
+      Showing top performing signals. Past performance is for transparency — not a guarantee of future results.
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-title">Get Started in 3 Steps</div>
+  <div class="section-subtitle">From zero to automated trading in under 5 minutes</div>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <h3>Connect Wallet</h3>
+      <p>Connect your wallet and deposit USDT. Supports MetaMask, Phantom, and Privy embedded wallets.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <h3>Choose Strategy</h3>
+      <p>Pick your signal source — Alpha Signal, Meme Radar, KOL, or Fusion. Set your risk parameters and trade amount.</p>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <h3>Auto Profit</h3>
+      <p>AI agents handle everything: entry, real-time monitoring, stop-loss, and take-profit. Fully on-chain, fully automated.</p>
+    </div>
+  </div>
+
+  <div class="how-cta">
+    <a href="#">Start Trading Now</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">GALEON &copy; 2026</div>
+  <div class="footer-links">
+    <a href="#">Twitter</a>
+    <a href="#">Telegram</a>
+    <a href="#">Documentation</a>
+  </div>
+</footer>
+
+<script>
+  function openModal() {
+    document.getElementById('walletModal').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('walletModal').classList.remove('active');
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === e.currentTarget) closeModal();
+  }
+
+  function connectWallet(type) {
+    var addr = type === 'metamask' ? '0x1a2b...3f4d' : '7Kp2...9mNx';
+    document.getElementById('navAddr').textContent = addr;
+    document.querySelector('.btn-connect').style.display = 'none';
+    document.getElementById('navWallet').classList.add('active');
+    closeModal();
+  }
+
+  function disconnect() {
+    document.querySelector('.btn-connect').style.display = '';
+    document.getElementById('navWallet').classList.remove('active');
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+</body>
+</html>

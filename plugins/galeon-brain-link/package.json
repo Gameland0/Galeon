@@ -1,0 +1,59 @@
+{
+  "name": "@galeon/brain-link-plugin",
+  "version": "0.1.0",
+  "description": "Galeon Brain Link — AI trading intelligence plugin for MetaMask Agent Wallet",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc && oclif manifest",
+    "typecheck": "tsc --noEmit",
+    "prepack": "npm run build"
+  },
+  "oclif": {
+    "bin": "mm",
+    "commands": {
+      "strategy": "explicit",
+      "target": "./dist/commands"
+    },
+    "topicSeparator": " "
+  },
+  "mm": {
+    "schemaVersion": 1,
+    "cliVersion": "^6.2.0",
+    "commands": {
+      "brain:check": {
+        "capabilities": ["wallet-read"],
+        "description": "Check a token with Galeon Brain AI before trading. Returns direction, confidence, risk, and historical win rate."
+      },
+      "brain:decision": {
+        "capabilities": [],
+        "description": "Get Galeon Brain's current AI decision for any token — direction, confidence, voting breakdown."
+      },
+      "brain:risk": {
+        "capabilities": ["wallet-read"],
+        "description": "Assess risk for a proposed trade using Galeon Brain's 12-dimension AI analysis."
+      },
+      "brain:auto-trade": {
+        "capabilities": ["wallet-read", "wallet-submit"],
+        "description": "Enable AI auto-trade. Galeon Brain will automatically execute trades on Kuru DEX based on its signals."
+      },
+      "brain:positions": {
+        "capabilities": ["wallet-read"],
+        "description": "View active AI-managed positions, PnL, and trade history."
+      },
+      "brain:status": {
+        "capabilities": [],
+        "description": "Check Galeon Brain Link service status and recent activity."
+      }
+    }
+  },
+  "peerDependencies": {
+    "@metamask/agent-wallet": "^6.2.0"
+  },
+  "devDependencies": {
+    "oclif": "^4",
+    "typescript": "^5"
+  }
+}

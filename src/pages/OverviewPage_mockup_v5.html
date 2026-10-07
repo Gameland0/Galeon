@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Market Overview v5 - Galeon</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, #fefcea 0%, #f7f9fc 40%, #f2f7ff 100%);
+  color: #1e293b;
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.page { max-width: 1440px; margin: 0 auto; padding: 28px 32px; }
+
+/* ── Glass Card Base ── */
+.glass {
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  transition: all 0.25s ease;
+}
+.glass:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+
+/* ── Header ── */
+.hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.hdr-left h1 {
+  font-size: 22px; font-weight: 800; letter-spacing: -0.3px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hdr-sub { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.hdr-right { display: flex; align-items: center; gap: 14px; }
+.live { display: flex; align-items: center; gap: 6px; }
+.live-dot { width: 7px; height: 7px; background: #22c55e; border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)} 50%{box-shadow:0 0 0 6px rgba(34,197,94,0)} }
+.live-text { font-size: 11px; color: #94a3b8; }
+.tabs { display: flex; background: rgba(255,255,255,0.6); border-radius: 10px; padding: 3px; border: 1px solid #e2e8f0; }
+.tabs button {
+  padding: 7px 18px; font-size: 12px; font-weight: 600; border: none;
+  background: transparent; color: #64748b; border-radius: 8px; cursor: pointer;
+  transition: all 0.2s; font-family: 'Inter', sans-serif;
+}
+.tabs button.active { background: #6366f1; color: #fff; box-shadow: 0 2px 8px rgba(99,102,241,0.3); }
+.tabs button:hover:not(.active) { color: #6366f1; }
+.btn-icon {
+  width: 34px; height: 34px; border-radius: 10px; border: 1px solid #e2e8f0;
+  background: rgba(255,255,255,0.7); cursor: pointer; display: flex;
+  align-items: center; justify-content: center; color: #64748b; font-size: 16px;
+  transition: all 0.2s;
+}
+.btn-icon:hover { background: #6366f1; color: #fff; border-color: #6366f1; }
+
+/* ── Environment Cards ── */
+.env-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.env-card { padding: 18px 20px; display: flex; align-items: center; gap: 14px; }
+.env-icon {
+  width: 42px; height: 42px; border-radius: 12px; display: flex;
+  align-items: center; justify-content: center; font-size: 18px; font-weight: 800;
+}
+.env-icon.btc { background: linear-gradient(135deg, #fef3c7, #fde68a); color: #d97706; }
+.env-icon.regime { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #7c3aed; }
+.env-icon.perf { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a; }
+.env-icon.sig { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #6366f1; }
+.env-label { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; }
+.env-val { font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-top: 3px; color: #1e293b; }
+.env-val .g { color: #16a34a; }
+.env-val .r { color: #dc2626; }
+.env-sub { font-size: 10px; color: #94a3b8; margin-top: 3px; }
+
+/* ── Sector Row ── */
+.sector-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.sector-card { padding: 18px 20px; }
+.sector-title { font-size: 11px; font-weight: 700; color: #6366f1; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px; }
+.sector-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 13px; }
+.sector-item-label { color: #64748b; }
+.sector-item-val { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+.sector-item-val.g { color: #16a34a; }
+.sector-item-val.r { color: #dc2626; }
+.sector-item-val.n { color: #94a3b8; }
+.data-src { font-size: 9px; color: #c0c7d0; margin-top: 10px; display: flex; justify-content: space-between; }
+.data-warn { color: #f59e0b; font-weight: 600; }
+
+/* Change items */
+.chg-item { font-size: 12px; color: #1e293b; padding: 4px 0; line-height: 1.5; }
+.chg-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.chg-dot.g { background: #16a34a; }
+.chg-dot.y { background: #f59e0b; }
+.chg-dot.n { background: #d1d5db; }
+
+/* ── Stress Banner ── */
+.stress { border-radius: 14px; padding: 14px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; }
+.stress.low { background: linear-gradient(90deg, rgba(220,252,231,0.6), rgba(255,255,255,0.3)); border: 1px solid #bbf7d0; }
+.stress.med { background: linear-gradient(90deg, rgba(254,243,199,0.6), rgba(255,255,255,0.3)); border: 1px solid #fde68a; }
+.stress.high { background: linear-gradient(90deg, rgba(254,226,226,0.6), rgba(255,255,255,0.3)); border: 1px solid #fecaca; }
+.stress-icon { font-size: 22px; }
+.stress-text { font-size: 13px; font-weight: 600; color: #1e293b; }
+.stress-sub { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+/* ── Main Grid ── */
+.main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 18px; }
+
+/* ── Signal Table Section ── */
+.tbl-section { padding: 22px 24px; }
+.tbl-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.tbl-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+.tbl-badge { font-size: 10px; font-weight: 600; color: #6366f1; background: rgba(99,102,241,0.08); padding: 4px 10px; border-radius: 6px; }
+
+/* Filters */
+.filters { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.fil-group { display: flex; background: rgba(255,255,255,0.5); border-radius: 8px; padding: 2px; border: 1px solid #e2e8f0; }
+.fil-group button {
+  padding: 4px 12px; font-size: 10px; font-weight: 600;
+  border: none; background: transparent; color: #94a3b8;
+  cursor: pointer; border-radius: 6px; transition: all 0.15s;
+  font-family: 'Inter', sans-serif;
+}
+.fil-group button.active { background: #1e293b; color: #fff; }
+.fil-group button:hover:not(.active) { color: #6366f1; }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; }
+th {
+  font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase;
+  letter-spacing: 0.5px; padding: 0 10px 12px; text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+th.r { text-align: right; }
+th.c { text-align: center; }
+td { padding: 14px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+tr.row { cursor: pointer; transition: background 0.15s; }
+tr.row:hover { background: rgba(99,102,241,0.03); }
+
+/* Token */
+.tk { display: flex; align-items: center; gap: 10px; }
+.tk-avatar {
+  width: 32px; height: 32px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 800; color: #fff;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+.tk-avatar.rwa { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+.tk-name { font-size: 14px; font-weight: 700; color: #1e293b; }
+.tk-sub { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.tk-price { font-size: 11px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; }
+.tk-chg { font-size: 10px; font-weight: 700; }
+.tk-chg.g { color: #16a34a; }
+.tk-chg.r { color: #dc2626; }
+.rwa-tag { font-size: 8px; font-weight: 700; color: #6366f1; background: rgba(99,102,241,0.1); padding: 1px 5px; border-radius: 4px; margin-left: 4px; }
+
+/* Status */
+.st {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.3px;
+}
+.st.entry { background: rgba(22,163,106,0.1); color: #16a34a; }
+.st.ready { background: rgba(217,119,6,0.1); color: #d97706; }
+.st.watch { background: rgba(148,163,184,0.1); color: #94a3b8; }
+.st-dot { width: 6px; height: 6px; border-radius: 50%; }
+.st.entry .st-dot { background: #16a34a; animation: pulse 2s infinite; }
+.st.ready .st-dot { background: #d97706; animation: pulse 2s infinite; }
+.st.watch .st-dot { background: #94a3b8; }
+
+/* Signal */
+.sig {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+.sig.long { background: rgba(22,163,106,0.1); color: #16a34a; }
+.sig.short { background: rgba(220,38,38,0.1); color: #dc2626; }
+.sig.wait { background: rgba(148,163,184,0.08); color: #94a3b8; }
+
+/* Score */
+.sc { text-align: right; }
+.sc-val { font-size: 16px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.sc-val.g { color: #16a34a; }
+.sc-val.r { color: #dc2626; }
+.sc-val.n { color: #94a3b8; }
+.sc-chg { font-size: 10px; font-weight: 600; margin-top: 2px; }
+.sc-wr { font-size: 9px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+.sc-wr b { color: #1e293b; }
+
+/* Targets */
+.tgt { font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.7; }
+.tgt-row { display: flex; align-items: center; gap: 4px; }
+.tgt-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; min-width: 18px; }
+.tgt-lbl.in { color: #6366f1; }
+.tgt-lbl.tp { color: #16a34a; }
+.tgt-lbl.sl { color: #dc2626; }
+.tgt-val { font-weight: 600; color: #1e293b; }
+.tgt-pct { font-size: 9px; color: #94a3b8; margin-left: 2px; }
+.tgt-empty { color: #c0c7d0; font-size: 11px; }
+
+/* R:R */
+.rr { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 800; text-align: center; }
+.rr.good { color: #16a34a; }
+.rr.ok { color: #d97706; }
+.rr-bar { width: 40px; height: 5px; border-radius: 3px; background: #e2e8f0; margin: 4px auto 0; overflow: hidden; }
+.rr-fill { height: 100%; border-radius: 3px; }
+.rr.good .rr-fill { background: #16a34a; width: 85%; }
+.rr.ok .rr-fill { background: #d97706; width: 60%; }
+
+/* Star */
+.star {
+  width: 28px; height: 28px; border: none; background: transparent;
+  cursor: pointer; font-size: 16px; border-radius: 8px; transition: all 0.15s;
+  color: #d1d5db;
+}
+.star:hover { background: rgba(245,158,11,0.1); color: #f59e0b; }
+.star.on { color: #f59e0b; }
+
+/* ── Expanded Report ── */
+.exp { display: none; }
+.exp.open { display: table-row; }
+.exp td { padding: 0 10px 18px; }
+.report { border-radius: 16px; border: 1px solid #e2e8f0; background: #fff; padding: 20px; }
+
+.rpt-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9; }
+.rpt-title { font-size: 15px; font-weight: 800; color: #1e293b; }
+.rpt-meta { font-size: 10px; color: #94a3b8; display: flex; gap: 14px; }
+.rpt-meta .warn { color: #f59e0b; font-weight: 700; }
+
+/* 4-col dimensions */
+.dim-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+.dim { background: #f8fafc; border-radius: 12px; padding: 14px 16px; border: 1px solid #f1f5f9; }
+.dim-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.dim-title { font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.4px; }
+.dim-sc { font-size: 18px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+.dim-sc.g { color: #16a34a; }
+.dim-sc.r { color: #dc2626; }
+.dim-sc.n { color: #94a3b8; }
+.dim-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 11px; }
+.dim-row-l { color: #94a3b8; }
+.dim-row-v { font-weight: 600; color: #1e293b; font-family: 'JetBrains Mono', monospace; }
+.dim-row-v.g { color: #16a34a; }
+.dim-row-v.r { color: #dc2626; }
+.dim-row-v.y { color: #f59e0b; }
+
+/* Pattern bar */
+.pat { background: #f8fafc; border-radius: 12px; padding: 16px 18px; border: 1px solid #f1f5f9; margin-bottom: 16px; display: flex; gap: 24px; align-items: flex-start; }
+.pat-left { flex: 1; }
+.pat-name { font-size: 14px; font-weight: 700; color: #1e293b; }
+.pat-detail { font-size: 11px; color: #64748b; line-height: 1.6; margin-top: 6px; }
+.pat-right { text-align: right; min-width: 160px; }
+.pat-target-lbl { font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+.pat-target-val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: #16a34a; margin-top: 4px; }
+.pat-target-basis { font-size: 10px; color: #94a3b8; font-style: italic; margin-top: 4px; }
+.otag { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 5px; }
+.otag.bull { background: rgba(22,163,106,0.1); color: #16a34a; }
+.otag.bear { background: rgba(220,38,38,0.1); color: #dc2626; }
+
+/* Bull/Bear case */
+.cases { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.case { border-radius: 12px; padding: 16px 18px; }
+.case.bull { background: rgba(22,163,106,0.04); border: 1px solid rgba(22,163,106,0.15); }
+.case.bear { background: rgba(220,38,38,0.04); border: 1px solid rgba(220,38,38,0.15); }
+.case-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 10px; }
+.case.bull .case-title { color: #16a34a; }
+.case.bear .case-title { color: #dc2626; }
+.case-list { list-style: none; padding: 0; }
+.case-list li { font-size: 11px; color: #1e293b; padding: 4px 0 4px 16px; position: relative; line-height: 1.6; }
+.case-list li::before { content: ''; position: absolute; left: 0; top: 12px; width: 6px; height: 6px; border-radius: 50%; }
+.case.bull .case-list li::before { background: #16a34a; }
+.case.bear .case-list li::before { background: #dc2626; }
+.case-list li b { font-weight: 700; }
+
+/* Risk metrics */
+.risk-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 16px; }
+.risk-item { background: #f8fafc; border-radius: 10px; padding: 12px 14px; text-align: center; border: 1px solid #f1f5f9; }
+.risk-lbl { font-size: 9px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.risk-val { font-size: 17px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 4px; color: #1e293b; }
+.risk-val.g { color: #16a34a; }
+.risk-val.r { color: #dc2626; }
+.risk-note { font-size: 9px; color: #94a3b8; margin-top: 2px; }
+
+/* Conclusion */
+.conclusion { background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(139,92,246,0.04)); border-radius: 12px; padding: 16px 18px; border: 1px solid rgba(99,102,241,0.12); }
+.conc-title { font-size: 11px; font-weight: 800; color: #6366f1; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 10px; }
+.conc-row { display: flex; gap: 10px; align-items: baseline; padding: 5px 0; font-size: 12px; }
+.conc-icon { font-size: 14px; flex-shrink: 0; }
+.conc-text { color: #1e293b; line-height: 1.6; }
+.conc-text b { font-weight: 700; }
+.conc-text .muted { color: #94a3b8; font-size: 11px; }
+
+/* Footer */
+.rpt-footer { display: flex; justify-content: space-between; margin-top: 14px; padding-top: 12px; border-top: 1px solid #f1f5f9; font-size: 9px; color: #c0c7d0; }
+.rpt-footer .warn { color: #f59e0b; font-weight: 700; }
+
+/* ── Feed ── */
+.feed-section { padding: 22px 20px; }
+.feed-title { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 14px; }
+.feed { max-height: 820px; overflow-y: auto; }
+.feed::-webkit-scrollbar { width: 4px; }
+.feed::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+.fi { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid #f1f5f9; }
+.fi:last-child { border-bottom: none; }
+.fi-time { font-size: 10px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; min-width: 40px; padding-top: 3px; }
+.fi-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.fi-dot.dir { background: #f59e0b; }
+.fi-dot.sc { background: #6366f1; }
+.fi-dot.new { background: #16a34a; }
+.fi-dot.blk { background: #dc2626; }
+.fi-dot.dim { background: #8b5cf6; }
+.fi-body { flex: 1; }
+.fi-title { font-size: 12px; font-weight: 700; color: #1e293b; }
+.fi-desc { font-size: 11px; color: #64748b; margin-top: 2px; line-height: 1.4; }
+.fi-tag { display: inline-block; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 5px; margin-top: 5px; }
+.fi-tag.success { background: rgba(22,163,106,0.1); color: #16a34a; }
+.fi-tag.warn { background: rgba(245,158,11,0.1); color: #d97706; }
+.fi-tag.danger { background: rgba(220,38,38,0.1); color: #dc2626; }
+.fi-tag.info { background: rgba(99,102,241,0.1); color: #6366f1; }
+
+/* Chevron */
+.chev { font-size: 10px; color: #94a3b8; transition: transform 0.2s; display: inline-block; margin-left: 3px; }
+.chev.open { transform: rotate(90deg); }
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .main-grid { grid-template-columns: 1fr; }
+  .env-row { grid-template-columns: repeat(2, 1fr); }
+  .sector-row { grid-template-columns: 1fr; }
+  .dim-grid { grid-template-columns: 1fr 1fr; }
+  .cases { grid-template-columns: 1fr; }
+  .risk-row { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <h1>AI Market Overview</h1>
+      <div class="hdr-sub">Real-time AI signal analysis across crypto & RWA markets</div>
+    </div>
+    <div class="hdr-right">
+      <div class="live"><div class="live-dot"></div><span class="live-text">Updated 30s ago</span></div>
+      <div class="tabs"><button class="active">All Signals</button><button>My Watchlist</button></div>
+      <button class="btn-icon">&#x21bb;</button>
+    </div>
+  </div>
+
+  <!-- Environment -->
+  <div class="env-row">
+    <div class="glass env-card">
+      <div class="env-icon btc">&#x20bf;</div>
+      <div>
+        <div class="env-label">BTC Trend</div>
+        <div class="env-val"><span class="g">BULL</span> &#x2197;</div>
+        <div class="env-sub">$67,420 &middot; +2.3% 24h</div>
+      </div>
+    </div>
+    <div class="glass env-card">
+      <div class="env-icon regime">R</div>
+      <div>
+        <div class="env-label">Market Regime</div>
+        <div class="env-val">TREND_LONG</div>
+        <div class="env-sub">Edge: BTC_PUMP</div>
+      </div>
+    </div>
+    <div class="glass env-card">
+      <div class="env-icon perf">&#x2713;</div>
+      <div>
+        <div class="env-label">AI Today</div>
+        <div class="env-val"><span class="g">6W</span> / 2L</div>
+        <div class="env-sub">WR 75% &middot; PnL <b style="color:#16a34a">+$420</b></div>
+      </div>
+    </div>
+    <div class="glass env-card">
+      <div class="env-icon sig">#</div>
+      <div>
+        <div class="env-label">Active Signals</div>
+        <div class="env-val">14 <span style="font-size:11px;color:#94a3b8;font-weight:400">tokens</span></div>
+        <div class="env-sub">3 Entry &middot; 4 Ready &middot; 7 Watch</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sector & Stress -->
+  <div class="sector-row">
+    <div class="glass sector-card">
+      <div class="sector-title">Sector Heatmap</div>
+      <div class="sector-item"><span class="sector-item-label">Layer 1 (ETH, SOL, AVAX)</span><span class="sector-item-val g">+3.2%</span></div>
+      <div class="sector-item"><span class="sector-item-label">DeFi (LINK, UNI, AAVE)</span><span class="sector-item-val g">+2.1%</span></div>
+      <div class="sector-item"><span class="sector-item-label">Meme (DOGE, PEPE, WIF)</span><span class="sector-item-val r">-1.8%</span></div>
+      <div class="sector-item"><span class="sector-item-label">RWA (AAPL, TSLA, NVDA)</span><span class="sector-item-val g">+1.2%</span></div>
+      <div class="data-src"><span>Binance + HL &middot; 14:30 UTC</span></div>
+    </div>
+    <div class="glass sector-card">
+      <div class="sector-title">On-chain Stress</div>
+      <div class="sector-item"><span class="sector-item-label">Avg Funding</span><span class="sector-item-val g">+0.012%</span></div>
+      <div class="sector-item"><span class="sector-item-label">OI Change (1h)</span><span class="sector-item-val g">+2.4%</span></div>
+      <div class="sector-item"><span class="sector-item-label">Taker Ratio</span><span class="sector-item-val g">1.08</span></div>
+      <div class="sector-item"><span class="sector-item-label">Liquidation Bias</span><span class="sector-item-val r">62% shorts</span></div>
+      <div class="data-src"><span>Binance API &middot; 14:30 UTC</span><span class="data-warn">&#x26A0; Social delayed</span></div>
+    </div>
+    <div class="glass sector-card">
+      <div class="sector-title">What Changed (1h)</div>
+      <div class="chg-item"><span class="chg-dot g"></span>BTC broke $67k, BULL confirmed</div>
+      <div class="chg-item"><span class="chg-dot y"></span>Meme sector weakening, SM exiting DOGE</div>
+      <div class="chg-item"><span class="chg-dot g"></span>ETH/LINK building momentum, OI up</div>
+      <div class="chg-item"><span class="chg-dot n"></span>RWA steady, no abnormal pressure</div>
+    </div>
+  </div>
+
+  <!-- Stress Banner -->
+  <div class="stress low">
+    <div class="stress-icon">&#x1F7E2;</div>
+    <div>
+      <div class="stress-text">Market Stress: Low &mdash; Normal trading conditions</div>
+      <div class="stress-sub">Short liquidation dominance (62%) suggests mild squeeze. Funding positive but not extreme.</div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+
+    <!-- Left: Table -->
+    <div class="glass tbl-section" style="overflow-x:auto">
+      <div class="tbl-head">
+        <div class="tbl-title">AI Signal Ranking</div>
+        <div class="tbl-badge">Click row for full analysis</div>
+      </div>
+      <div class="filters">
+        <div class="fil-group"><button class="active">All</button><button>LONG</button><button>SHORT</button></div>
+        <div class="fil-group"><button class="active">All</button><button>Entry</button><button>Ready</button><button>Watch</button></div>
+        <div class="fil-group"><button class="active">All</button><button>Crypto</button><button>RWA</button></div>
+      </div>
+
+      <table>
+        <thead><tr>
+          <th style="width:24px">#</th><th>Token</th><th>Status</th><th>Signal</th>
+          <th class="r">Score / WR</th><th class="c">Trend</th><th>Entry / TP / SL</th>
+          <th class="c">R:R</th><th style="width:28px"></th>
+        </tr></thead>
+        <tbody>
+
+          <!-- ETH -->
+          <tr class="row" onclick="toggle('eth')">
+            <td style="color:#94a3b8;font-size:11px;font-weight:700">1</td>
+            <td><div class="tk"><div class="tk-avatar">E</div><div><div class="tk-name">ETH <span class="chev" id="c-eth">&#x25B8;</span></div><div class="tk-sub"><span class="tk-price">$3,520</span><span class="tk-chg g">+4.2%</span></div></div></div></td>
+            <td><span class="st entry"><span class="st-dot"></span>Entry</span></td>
+            <td><span class="sig long">&#x25B2; LONG</span></td>
+            <td class="sc"><div class="sc-val g">+12</div><div class="sc-chg" style="color:#16a34a">&#x2191; +4</div><div class="sc-wr">Hist WR <b>72%</b></div></td>
+            <td class="ov-sparkline"><svg width="72" height="26" viewBox="0 0 72 26"><defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#16a34a" stop-opacity="0.15"/><stop offset="100%" stop-color="#16a34a" stop-opacity="0"/></linearGradient></defs><path d="M0,22 10,20 20,17 30,15 40,17 50,10 60,6 72,2 L72,26 L0,26Z" fill="url(#sg)"/><polyline points="0,22 10,20 20,17 30,15 40,17 50,10 60,6 72,2" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="2" r="2.5" fill="#16a34a"/></svg></td>
+            <td><div class="tgt"><div class="tgt-row"><span class="tgt-lbl in">IN</span><span class="tgt-val">3,480-3,530</span></div><div class="tgt-row"><span class="tgt-lbl tp">TP</span><span class="tgt-val">3,720</span><span class="tgt-pct">+5.7%</span></div><div class="tgt-row"><span class="tgt-lbl sl">SL</span><span class="tgt-val">3,410</span><span class="tgt-pct">-3.1%</span></div></div></td>
+            <td><div class="rr good">1:1.8<div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star on" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+          <!-- ETH Expanded Report -->
+          <tr class="exp" id="x-eth"><td colspan="9">
+            <div class="report">
+              <div class="rpt-hdr">
+                <div class="rpt-title">ETH &mdash; Full AI Analysis</div>
+                <div class="rpt-meta"><span>14:30 UTC</span><span>Binance + Hyperliquid + K-line</span><span class="warn">&#x26A0; Social delayed</span></div>
+              </div>
+              <div class="dim-grid">
+                <div class="dim"><div class="dim-head"><div class="dim-title">Price Structure</div><div class="dim-sc g">+4</div></div><div class="dim-row"><span class="dim-row-l">K-line 4H</span><span class="dim-row-v g">BULL (str=3)</span></div><div class="dim-row"><span class="dim-row-l">Position</span><span class="dim-row-v">62%</span></div><div class="dim-row"><span class="dim-row-l">EMA 20/60</span><span class="dim-row-v g">Bullish align</span></div><div class="dim-row"><span class="dim-row-l">Support</span><span class="dim-row-v">$3,410</span></div><div class="dim-row"><span class="dim-row-l">Resistance</span><span class="dim-row-v">$3,720</span></div></div>
+                <div class="dim"><div class="dim-head"><div class="dim-title">On-chain Flow</div><div class="dim-sc g">+5</div></div><div class="dim-row"><span class="dim-row-l">Smart Money</span><span class="dim-row-v g">+15 inflow</span></div><div class="dim-row"><span class="dim-row-l">OI</span><span class="dim-row-v g">+8% expanding</span></div><div class="dim-row"><span class="dim-row-l">Taker</span><span class="dim-row-v g">1.12 buying</span></div><div class="dim-row"><span class="dim-row-l">Funding</span><span class="dim-row-v">+0.008%</span></div><div class="dim-row"><span class="dim-row-l">Buy/Sell</span><span class="dim-row-v g">BS=1.6</span></div></div>
+                <div class="dim"><div class="dim-head"><div class="dim-title">Sentiment</div><div class="dim-sc g">+2</div></div><div class="dim-row"><span class="dim-row-l">Top Traders</span><span class="dim-row-v">TT=-1.2</span></div><div class="dim-row"><span class="dim-row-l">Whale L/S</span><span class="dim-row-v g">1.4 long</span></div><div class="dim-row"><span class="dim-row-l">Retail L/S</span><span class="dim-row-v y">1.6 chasing &#x26A0;</span></div><div class="dim-row"><span class="dim-row-l">Social</span><span class="dim-row-v">Normal</span></div></div>
+                <div class="dim"><div class="dim-head"><div class="dim-title">Environment</div><div class="dim-sc g">+1</div></div><div class="dim-row"><span class="dim-row-l">BTC</span><span class="dim-row-v g">BULL</span></div><div class="dim-row"><span class="dim-row-l">Regime</span><span class="dim-row-v">TREND_LONG</span></div><div class="dim-row"><span class="dim-row-l">Archetype</span><span class="dim-row-v">BTC_PUMP</span></div><div class="dim-row"><span class="dim-row-l">7D Trend</span><span class="dim-row-v g">+8.4%</span></div></div>
+              </div>
+              <div class="pat">
+                <div class="pat-left">
+                  <div class="pat-name"><span class="otag bull">Bullish</span> &nbsp; Bull Flag Breakout &mdash; 4H Confirmed</div>
+                  <div class="pat-detail">Flagpole from $3,280 (+7.3%). Consolidation $3,450-$3,520 with declining vol.<br>Breakout above $3,530. <b>Invalidation:</b> Close below $3,410 (EMA60).</div>
+                </div>
+                <div class="pat-right">
+                  <div class="pat-target-lbl">2-Day Target</div>
+                  <div class="pat-target-val">$3,680-$3,750</div>
+                  <div class="pat-target-basis">Basis: Flagpole measured move</div>
+                  <div style="font-size:10px;color:#94a3b8;margin-top:6px">Est. 18-36h to target</div>
+                </div>
+              </div>
+              <div class="cases">
+                <div class="case bull"><div class="case-title">&#x25B2; Bull Case</div><ul class="case-list"><li><b>SM +15 strong inflow</b> &mdash; Smart money actively entering</li><li><b>OI expanding +8%</b> &mdash; New money, not leverage rotation</li><li><b>Bull flag confirmed</b> on 4H &mdash; Measured target $3,720</li><li><b>BTC BULL</b> &mdash; TREND_LONG regime, 68% hist WR for longs</li><li><b>Whales adding longs</b> &mdash; Top trader L/S 1.4 rising</li></ul></div>
+                <div class="case bear"><div class="case-title">&#x25BC; Strongest Counter-Argument</div><ul class="case-list"><li><b>Retail chasing</b> &mdash; L/S at 1.6, approaching contrarian trigger at 2.0</li><li><b>Funding trending up</b> &mdash; Spike above 0.03% = crowded trade</li><li><b>$3,720 resistance</b> &mdash; Previous high, first test often rejects</li><li><b>BTC dependency</b> &mdash; If BTC reverses from $68k, setup breaks</li></ul></div>
+              </div>
+              <div class="risk-row">
+                <div class="risk-item"><div class="risk-lbl">Upside</div><div class="risk-val g">+5.7%</div><div class="risk-note">to $3,720</div></div>
+                <div class="risk-item"><div class="risk-lbl">Downside</div><div class="risk-val r">-3.1%</div><div class="risk-note">to $3,410</div></div>
+                <div class="risk-item"><div class="risk-lbl">R:R</div><div class="risk-val g">1:1.8</div><div class="risk-note">favorable</div></div>
+                <div class="risk-item"><div class="risk-lbl">Est. Hold</div><div class="risk-val">18-36h</div><div class="risk-note">pattern based</div></div>
+                <div class="risk-item"><div class="risk-lbl">Volatility</div><div class="risk-val">Med</div><div class="risk-note">ATR: $85</div></div>
+              </div>
+              <div class="conclusion">
+                <div class="conc-title">AI Conclusion</div>
+                <div class="conc-row"><div class="conc-icon">&#x1F7E2;</div><div class="conc-text"><b>Worth pursuing.</b> Strong confluence: SM inflow + OI expansion + bull flag + BTC BULL. R:R 1:1.8.</div></div>
+                <div class="conc-row"><div class="conc-icon">&#x26A0;&#xFE0F;</div><div class="conc-text"><b>Watch for:</b> Retail L/S approaching 2.0, funding spike above 0.03%, BTC rejection at $68k.</div></div>
+                <div class="conc-row"><div class="conc-icon">&#x23F3;</div><div class="conc-text"><b>If waiting:</b> Better entry on retest of $3,480. <span class="muted">Improves R:R to 1:2.2</span></div></div>
+              </div>
+              <div class="rpt-footer"><span>Binance API (FR, OI, L/S) + Hyperliquid (SM, taker) + K-line (15m/1h/4h) &middot; 14:30 UTC</span><span class="warn">&#x26A0; Missing: Social, whale transfers</span></div>
+            </div>
+          </td></tr>
+
+          <!-- DOGE -->
+          <tr class="row" onclick="toggle('doge')">
+            <td style="color:#94a3b8;font-size:11px;font-weight:700">2</td>
+            <td><div class="tk"><div class="tk-avatar">D</div><div><div class="tk-name">DOGE <span class="chev" id="c-doge">&#x25B8;</span></div><div class="tk-sub"><span class="tk-price">$0.1842</span><span class="tk-chg r">-2.8%</span></div></div></div></td>
+            <td><span class="st entry"><span class="st-dot"></span>Entry</span></td>
+            <td><span class="sig short">&#x25BC; SHORT</span></td>
+            <td class="sc"><div class="sc-val r">-9</div><div class="sc-chg" style="color:#dc2626">&#x2193; -3</div><div class="sc-wr">Hist WR <b>68%</b></div></td>
+            <td><svg width="72" height="26" viewBox="0 0 72 26"><defs><linearGradient id="sr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#dc2626" stop-opacity="0.15"/><stop offset="100%" stop-color="#dc2626" stop-opacity="0"/></linearGradient></defs><path d="M0,6 10,8 20,10 30,8 40,12 50,16 60,20 72,22 L72,26 L0,26Z" fill="url(#sr)"/><polyline points="0,6 10,8 20,10 30,8 40,12 50,16 60,20 72,22" fill="none" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="22" r="2.5" fill="#dc2626"/></svg></td>
+            <td><div class="tgt"><div class="tgt-row"><span class="tgt-lbl in">IN</span><span class="tgt-val">0.183-0.186</span></div><div class="tgt-row"><span class="tgt-lbl tp">TP</span><span class="tgt-val">0.168</span><span class="tgt-pct">+8.7%</span></div><div class="tgt-row"><span class="tgt-lbl sl">SL</span><span class="tgt-val">0.192</span><span class="tgt-pct">-4.3%</span></div></div></td>
+            <td><div class="rr good">1:2.0<div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star" onclick="event.stopPropagation()">&#x2606;</button></td>
+          </tr>
+
+          <!-- LINK -->
+          <tr class="row">
+            <td style="color:#94a3b8;font-size:11px;font-weight:700">3</td>
+            <td><div class="tk"><div class="tk-avatar">L</div><div><div class="tk-name">LINK</div><div class="tk-sub"><span class="tk-price">$18.75</span><span class="tk-chg g">+3.1%</span></div></div></div></td>
+            <td><span class="st ready"><span class="st-dot"></span>Ready</span></td>
+            <td><span class="sig long">&#x25B2; LONG</span></td>
+            <td class="sc"><div class="sc-val g">+9</div><div class="sc-chg" style="color:#16a34a">&#x2191; +2</div><div class="sc-wr">Hist WR <b>65%</b></div></td>
+            <td><svg width="72" height="26" viewBox="0 0 72 26"><defs><linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#16a34a" stop-opacity="0.12"/><stop offset="100%" stop-color="#16a34a" stop-opacity="0"/></linearGradient></defs><path d="M0,18 10,16 20,13 30,13 40,11 50,8 60,5 72,3 L72,26 L0,26Z" fill="url(#sg2)"/><polyline points="0,18 10,16 20,13 30,13 40,11 50,8 60,5 72,3" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="3" r="2.5" fill="#16a34a"/></svg></td>
+            <td><div class="tgt"><div class="tgt-row"><span class="tgt-lbl in">IN</span><span class="tgt-val">18.50-18.80</span></div><div class="tgt-row"><span class="tgt-lbl tp">TP</span><span class="tgt-val">20.40</span><span class="tgt-pct">+8.8%</span></div><div class="tgt-row"><span class="tgt-lbl sl">SL</span><span class="tgt-val">17.80</span><span class="tgt-pct">-5.1%</span></div></div></td>
+            <td><div class="rr ok">1:1.7<div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star" onclick="event.stopPropagation()">&#x2606;</button></td>
+          </tr>
+
+          <!-- AAPL RWA -->
+          <tr class="row">
+            <td style="color:#94a3b8;font-size:11px;font-weight:700">4</td>
+            <td><div class="tk"><div class="tk-avatar rwa">A</div><div><div class="tk-name">AAPL <span class="rwa-tag">RWA</span></div><div class="tk-sub"><span class="tk-price">$198.32</span><span class="tk-chg g">+1.5%</span></div></div></div></td>
+            <td><span class="st ready"><span class="st-dot"></span>Ready</span></td>
+            <td><span class="sig long">&#x25B2; LONG</span></td>
+            <td class="sc"><div class="sc-val g">+7</div><div class="sc-chg" style="color:#16a34a">&#x2191; +4</div><div class="sc-wr">Hist WR <b>63%</b></div></td>
+            <td><svg width="72" height="26" viewBox="0 0 72 26"><path d="M0,20 10,18 20,15 30,17 40,13 50,10 60,7 72,5 L72,26 L0,26Z" fill="url(#sg2)"/><polyline points="0,20 10,18 20,15 30,17 40,13 50,10 60,7 72,5" fill="none" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="5" r="2.5" fill="#16a34a"/></svg></td>
+            <td><div class="tgt"><div class="tgt-row"><span class="tgt-lbl in">IN</span><span class="tgt-val">196-199</span></div><div class="tgt-row"><span class="tgt-lbl tp">TP</span><span class="tgt-val">210</span><span class="tgt-pct">+5.9%</span></div><div class="tgt-row"><span class="tgt-lbl sl">SL</span><span class="tgt-val">192</span><span class="tgt-pct">-3.2%</span></div></div></td>
+            <td><div class="rr ok">1:1.8<div class="rr-bar"><div class="rr-fill"></div></div></div></td>
+            <td><button class="star on" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+          <!-- SOL Watch -->
+          <tr class="row">
+            <td style="color:#94a3b8;font-size:11px;font-weight:700">5</td>
+            <td><div class="tk"><div class="tk-avatar" style="background:linear-gradient(135deg,#94a3b8,#64748b)">S</div><div><div class="tk-name">SOL</div><div class="tk-sub"><span class="tk-price">$178.90</span><span class="tk-chg r">-0.6%</span></div></div></div></td>
+            <td><span class="st watch"><span class="st-dot"></span>Watch</span></td>
+            <td><span class="sig wait">&#x25CF; WAIT</span></td>
+            <td class="sc"><div class="sc-val n">+2</div><div class="sc-chg" style="color:#dc2626">&#x2193; -7</div><div class="sc-wr">Hist WR <b>52%</b></div></td>
+            <td><svg width="72" height="26" viewBox="0 0 72 26"><polyline points="0,5 10,7 20,5 30,7 40,10 50,15 60,18 72,20" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/><circle cx="72" cy="20" r="2.5" fill="#94a3b8"/></svg></td>
+            <td><div class="tgt-empty">Signal too weak<br><span style="font-size:10px">Score &#x2265; 6 to activate</span></div></td>
+            <td style="text-align:center;color:#c0c7d0">&mdash;</td>
+            <td><button class="star on" onclick="event.stopPropagation()">&#x2605;</button></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Right: Feed -->
+    <div class="glass feed-section">
+      <div class="tbl-head"><div class="feed-title">Signal Feed</div><div class="tbl-badge">Live</div></div>
+      <div class="feed">
+        <div class="fi"><div class="fi-time">14:30</div><div class="fi-dot sc"></div><div class="fi-body"><div class="fi-title">ETH &#x2192; Entry</div><div class="fi-desc">Score +8&#x2192;+12, bull flag confirmed, SM +15</div><span class="fi-tag success">Entry Signal</span></div></div>
+        <div class="fi"><div class="fi-time">14:25</div><div class="fi-dot dir"></div><div class="fi-body"><div class="fi-title">DOGE flipped SHORT</div><div class="fi-desc">Descending triangle breaking, SM exit</div><span class="fi-tag warn">Direction Flip</span></div></div>
+        <div class="fi"><div class="fi-time">14:20</div><div class="fi-dot dim"></div><div class="fi-body"><div class="fi-title">SOL &#x2192; Watch</div><div class="fi-desc">Score +9&#x2192;+2, whales reducing longs</div><span class="fi-tag info">Downgraded</span></div></div>
+        <div class="fi"><div class="fi-time">14:15</div><div class="fi-dot new"></div><div class="fi-body"><div class="fi-title">PEPE volume spike</div><div class="fi-desc">3x avg vol, price flat. Accumulation?</div><span class="fi-tag success">New Signal</span></div></div>
+        <div class="fi"><div class="fi-time">14:10</div><div class="fi-dot sc"></div><div class="fi-body"><div class="fi-title">AAPL +3 &#x2192; +7</div><div class="fi-desc">Double bottom neckline retest</div><span class="fi-tag success">Upgrading</span></div></div>
+        <div class="fi"><div class="fi-time">14:05</div><div class="fi-dot blk"></div><div class="fi-body"><div class="fi-title">XRP blocked</div><div class="fi-desc">Position 92%, R:R &lt; 1.0</div><span class="fi-tag danger">Risk Block</span></div></div>
+        <div class="fi"><div class="fi-time">14:00</div><div class="fi-dot dir"></div><div class="fi-body"><div class="fi-title">BTC &#x2192; BULL</div><div class="fi-desc">3 green candles + RSI recovery</div><span class="fi-tag warn">Regime Change</span></div></div>
+        <div class="fi"><div class="fi-time">13:55</div><div class="fi-dot sc"></div><div class="fi-body"><div class="fi-title">LINK +5 &#x2192; +9</div><div class="fi-desc">OI +12%, near Entry threshold</div><span class="fi-tag success">Upgrading</span></div></div>
+        <div class="fi"><div class="fi-time">13:45</div><div class="fi-dot sc"></div><div class="fi-body"><div class="fi-title">ETH prev LONG hit TP</div><div class="fi-desc">$3,380&#x2192;$3,480 (+2.9%) &#x2713;</div><span class="fi-tag success">TP Hit</span></div></div>
+        <div class="fi"><div class="fi-time">13:30</div><div class="fi-dot dim"></div><div class="fi-body"><div class="fi-title">ARB retail chasing</div><div class="fi-desc">L/S 1.2&#x2192;2.1, contrarian SHORT</div><span class="fi-tag info">Alert</span></div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggle(id) {
+  const r = document.getElementById('x-' + id);
+  const c = document.getElementById('c-' + id);
+  if (r) r.classList.toggle('open');
+  if (c) c.classList.toggle('open');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galeon Brain Link — UI Mockup V2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e8; min-height: 100vh; }
+
+  /* Nav */
+  .nav { display: flex; background: #12121a; border-bottom: 1px solid #1e1e2e; position: sticky; top: 0; z-index: 100; }
+  .nav-item { padding: 14px 20px; cursor: pointer; color: #666; font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; transition: all 0.2s; }
+  .nav-item:hover { color: #c0c0d0; background: #1a1a28; }
+  .nav-item.active { color: #7c6ff7; border-bottom-color: #7c6ff7; }
+  .nav-logo { padding: 14px 20px; font-weight: 700; font-size: 15px; color: #7c6ff7; display: flex; align-items: center; gap: 8px; }
+  .nav-logo span { color: #e0e0e8; }
+
+  /* Layout */
+  .page { display: none; padding: 28px; max-width: 1100px; margin: 0 auto; }
+  .page.active { display: block; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  /* Card */
+  .card { background: #14141f; border: 1px solid #1e1e2e; border-radius: 12px; padding: 20px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 14px; font-weight: 600; }
+  .card-glow { border-color: #2a2a5a; box-shadow: 0 0 20px rgba(124,111,247,0.08); }
+
+  /* Typography */
+  .page-title { font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+  .page-desc { font-size: 13px; color: #666; margin-bottom: 24px; }
+  .section-title { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+  .label { font-size: 12px; color: #555; }
+  .green { color: #22c55e; }
+  .red { color: #ef4444; }
+  .yellow { color: #f59e0b; }
+  .purple { color: #7c6ff7; }
+  .muted { color: #888; }
+
+  /* Info rows */
+  .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a25; font-size: 13px; }
+  .info-row:last-child { border-bottom: none; }
+
+  /* Stats */
+  .stats-row { display: flex; gap: 16px; }
+  .stat { flex: 1; text-align: center; padding: 14px 8px; background: #0e0e18; border-radius: 10px; }
+  .stat-val { font-size: 22px; font-weight: 700; }
+  .stat-lbl { font-size: 11px; color: #555; margin-top: 4px; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn { flex: 1; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+  .btn-primary { background: #7c6ff7; color: white; }
+  .btn-primary:hover { background: #6b5ce7; }
+  .btn-secondary { background: #1e1e2e; color: #a0a0b8; border: 1px solid #2a2a3a; }
+  .btn-success { background: #1a2a1a; color: #22c55e; border: 1px solid #203a20; }
+
+  /* Badge */
+  .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-long { background: #1a2a1a; color: #22c55e; }
+  .badge-short { background: #2a1a1a; color: #ef4444; }
+  .badge-wait { background: #2a2a1a; color: #f59e0b; }
+  .badge-win { background: #1a2a1a; color: #22c55e; }
+  .badge-loss { background: #2a1a1a; color: #ef4444; }
+  .link { color: #7c6ff7; cursor: pointer; text-decoration: none; font-size: 12px; }
+
+  /* Progress */
+  .progress { height: 6px; background: #1e1e2e; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; }
+
+  /* Token card */
+  .token-card { background: #14141f; border: 1px solid #1e1e2e; border-radius: 12px; padding: 16px; cursor: pointer; transition: 0.2s; }
+  .token-card:hover { border-color: #7c6ff7; transform: translateY(-2px); }
+
+  /* Chart placeholder */
+  .chart-area { background: #0e0e18; border-radius: 10px; height: 200px; position: relative; overflow: hidden; margin-bottom: 8px; }
+  .chart-line { position: absolute; bottom: 0; left: 0; right: 0; }
+  .chart-line svg { width: 100%; height: 200px; }
+  .chart-annotation { position: absolute; font-size: 10px; font-weight: 600; padding: 3px 6px; border-radius: 4px; white-space: nowrap; }
+
+  /* Radar chart */
+  .radar-container { display: flex; justify-content: center; align-items: center; padding: 10px; }
+  .radar-container svg { max-width: 280px; }
+
+  /* Live feed */
+  .feed-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #1a1a22; font-size: 12px; align-items: flex-start; }
+  .feed-item:last-child { border-bottom: none; }
+  .feed-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .feed-dot.green { background: #22c55e; }
+  .feed-dot.purple { background: #7c6ff7; }
+  .feed-dot.yellow { background: #f59e0b; }
+  .feed-dot.red { background: #ef4444; }
+  .feed-time { color: #444; width: 36px; flex-shrink: 0; }
+  .feed-text { color: #a0a0b8; line-height: 1.4; }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: #1e1e2e; }
+  .timeline-item { position: relative; padding: 12px 0; }
+  .timeline-dot { position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #1e1e2e; }
+  .timeline-dot.active { background: #7c6ff7; border-color: #7c6ff7; }
+  .timeline-dot.green { background: #22c55e; border-color: #22c55e; }
+  .timeline-dot.red { background: #ef4444; border-color: #ef4444; }
+  .timeline-time { font-size: 11px; color: #444; }
+  .timeline-text { font-size: 13px; color: #a0a0b8; margin-top: 2px; }
+  .timeline-tag { font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+  /* Vote bar */
+  .vote-bar-row { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 12px; }
+  .vote-bar-label { width: 70px; color: #888; text-align: right; }
+  .vote-bar { flex: 1; height: 20px; background: #1a1a25; border-radius: 4px; position: relative; overflow: hidden; }
+  .vote-bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 6px; font-size: 10px; font-weight: 600; color: white; }
+  .vote-bar-score { width: 36px; text-align: center; font-weight: 600; font-size: 13px; }
+
+  /* Brain thinking animation */
+  .brain-pulse { display: inline-block; width: 10px; height: 10px; background: #7c6ff7; border-radius: 50%; animation: pulse 1.5s infinite; margin-right: 8px; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+
+  /* Thinking log */
+  .think-item { padding: 8px 12px; background: #0e0e18; border-radius: 8px; margin-bottom: 6px; font-size: 12px; border-left: 3px solid #1e1e2e; }
+  .think-item.active { border-left-color: #7c6ff7; background: #12121f; }
+  .think-item.done { border-left-color: #22c55e; }
+  .think-item.warn { border-left-color: #f59e0b; }
+
+  /* Learning card */
+  .learn-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1a1a22; }
+  .learn-row:last-child { border-bottom: none; }
+  .learn-metric { font-size: 13px; color: #a0a0b8; }
+  .learn-change { font-size: 12px; font-weight: 600; }
+  .learn-arrow { font-size: 14px; }
+
+  /* Position with brain context */
+  .pos-card { background: #0e0e18; border-radius: 10px; padding: 14px; margin-bottom: 10px; }
+  .pos-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .pos-brain { font-size: 11px; color: #888; padding: 8px; background: #14141f; border-radius: 6px; margin-top: 8px; border-left: 2px solid #7c6ff7; }
+
+  /* Table */
+  .trade-table { width: 100%; font-size: 12px; }
+  .trade-table th { text-align: left; padding: 8px 6px; color: #555; font-weight: 500; border-bottom: 1px solid #1e1e2e; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .trade-table td { padding: 10px 6px; border-bottom: 1px solid #1a1a22; }
+  .trade-table tr:hover { background: #1a1a25; cursor: pointer; }
+
+  /* Onchain badge */
+  .onchain { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #7c6ff7; background: #1a1a2e; padding: 4px 10px; border-radius: 6px; }
+
+  /* DEX mockup */
+  .dex-mockup { background: #18182a; border: 2px solid #2a2a4a; border-radius: 16px; padding: 28px; max-width: 420px; margin: 0 auto 20px; }
+  .dex-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #2a2a4a; }
+  .dex-input { width: 100%; padding: 12px; background: #0e0e1a; border: 1px solid #2a2a3a; border-radius: 10px; color: #e0e0e8; font-size: 18px; font-weight: 600; text-align: right; outline: none; margin-top: 4px; }
+  .dex-swap-btn { width: 100%; padding: 14px; background: #7c6ff7; color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 12px; }
+
+  /* Popup */
+  .popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; justify-content: center; align-items: flex-end; }
+  .popup-overlay.show { display: flex; }
+  .popup { background: #14141f; border: 1px solid #2a2a4a; border-radius: 20px 20px 0 0; width: 100%; max-width: 560px; padding: 24px; animation: slideUp 0.3s ease; max-height: 85vh; overflow-y: auto; }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+  /* Toggle */
+  .toggle { width: 44px; height: 24px; background: #22c55e; border-radius: 12px; position: relative; cursor: pointer; display: inline-block; }
+  .toggle::after { content: ''; width: 20px; height: 20px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 22px; }
+
+  /* Collapsible */
+  .collapse-trigger { cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .collapse-content { display: none; }
+  .collapse-content.open { display: block; }
+
+  @media (max-width: 768px) { .two-col, .three-col { grid-template-columns: 1fr; } .page { padding: 16px; } }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">🧠 <span>Galeon</span></div>
+  <div class="nav-item active" onclick="showPage('home')">Brain Link</div>
+  <div class="nav-item" onclick="showPage('asset')">Token Analysis</div>
+  <div class="nav-item" onclick="showPage('trade')">Auto Trade</div>
+  <div class="nav-item" onclick="showPage('history')">History</div>
+  <div class="nav-item" onclick="showPage('embed')">Embed Demo</div>
+</nav>
+
+<!-- ==================== PAGE 1: HOME ==================== -->
+<div class="page active" id="page-home">
+  <div class="page-title">Galeon Brain Link</div>
+  <div class="page-desc">Before every trade on Monad, ask Galeon.</div>
+
+  <div class="two-col">
+    <!-- Left: Live Decisions -->
+    <div>
+      <div class="section-title">Live Decisions</div>
+
+      <div class="token-card" onclick="showPage('asset')" style="margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 16px; font-weight: 700;">MON</span>
+            <span style="font-size: 12px; color: #888; margin-left: 8px;">$0.0223</span>
+          </div>
+          <span class="badge badge-long">LONG 76%</span>
+        </div>
+        <!-- Mini sparkline -->
+        <div style="height: 40px; background: #0e0e18; border-radius: 6px; margin: 10px 0; overflow: hidden; position: relative;">
+          <svg width="100%" height="40" viewBox="0 0 300 40" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#22c55e" stroke-width="1.5" points="0,35 30,30 60,28 90,25 120,20 150,22 180,15 210,12 240,10 270,8 300,5"/>
+            <polyline fill="url(#gfill)" stroke="none" points="0,35 30,30 60,28 90,25 120,20 150,22 180,15 210,12 240,10 270,8 300,5 300,40 0,40"/>
+            <defs><linearGradient id="gfill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22c55e" stop-opacity="0.15"/><stop offset="100%" stop-color="#22c55e" stop-opacity="0"/></linearGradient></defs>
+          </svg>
+          <!-- Brain entry marker -->
+          <div style="position: absolute; left: 60%; top: 2px; font-size: 9px; color: #7c6ff7; font-weight: 600;">▼ Brain: BUY</div>
+        </div>
+        <div style="font-size: 12px; color: #888;">184 similar · 63% WR · Regime: BTC Uptrend</div>
+      </div>
+
+      <div class="token-card" style="margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 16px; font-weight: 700;">WETH</span>
+            <span style="font-size: 12px; color: #888; margin-left: 8px;">$2,412</span>
+          </div>
+          <span class="badge badge-wait">WAIT 42%</span>
+        </div>
+        <div style="height: 40px; background: #0e0e18; border-radius: 6px; margin: 10px 0; overflow: hidden;">
+          <svg width="100%" height="40" viewBox="0 0 300 40" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#f59e0b" stroke-width="1.5" points="0,20 30,22 60,18 90,20 120,19 150,21 180,20 210,22 240,19 270,20 300,21"/>
+          </svg>
+        </div>
+        <div style="font-size: 12px; color: #888;">No clear edge — sideways regime</div>
+      </div>
+
+      <div class="token-card" style="margin-bottom: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 16px; font-weight: 700;">WBTC</span>
+            <span style="font-size: 12px; color: #888; margin-left: 8px;">$67,200</span>
+          </div>
+          <span class="badge badge-long">LONG 71%</span>
+        </div>
+        <div style="height: 40px; background: #0e0e18; border-radius: 6px; margin: 10px 0; overflow: hidden;">
+          <svg width="100%" height="40" viewBox="0 0 300 40" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#22c55e" stroke-width="1.5" points="0,30 30,28 60,25 90,20 120,18 150,22 180,16 210,14 240,12 270,10 300,8"/>
+          </svg>
+        </div>
+        <div style="font-size: 12px; color: #888;">156 similar · 65% WR · BTC breaking resistance</div>
+      </div>
+
+      <div class="token-card">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <span style="font-size: 16px; font-weight: 700;">CHOG</span>
+            <span style="font-size: 12px; color: #888; margin-left: 8px;">$0.0017</span>
+          </div>
+          <span class="badge badge-short">SHORT 68%</span>
+        </div>
+        <div style="height: 40px; background: #0e0e18; border-radius: 6px; margin: 10px 0; overflow: hidden;">
+          <svg width="100%" height="40" viewBox="0 0 300 40" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#ef4444" stroke-width="1.5" points="0,8 30,10 60,12 90,18 120,15 150,20 180,25 210,28 240,32 270,30 300,35"/>
+          </svg>
+        </div>
+        <div style="font-size: 12px; color: #888;">92 similar · 58% WR · SM exiting, FR crowded</div>
+      </div>
+    </div>
+
+    <!-- Right: Brain Activity + Stats -->
+    <div>
+      <div class="section-title"><span class="brain-pulse"></span>Brain Activity</div>
+      <div class="card" style="max-height: 380px; overflow-y: auto;">
+        <div class="feed-item">
+          <div class="feed-dot green"></div>
+          <div class="feed-time">3s</div>
+          <div class="feed-text"><strong>MON</strong> — <span class="green">TP1 executed</span>: sold 30% at $0.0229 (+5.0%) · SL moved to breakeven<br><span class="link">Micro-step #1234-s4 ↗</span></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot purple"></div>
+          <div class="feed-time">8s</div>
+          <div class="feed-text"><strong>MON</strong> — <span class="purple">DCA complete</span>: 3 steps, $420 filled in 8 seconds. Avg entry $0.0218<br><span class="link">#1234-s1 ↗ #1234-s2 ↗ #1234-s3 ↗</span></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot green"></div>
+          <div class="feed-time">12s</div>
+          <div class="feed-text"><strong>MON</strong> — Decision: WAIT → <span class="green">LONG 76%</span> · K线突破 + SM 进入 → Opening micro-position</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot yellow"></div>
+          <div class="feed-time">2m</div>
+          <div class="feed-text"><strong>WETH</strong> — <span class="yellow">DCA paused</span>: Step 3 on hold, price dipped below confirm. 60% filled, watching...</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot purple"></div>
+          <div class="feed-time">5m</div>
+          <div class="feed-text"><strong>WBTC</strong> — Confidence: 65% → <span class="purple">71%</span> · BTC broke $67k. Preparing micro-position if holds next block.</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot yellow"></div>
+          <div class="feed-time">8m</div>
+          <div class="feed-text"><strong>CHOG</strong> — Risk: SM 12 → <span class="red">7</span>. If ≤5 → Brain opens SHORT micro-position (DCA 3 steps)</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot red"></div>
+          <div class="feed-time">12m</div>
+          <div class="feed-text"><strong>WETH</strong> — Fatal Combo: FR 0.0008 + 散户追涨 → <span class="yellow">WAIT</span>. If FR hits 0.001 → <span class="red">emergencyExit()</span></div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot green"></div>
+          <div class="feed-time">15m</div>
+          <div class="feed-text"><strong>Brain</strong> — Learning: MON LONG +12.8% settled. K线 weight: 1.6 → <span class="green">1.8x</span>. Taker: 反向指标 confirmed.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Brain Performance</div>
+        <div class="stats-row" style="margin-bottom: 12px;">
+          <div class="stat">
+            <div class="stat-val">2,947</div>
+            <div class="stat-lbl">Total Decisions</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val green">61%</div>
+            <div class="stat-lbl">Win Rate</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val purple">12s</div>
+            <div class="stat-lbl">Last Update</div>
+          </div>
+        </div>
+        <div class="info-row">
+          <span class="muted">Active Signals</span>
+          <span>4 tokens monitored</span>
+        </div>
+        <div class="info-row">
+          <span class="muted">Dimensions Active</span>
+          <span>12 of 14</span>
+        </div>
+        <div class="info-row">
+          <span class="muted">Learning Cycles</span>
+          <span>847 completed</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">For Developers</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 8px;">Embed in your Monad app:</div>
+        <div style="background: #0a0a15; border: 1px solid #1e1e2e; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 12px; color: #7c6ff7; margin-bottom: 6px;">
+          &lt;GaleonBrainWidget asset="MON" /&gt;
+        </div>
+        <div class="btn-row" style="margin-top: 10px;">
+          <button class="btn btn-secondary" onclick="showPage('embed')" style="font-size: 12px; padding: 8px;">Embed Demo</button>
+          <button class="btn btn-secondary" style="font-size: 12px; padding: 8px;">API Docs</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: TOKEN ANALYSIS ==================== -->
+<div class="page" id="page-asset">
+  <div style="cursor: pointer; color: #7c6ff7; font-size: 12px; margin-bottom: 16px;" onclick="showPage('home')">← Back to Brain Link</div>
+
+  <!-- Header: Token + Price -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+    <div>
+      <div class="page-title">MON / USDC</div>
+      <span class="muted" style="font-size: 13px;">Monad · Kuru DEX</span>
+    </div>
+    <div style="text-align: right;">
+      <div style="font-size: 22px; font-weight: 700;">$0.0223</div>
+      <div class="green" style="font-size: 13px;">+2.4% (24h)</div>
+    </div>
+  </div>
+
+  <!-- Decision Hero -->
+  <div class="card card-glow" style="text-align: center; padding: 28px; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+    <div style="font-size: 34px; font-weight: 800;" class="green">LONG</div>
+    <div style="font-size: 14px; color: #a0a0b8; margin: 4px 0 16px;">ADJUST — $420 recommended (not $1,000)</div>
+    <div style="display: inline-flex; gap: 24px; background: #0a0a15; padding: 12px 28px; border-radius: 20px;">
+      <div><div style="font-size: 26px; font-weight: 700;" class="purple">76%</div><div class="label">Confidence</div></div>
+      <div style="border-left: 1px solid #2a2a3a;"></div>
+      <div><div style="font-size: 26px; font-weight: 700;" class="yellow">MED</div><div class="label">Risk</div></div>
+      <div style="border-left: 1px solid #2a2a3a;"></div>
+      <div><div style="font-size: 26px; font-weight: 700;" class="green">63%</div><div class="label">Win Rate</div></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <!-- Left column -->
+    <div>
+      <!-- Chart with Brain annotations -->
+      <div class="card">
+        <div class="card-title">Price Chart — Brain Annotations</div>
+        <div class="chart-area">
+          <svg width="100%" height="200" viewBox="0 0 500 200" preserveAspectRatio="none">
+            <!-- Price line -->
+            <polyline fill="none" stroke="#555" stroke-width="1" points="0,160 20,155 40,150 60,148 80,152 100,145 120,140 140,135 160,130 180,128 200,125 220,120 240,115 260,105 280,100 300,95 320,85 340,80 360,75 380,70 400,65 420,55 440,50 460,42 480,38 500,35"/>
+            <!-- Entry zone highlight -->
+            <rect x="300" y="85" width="60" height="20" fill="#22c55e" opacity="0.1" rx="4"/>
+            <!-- Stop loss line -->
+            <line x1="0" y1="130" x2="500" y2="130" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+            <!-- Take profit line -->
+            <line x1="0" y1="50" x2="500" y2="50" stroke="#22c55e" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
+          </svg>
+          <!-- Annotations -->
+          <div class="chart-annotation" style="left: 18%; top: 52%; background: #2a1a2a; color: #f59e0b;">⚠ SM exited here</div>
+          <div class="chart-annotation" style="left: 55%; top: 30%; background: #1a2a1a; color: #22c55e;">▼ Brain: Entry Zone</div>
+          <div class="chart-annotation" style="right: 8%; top: 8%; background: #1a2a1a; color: #22c55e;">— TP $0.0248</div>
+          <div class="chart-annotation" style="left: 5%; top: 58%; background: #2a1a1a; color: #ef4444;">— SL $0.0205</div>
+          <div class="chart-annotation" style="left: 40%; top: 75%; background: #1a1a2e; color: #7c6ff7;">🔄 Volume spike 2.1x</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #444;">
+          <span>24h ago</span><span>12h ago</span><span>6h ago</span><span>Now</span>
+        </div>
+      </div>
+
+      <!-- Why -->
+      <div class="card">
+        <div class="card-title">Why This Decision</div>
+        <div style="font-size: 14px; line-height: 1.7;">
+          <span class="green">BTC Trend Up</span> + <span class="green">K线突破前高</span> + <span class="green">Smart Money 12 holders 增持</span><br>
+          <span class="yellow">但散户追涨明显 (Taker ratio 1.35)</span>, 建议控制仓位在 35%
+        </div>
+      </div>
+
+      <!-- Historical Evidence -->
+      <div class="card">
+        <div class="card-title">Historical Evidence</div>
+        <div class="three-col" style="margin-bottom: 12px;">
+          <div class="stat">
+            <div class="stat-val">184</div>
+            <div class="stat-lbl">Similar Setups</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val green">63%</div>
+            <div class="stat-lbl">Win Rate</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val green">+4.2%</div>
+            <div class="stat-lbl">Avg PnL</div>
+          </div>
+        </div>
+        <div class="info-row"><span class="muted">Best Regime</span><span>BTC Uptrend (WR 71%)</span></div>
+        <div class="info-row"><span class="muted">Worst Regime</span><span class="yellow">Sideways (WR 48%)</span></div>
+        <div class="info-row"><span class="muted">Current Regime</span><span class="green">BTC Uptrend ✓</span></div>
+        <div class="info-row"><span class="muted">Avg Holding Time</span><span>4.2 hours</span></div>
+        <div class="info-row"><span class="muted">Max Drawdown</span><span class="red">-6.8%</span></div>
+      </div>
+
+      <!-- Risk Assessment -->
+      <div class="card">
+        <div class="card-title">Risk Assessment</div>
+        <div class="info-row"><span class="muted">Portfolio Risk</span><span class="yellow" style="font-weight: 600;">HIGH ⚠</span></div>
+        <div class="info-row"><span class="muted">Reason</span><span>Directional exposure too concentrated</span></div>
+        <div class="info-row"><span class="muted">Your Input</span><span>$1,000</span></div>
+        <div class="info-row"><span class="muted">Suggested Size</span><span class="purple" style="font-weight: 600;">$420</span></div>
+        <div class="info-row"><span class="muted">Entry Zone</span><span>$0.0218 — $0.0225</span></div>
+        <div class="info-row"><span class="muted">Stop Loss</span><span class="red">$0.0205 (-8.1%)</span></div>
+        <div class="info-row"><span class="muted">Take Profit</span><span class="green">$0.0248 (+11.2%)</span></div>
+        <div class="info-row"><span class="muted">Risk/Reward</span><span class="green">1 : 1.38</span></div>
+      </div>
+
+      <!-- Micro-Execution Plan Preview -->
+      <div class="card card-glow">
+        <div class="card-title">AI Micro-Execution Plan</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">Brain won't buy $420 at once. It splits into micro-steps, block by block:</div>
+
+        <div style="display: flex; gap: 2px; margin-bottom: 14px;">
+          <div style="flex: 3; background: #1a2a1a; border-radius: 4px 0 0 4px; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; font-weight: 600; color: #22c55e;">DCA IN</div>
+            <div style="font-size: 10px; color: #888;">3 steps · 30/30/40%</div>
+          </div>
+          <div style="flex: 1; background: #0e0e18; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; font-weight: 600; color: #a0a0b8;">HOLD</div>
+            <div style="font-size: 10px; color: #888;">monitor</div>
+          </div>
+          <div style="flex: 2; background: #2a2a1a; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; font-weight: 600; color: #f59e0b;">TP</div>
+            <div style="font-size: 10px; color: #888;">30% → 30% → 40%</div>
+          </div>
+          <div style="flex: 1; background: #2a1a1a; border-radius: 0 4px 4px 0; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; font-weight: 600; color: #ef4444;">SL</div>
+            <div style="font-size: 10px; color: #888;">dynamic</div>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; line-height: 1.8;">
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a22;">
+            <span class="muted">Step 1</span>
+            <span>DCA 30% → buy $126 at market</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a22;">
+            <span class="muted">Step 2</span>
+            <span>If price confirms (+0.3~0.5%) → DCA 30% ($126)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a22;">
+            <span class="muted">Step 3</span>
+            <span>If momentum holds → DCA 40% ($168)</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a22;">
+            <span class="muted">TP1</span>
+            <span class="green">+5% → sell 30%, move SL to breakeven</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a22;">
+            <span class="muted">TP2</span>
+            <span class="green">+10% → sell 30%, move SL to TP1</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #1a1a22;">
+            <span class="muted">TP3</span>
+            <span class="green">+15% → exit remaining 40%</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+            <span class="muted">Safety</span>
+            <span class="red">If price reverses before Step 2 → exit Step 1 only (-$126 risk)</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 12px; padding: 8px; background: #0a0a15; border-radius: 6px; font-size: 11px; color: #555;">
+          Est. 4-6 on-chain micro-steps · Gas: ~$0.02 total · Only possible on Monad (0.8s blocks, near-zero gas)
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div>
+      <!-- Voting Radar -->
+      <div class="card">
+        <div class="card-title">Dimension Radar</div>
+        <div class="radar-container">
+          <svg viewBox="0 0 300 300" width="260" height="260">
+            <!-- Background rings -->
+            <circle cx="150" cy="150" r="120" fill="none" stroke="#1e1e2e" stroke-width="1"/>
+            <circle cx="150" cy="150" r="90" fill="none" stroke="#1e1e2e" stroke-width="1"/>
+            <circle cx="150" cy="150" r="60" fill="none" stroke="#1e1e2e" stroke-width="1"/>
+            <circle cx="150" cy="150" r="30" fill="none" stroke="#1e1e2e" stroke-width="1"/>
+            <!-- Axes -->
+            <line x1="150" y1="30" x2="150" y2="270" stroke="#1a1a28" stroke-width="0.5"/>
+            <line x1="30" y1="150" x2="270" y2="150" stroke="#1a1a28" stroke-width="0.5"/>
+            <line x1="65" y1="65" x2="235" y2="235" stroke="#1a1a28" stroke-width="0.5"/>
+            <line x1="235" y1="65" x2="65" y2="235" stroke="#1a1a28" stroke-width="0.5"/>
+            <!-- Data polygon (bullish shape) -->
+            <polygon fill="#22c55e" fill-opacity="0.12" stroke="#22c55e" stroke-width="1.5"
+              points="150,42 225,75 258,150 225,210 150,240 90,225 42,150 75,90"/>
+            <!-- Labels -->
+            <text x="150" y="22" text-anchor="middle" fill="#888" font-size="10">K线 +2</text>
+            <text x="265" y="70" text-anchor="start" fill="#888" font-size="10">BTC +1</text>
+            <text x="270" y="155" text-anchor="start" fill="#888" font-size="10">动能 +2</text>
+            <text x="240" y="228" text-anchor="start" fill="#888" font-size="10">RSI +1</text>
+            <text x="150" y="265" text-anchor="middle" fill="#888" font-size="10">SM +2</text>
+            <text x="60" y="240" text-anchor="end" fill="#888" font-size="10">EMA +1</text>
+            <text x="20" y="155" text-anchor="end" fill="#ef4444" font-size="10">Taker -2</text>
+            <text x="50" y="80" text-anchor="end" fill="#ef4444" font-size="10">FR -1</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Voting Bars -->
+      <div class="card">
+        <div class="card-title">Voting Breakdown — Score +6 (Threshold: 6) ✅</div>
+        <div style="display: flex; gap: 8px; margin-bottom: 14px; font-size: 12px;">
+          <span class="green" style="font-weight: 600;">9 Bullish</span>
+          <span class="red" style="font-weight: 600;">3 Bearish</span>
+          <span class="muted">1 Neutral</span>
+        </div>
+        <div class="vote-bar-row"><div class="vote-bar-label">K线</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 100%; background: #22c55e;">4H突破前高</div></div><div class="vote-bar-score green">+2</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">动能</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 100%; background: #22c55e;">+9.2% 放量2.1x</div></div><div class="vote-bar-score green">+2</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">SM</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 100%; background: #22c55e;">12 holders 增持</div></div><div class="vote-bar-score green">+2</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">BTC</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #22c55e;">Trend Up</div></div><div class="vote-bar-score green">+1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">RSI</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #22c55e;">53 有空间</div></div><div class="vote-bar-score green">+1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">BS</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #22c55e;">买卖比1.6x</div></div><div class="vote-bar-score green">+1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">EMA</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #22c55e;">多头排列</div></div><div class="vote-bar-score green">+1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">OI阶段</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #22c55e;">建仓期</div></div><div class="vote-bar-score green">+1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">多天</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #22c55e;">连涨3天</div></div><div class="vote-bar-score green">+1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">Taker</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 100%; background: #ef4444;">散户追涨1.35</div></div><div class="vote-bar-score red">-2</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">OI变化</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #ef4444;">+18% 偏高</div></div><div class="vote-bar-score red">-1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">FR</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 75%; background: #ef4444;">0.0006 偏高</div></div><div class="vote-bar-score red">-1</div></div>
+        <div class="vote-bar-row"><div class="vote-bar-label">FR趋势</div><div class="vote-bar"><div class="vote-bar-fill" style="width: 50%; background: #444;">FLAT</div></div><div class="vote-bar-score" style="color: #555;">0</div></div>
+      </div>
+
+      <!-- Brain Decision Timeline -->
+      <div class="card">
+        <div class="card-title">Brain Decision Timeline — MON</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-dot active"></div>
+            <div class="timeline-time">Now</div>
+            <div class="timeline-text"><span class="green" style="font-weight: 600;">LONG 76%</span> — K线突破+SM进入</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background: #f59e0b; border-color: #f59e0b;"></div>
+            <div class="timeline-time">2h ago</div>
+            <div class="timeline-text"><span class="yellow">WAIT 52%</span> — 等待K线确认方向</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot" style="background: #f59e0b; border-color: #f59e0b;"></div>
+            <div class="timeline-time">6h ago</div>
+            <div class="timeline-text"><span class="yellow">WAIT 45%</span> — BTC 横盘, 信号不足</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot red"></div>
+            <div class="timeline-time">12h ago</div>
+            <div class="timeline-text"><span class="red">SHORT 62%</span> — 出货形态+FR过高</div>
+            <div class="timeline-tag green">Result: +8.2% ✓</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-dot green"></div>
+            <div class="timeline-time">1d ago</div>
+            <div class="timeline-text"><span class="green">LONG 70%</span> — 底部反弹+缩量确认</div>
+            <div class="timeline-tag green">Result: +5.1% ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Execute -->
+  <div class="card card-glow" style="margin-top: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <div style="font-size: 14px; font-weight: 600;">Execute this trade on Kuru DEX</div>
+        <div style="font-size: 12px; color: #888;">Fee: 0.5% · AI-Endorsed on Monad</div>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-primary" style="flex: none; padding: 12px 28px;">Execute $420 ✅</button>
+        <button class="btn btn-secondary" style="flex: none; padding: 12px 20px;">Override $1,000 ⚠</button>
+      </div>
+    </div>
+    <div class="onchain" style="margin-top: 12px;">🔗 Decision ID: #1234 · Will be recorded on Monad</div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: AUTO TRADE ==================== -->
+<div class="page" id="page-trade">
+  <div class="page-title">AI Auto Trade — Monad</div>
+  <div class="page-desc">Galeon Brain trades for you. You watch.</div>
+
+  <div class="two-col">
+    <!-- Left: Account + Settings + Positions -->
+    <div>
+      <div class="card">
+        <div class="card-title">Smart Account</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div>
+            <span class="green" style="font-weight: 600;">● Active</span>
+            <span class="muted" style="font-size: 12px; margin-left: 8px; font-family: monospace;">0x7a3f...8b2c</span>
+          </div>
+          <div style="font-size: 22px; font-weight: 700;">504.50 <span class="muted" style="font-size: 13px;">USDC</span></div>
+        </div>
+        <div class="btn-row" style="margin-top: 8px;">
+          <button class="btn btn-success" style="font-size: 13px;">Deposit</button>
+          <button class="btn btn-secondary" style="font-size: 13px;">Withdraw</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Settings</div>
+        <div class="info-row"><span class="muted">Max per trade</span><span>$50</span></div>
+        <div class="info-row"><span class="muted">Session Key valid</span><span>28 days remaining</span></div>
+        <div class="info-row"><span class="muted">Trading on</span><span>Kuru DEX</span></div>
+        <div class="info-row"><span class="muted">Fee</span><span>0.5% per swap</span></div>
+        <div style="margin-top: 14px; display: flex; align-items: center; gap: 12px;">
+          <div class="toggle"></div>
+          <span class="green" style="font-weight: 600; font-size: 14px;">AI Auto Trade: ON</span>
+        </div>
+      </div>
+
+      <!-- Current Positions with Micro-Execution -->
+      <div class="card">
+        <div class="card-title">Current Positions — AI Micro-Execution</div>
+
+        <!-- MON Position with micro steps -->
+        <div class="pos-card">
+          <div class="pos-header">
+            <div>
+              <span style="font-weight: 600; font-size: 15px;">MON</span>
+              <span class="badge badge-long" style="margin-left: 6px;">LONG</span>
+              <span style="font-size: 11px; color: #7c6ff7; margin-left: 8px;">4 micro-steps</span>
+            </div>
+            <span class="green" style="font-weight: 600; font-size: 15px;">+3.2%</span>
+          </div>
+
+          <!-- Micro-execution timeline -->
+          <div style="margin: 10px 0; padding: 10px; background: #0a0a15; border-radius: 8px;">
+            <div style="font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Micro-Execution Steps</div>
+
+            <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #22c55e;">DCA 30%</div>
+                <div style="font-size: 9px; color: #555;">14:03:00</div>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #22c55e;">DCA 30%</div>
+                <div style="font-size: 9px; color: #555;">14:03:04</div>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #22c55e;">DCA 40%</div>
+                <div style="font-size: 9px; color: #555;">14:03:08</div>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #f59e0b; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #f59e0b;">TP1 30%</div>
+                <div style="font-size: 9px; color: #555;">14:05:00</div>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #1e1e2e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #555;">TP2</div>
+                <div style="font-size: 9px; color: #555;">pending</div>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #1e1e2e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #555;">Exit</div>
+                <div style="font-size: 9px; color: #555;">pending</div>
+              </div>
+            </div>
+
+            <div style="font-size: 11px; color: #888; margin-top: 6px;">
+              Avg entry: $0.0218 · Filled: $420 in 3 steps (8 seconds) · TP1 hit: +5% locked 💰
+            </div>
+          </div>
+
+          <div class="pos-brain">
+            🧠 Brain: Holding 70% position. SL moved to breakeven after TP1. Next: TP2 at +10%.
+          </div>
+        </div>
+
+        <!-- WETH Position with micro steps -->
+        <div class="pos-card">
+          <div class="pos-header">
+            <div>
+              <span style="font-weight: 600; font-size: 15px;">WETH</span>
+              <span class="badge badge-long" style="margin-left: 6px;">LONG</span>
+              <span style="font-size: 11px; color: #7c6ff7; margin-left: 8px;">2 micro-steps</span>
+            </div>
+            <span class="red" style="font-weight: 600; font-size: 15px;">-1.1%</span>
+          </div>
+
+          <div style="margin: 10px 0; padding: 10px; background: #0a0a15; border-radius: 8px;">
+            <div style="font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Micro-Execution Steps</div>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #22c55e;">DCA 30%</div>
+                <div style="font-size: 9px; color: #555;">16:20:00</div>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #22c55e;">DCA 30%</div>
+                <div style="font-size: 9px; color: #555;">16:20:05</div>
+              </div>
+              <div style="flex: 1; text-align: center;">
+                <div style="height: 4px; background: #1e1e2e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px; color: #ef4444;">DCA paused</div>
+                <div style="font-size: 9px; color: #555;">—</div>
+              </div>
+              <div style="flex: 1; text-align: center; opacity: 0.3;">
+                <div style="height: 4px; background: #1e1e2e; border-radius: 2px; margin-bottom: 4px;"></div>
+                <div style="font-size: 9px;">TP1</div>
+              </div>
+            </div>
+            <div style="font-size: 11px; color: #888; margin-top: 6px;">
+              Avg entry: $2,412 · Filled: 60% ($300 of $500) · DCA paused: price dipped, waiting confirm
+            </div>
+          </div>
+
+          <div class="pos-brain">
+            🧠 Brain: <span class="yellow">DCA paused — price dropped below confirm threshold. Not adding. SL at $2,280 active.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance -->
+      <div class="card">
+        <div class="card-title">Performance</div>
+        <div class="stats-row">
+          <div class="stat"><div class="stat-val green">+$4.50</div><div class="stat-lbl">Today</div></div>
+          <div class="stat"><div class="stat-val green">+$28.30</div><div class="stat-lbl">7 Days</div></div>
+          <div class="stat"><div class="stat-val">12</div><div class="stat-lbl">Trades</div></div>
+          <div class="stat"><div class="stat-val green">67%</div><div class="stat-lbl">Win Rate</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Brain Thinking + Activity -->
+    <div>
+      <!-- Brain thinking process (live) -->
+      <div class="card">
+        <div class="card-title"><span class="brain-pulse"></span>Brain Micro-Execution — Live</div>
+        <div style="font-size: 11px; color: #555; margin-bottom: 10px;">Checking every block (0.8s) · Gas cost per micro-step: ~$0.003</div>
+
+        <div class="think-item done">
+          ✅ <strong>Block #1,234,892</strong> — MON: TP1 hit +5% → partialExit(30%) executed. SL moved to breakeven.
+        </div>
+        <div class="think-item done">
+          ✅ <strong>Block #1,234,891</strong> — MON: Price +4.8%, approaching TP1. Preparing partial exit...
+        </div>
+        <div class="think-item done">
+          ✅ <strong>Block #1,234,889</strong> — MON: DCA Step 3 complete. Full position built ($420 across 3 steps in 8 seconds).
+        </div>
+        <div class="think-item active">
+          🔄 <strong>Block #1,234,893</strong> — WETH: Price -1.1%, below DCA threshold. Pausing Step 3. Watching for reversal or SL.
+        </div>
+        <div class="think-item warn">
+          ⚠ <strong>Block #1,234,893</strong> — WETH: FR rising to 0.0008. If hits 0.001 + Taker flips → emergencyExit().
+        </div>
+        <div class="think-item">
+          ⏳ <strong>CHOG</strong> — SHORT signal brewing. SM at 7. Waiting for SM ≤ 5 to open micro-position.
+        </div>
+        <div class="think-item">
+          ⏳ <strong>Next block</strong> in 0.4s...
+        </div>
+      </div>
+
+      <!-- Today's Micro-Execution Log -->
+      <div class="card">
+        <div class="card-title">Micro-Execution Log</div>
+        <div style="font-size: 11px; color: #555; margin-bottom: 8px;">17 on-chain operations today · Total gas: $0.051</div>
+
+        <div class="feed-item">
+          <div class="feed-dot green"></div>
+          <div class="feed-time">14:05</div>
+          <div class="feed-text">
+            <strong class="green">MON TP1</strong> — partialExit 30% at $0.0229 <span class="green">+5.0% 💰</span><br>
+            <span class="muted">Step 4/6 · SL moved to breakeven · <span class="link">#1234-s4 ↗</span></span>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot purple"></div>
+          <div class="feed-time">14:03</div>
+          <div class="feed-text">
+            <strong class="purple">MON DCA</strong> — 3 steps in 8 seconds:<br>
+            <span class="muted">Step 1: 30% ($126) at $0.0218 · Step 2: 30% ($126) at $0.0219 · Step 3: 40% ($168) at $0.0219</span><br>
+            <span class="muted">Brain: LONG 76% · <span class="link">#1234-s1 ↗</span> <span class="link">#1234-s2 ↗</span> <span class="link">#1234-s3 ↗</span></span>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot purple"></div>
+          <div class="feed-time">16:20</div>
+          <div class="feed-text">
+            <strong class="purple">WETH DCA</strong> — 2 of 3 steps completed:<br>
+            <span class="muted">Step 1: 30% ($150) · Step 2: 30% ($150) · Step 3: <span class="yellow">paused (price dipped)</span></span><br>
+            <span class="muted">Brain: LONG 71% · <span class="link">#1236-s1 ↗</span> <span class="link">#1236-s2 ↗</span></span>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot yellow"></div>
+          <div class="feed-time">16:45</div>
+          <div class="feed-text">
+            <strong class="yellow">WETH SL ADJUST</strong> — Dynamic stop loss: $2,350 → $2,280 (volatility increased)<br>
+            <span class="muted">No on-chain tx needed (SL stored in backend, execution on trigger)</span>
+          </div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot red"></div>
+          <div class="feed-time">17:05</div>
+          <div class="feed-text">
+            <strong class="red">CHOG BLOCKED</strong> — SHORT signal ready but daily exposure limit near cap.<br>
+            <span class="muted">Brain: "Will open micro-position after MON TP2 frees capital."</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 4: HISTORY ==================== -->
+<div class="page" id="page-history">
+  <div class="page-title">AI-Endorsed Trade History</div>
+  <div class="page-desc">Every trade verified on Monad. Every AI decision traceable.</div>
+
+  <div class="two-col">
+    <!-- Left: Stats + Table -->
+    <div>
+      <div class="card">
+        <div class="card-title">On-chain Verified Stats</div>
+        <div class="stats-row" style="margin-bottom: 12px;">
+          <div class="stat"><div class="stat-val">12</div><div class="stat-lbl">Trades</div></div>
+          <div class="stat"><div class="stat-val green">67%</div><div class="stat-lbl">Win Rate</div></div>
+          <div class="stat"><div class="stat-val green">+$48.30</div><div class="stat-lbl">Total PnL</div></div>
+          <div class="stat"><div class="stat-val purple">72</div><div class="stat-lbl">AI Trust Score</div></div>
+        </div>
+        <div style="text-align: center;"><span class="link">View all on Monad Explorer ↗</span></div>
+      </div>
+
+      <div class="card" style="overflow-x: auto;">
+        <table class="trade-table">
+          <thead><tr><th>#</th><th>Token</th><th>Dir</th><th>Conf</th><th>Result</th><th>PnL</th><th>On-chain</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><strong>MON</strong></td><td><span class="badge badge-long">LONG</span></td><td>76%</td><td><span class="badge badge-win">WIN</span></td><td class="green" style="font-weight: 600;">+12.8%</td><td><span class="link">#1234</span></td></tr>
+            <tr><td>2</td><td><strong>WETH</strong></td><td><span class="badge badge-long">LONG</span></td><td>71%</td><td><span class="badge badge-loss">LOSS</span></td><td class="red" style="font-weight: 600;">-3.1%</td><td><span class="link">#1236</span></td></tr>
+            <tr><td>3</td><td><strong>MON</strong></td><td><span class="badge badge-long">LONG</span></td><td>82%</td><td><span class="badge badge-win">WIN</span></td><td class="green" style="font-weight: 600;">+6.4%</td><td><span class="link">#1240</span></td></tr>
+            <tr><td>4</td><td><strong>CHOG</strong></td><td><span class="badge badge-short">SHORT</span></td><td>68%</td><td><span class="badge badge-win">WIN</span></td><td class="green" style="font-weight: 600;">+8.9%</td><td><span class="link">#1245</span></td></tr>
+            <tr><td>5</td><td><strong>MON</strong></td><td><span class="badge badge-long">LONG</span></td><td>58%</td><td><span class="badge badge-loss">LOSS</span></td><td class="red" style="font-weight: 600;">-2.1%</td><td><span class="link">#1251</span></td></tr>
+            <tr><td>6</td><td><strong>WBTC</strong></td><td><span class="badge badge-long">LONG</span></td><td>74%</td><td><span class="badge badge-win">WIN</span></td><td class="green" style="font-weight: 600;">+5.7%</td><td><span class="link">#1258</span></td></tr>
+            <tr><td>7</td><td><strong>MON</strong></td><td><span class="badge badge-long">LONG</span></td><td>80%</td><td><span class="badge badge-win">WIN</span></td><td class="green" style="font-weight: 600;">+9.2%</td><td><span class="link">#1263</span></td></tr>
+            <tr><td>8</td><td><strong>WETH</strong></td><td><span class="badge badge-long">LONG</span></td><td>65%</td><td><span class="badge badge-win">WIN</span></td><td class="green" style="font-weight: 600;">+3.4%</td><td><span class="link">#1270</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Learning Evolution + Trade Detail -->
+    <div>
+      <div class="card">
+        <div class="card-title">Brain Learning Evolution</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 12px;">Brain auto-adjusts rules from every trade result</div>
+        <div class="learn-row">
+          <div class="learn-metric">Overall Win Rate</div>
+          <div><span class="learn-arrow green">↑</span> <span class="learn-change green">55% → 67%</span></div>
+        </div>
+        <div class="learn-row">
+          <div class="learn-metric">K线 Dimension Accuracy</div>
+          <div><span class="learn-arrow green">↑</span> <span class="learn-change green">58% → 72%</span></div>
+        </div>
+        <div class="learn-row">
+          <div class="learn-metric">Taker Dimension Accuracy</div>
+          <div><span class="learn-arrow red">↓</span> <span class="learn-change red">52% → 41%</span><span class="muted" style="font-size: 11px; margin-left: 4px;">(反向指标)</span></div>
+        </div>
+        <div class="learn-row">
+          <div class="learn-metric">SM Dimension Weight</div>
+          <div><span class="learn-arrow green">↑</span> <span class="learn-change green">1.0 → 1.8x</span></div>
+        </div>
+        <div class="learn-row">
+          <div class="learn-metric">Fatal Combo Rules</div>
+          <div><span class="learn-change purple">7 active (2 learned from losses)</span></div>
+        </div>
+        <div class="learn-row">
+          <div class="learn-metric">BTC Uptrend Strategy WR</div>
+          <div><span class="learn-arrow green">↑</span> <span class="learn-change green">60% → 71%</span></div>
+        </div>
+        <div class="learn-row">
+          <div class="learn-metric">Sideways Strategy WR</div>
+          <div><span class="learn-change yellow">48% (Brain avoids this regime)</span></div>
+        </div>
+        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #1e1e2e; font-size: 11px; color: #555;">
+          Last learning cycle: 12 minutes ago · 847 total cycles
+        </div>
+      </div>
+
+      <!-- Trade Detail Expanded with Micro-Steps -->
+      <div class="card">
+        <div class="card-title">Trade #1234 — Detailed On-chain Record</div>
+        <div class="info-row"><span class="muted">Token</span><span>MON LONG</span></div>
+        <div class="info-row"><span class="muted">Avg Entry</span><span>$0.0218</span></div>
+        <div class="info-row"><span class="muted">Final Exit</span><span>$0.0246</span></div>
+        <div class="info-row"><span class="muted">Total PnL</span><span class="green" style="font-weight: 600;">+12.8%</span></div>
+        <div class="info-row"><span class="muted">Brain Confidence</span><span class="purple">76%</span></div>
+        <div class="info-row"><span class="muted">Similar Setups</span><span>184 (63% WR)</span></div>
+        <div class="info-row"><span class="muted">Reason</span><span>BTC Trend Up + K线突破 + SM增持</span></div>
+
+        <!-- Micro-Execution Steps -->
+        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #1e1e2e;">
+          <div style="font-size: 11px; color: #555; margin-bottom: 10px;">MICRO-EXECUTION STEPS (6 on-chain operations):</div>
+
+          <div style="display: flex; gap: 2px; margin-bottom: 12px;">
+            <div style="flex: 1; text-align: center;">
+              <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 3px;"></div>
+              <div style="font-size: 9px; color: #22c55e;">DCA 30%</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 3px;"></div>
+              <div style="font-size: 9px; color: #22c55e;">DCA 30%</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div style="height: 4px; background: #22c55e; border-radius: 2px; margin-bottom: 3px;"></div>
+              <div style="font-size: 9px; color: #22c55e;">DCA 40%</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div style="height: 4px; background: #f59e0b; border-radius: 2px; margin-bottom: 3px;"></div>
+              <div style="font-size: 9px; color: #f59e0b;">TP1 30%</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div style="height: 4px; background: #f59e0b; border-radius: 2px; margin-bottom: 3px;"></div>
+              <div style="font-size: 9px; color: #f59e0b;">TP2 30%</div>
+            </div>
+            <div style="flex: 1; text-align: center;">
+              <div style="height: 4px; background: #ef4444; border-radius: 2px; margin-bottom: 3px;"></div>
+              <div style="font-size: 9px; color: #ef4444;">Exit 40%</div>
+            </div>
+          </div>
+
+          <div style="font-size: 11px; line-height: 1.9;">
+            <div style="display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #12121a;">
+              <span style="color: #444; width: 65px;">14:03:00</span>
+              <span class="green" style="width: 70px; font-weight: 500;">DCA_IN</span>
+              <span style="color: #888;">30% ($126) at $0.0218</span>
+              <span class="link" style="margin-left: auto;">#1234-s1 ↗</span>
+            </div>
+            <div style="display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #12121a;">
+              <span style="color: #444; width: 65px;">14:03:04</span>
+              <span class="green" style="width: 70px; font-weight: 500;">DCA_IN</span>
+              <span style="color: #888;">30% ($126) at $0.0219 — price confirmed ↑</span>
+              <span class="link" style="margin-left: auto;">#1234-s2 ↗</span>
+            </div>
+            <div style="display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #12121a;">
+              <span style="color: #444; width: 65px;">14:03:08</span>
+              <span class="green" style="width: 70px; font-weight: 500;">DCA_IN</span>
+              <span style="color: #888;">40% ($168) at $0.0219 — momentum holds</span>
+              <span class="link" style="margin-left: auto;">#1234-s3 ↗</span>
+            </div>
+            <div style="display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #12121a;">
+              <span style="color: #444; width: 65px;">14:08:20</span>
+              <span class="yellow" style="width: 70px; font-weight: 500;">TP1</span>
+              <span style="color: #888;">sell 30% at $0.0229 (+5.0%) · SL → breakeven</span>
+              <span class="link" style="margin-left: auto;">#1234-s4 ↗</span>
+            </div>
+            <div style="display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px solid #12121a;">
+              <span style="color: #444; width: 65px;">14:22:41</span>
+              <span class="yellow" style="width: 70px; font-weight: 500;">TP2</span>
+              <span style="color: #888;">sell 30% at $0.0240 (+10.1%) · SL → TP1</span>
+              <span class="link" style="margin-left: auto;">#1234-s5 ↗</span>
+            </div>
+            <div style="display: flex; gap: 8px; padding: 3px 0;">
+              <span style="color: #444; width: 65px;">14:41:05</span>
+              <span class="red" style="width: 70px; font-weight: 500;">EXIT</span>
+              <span style="color: #888;">sell final 40% at $0.0246 (+12.8%) · reversal signal</span>
+              <span class="link" style="margin-left: auto;">#1234-s6 ↗</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 10px; padding: 6px 10px; background: #0a0a15; border-radius: 6px; font-size: 10px; color: #555;">
+            6 on-chain operations · Total gas: $0.018 · Duration: 38 min · Each step AI-endorsed
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid #1e1e2e;">
+          <div style="font-size: 11px; color: #555; margin-bottom: 8px;">AI ENDORSEMENT ON-CHAIN:</div>
+          <div class="info-row"><span class="muted">Position ID</span><span class="link">#1234 ↗</span></div>
+          <div class="info-row"><span class="muted">Micro-Steps</span><span>6 verified transactions</span></div>
+          <div class="info-row"><span class="muted">Entry Tx</span><span class="link" style="font-family: monospace;">0xa3f8...2c1d ↗</span></div>
+          <div class="info-row"><span class="muted">Exit Tx</span><span class="link" style="font-family: monospace;">0xb7e2...9f4a ↗</span></div>
+          <div class="info-row"><span class="muted">Settled</span><span class="green">✅ PnL verified on-chain (+12.8%)</span></div>
+        </div>
+      </div>
+
+      <!-- What other protocols see -->
+      <div class="card" style="border-color: #2a2a5a;">
+        <div class="card-title">What Other Protocols See (On-chain)</div>
+        <div style="font-size: 12px; color: #888; margin-bottom: 10px;">Any Monad protocol can read your AI-endorsed trading history:</div>
+        <div class="info-row"><span class="muted">Trader</span><span style="font-family: monospace; font-size: 12px;">0x7a3f...8b2c</span></div>
+        <div class="info-row"><span class="muted">Total Trades</span><span>12</span></div>
+        <div class="info-row"><span class="muted">Win Rate</span><span class="green">67%</span></div>
+        <div class="info-row"><span class="muted">AI Trust Score</span><span class="purple">72 / 100</span></div>
+        <div style="margin-top: 12px; padding: 10px; background: #0e0e18; border-radius: 8px; font-size: 11px; color: #888;">
+          <strong class="purple">Example:</strong> A lending protocol reads this data → Your 67% win rate + 72 trust score → grants you 20% higher credit limit for collateralized loans.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 5: EMBED DEMO ==================== -->
+<div class="page" id="page-embed">
+  <div class="page-title">Brain Link Embed Demo</div>
+  <div class="page-desc">Any Monad app can embed Galeon Brain Link. Click Swap to see it.</div>
+
+  <div style="text-align: center; margin-bottom: 12px;">
+    <span style="font-size: 12px; color: #555;">↓ Simulated third-party Monad DEX ↓</span>
+  </div>
+
+  <div class="dex-mockup">
+    <div class="dex-header">
+      <span style="font-size: 16px; font-weight: 700;">🔄 MonadSwap</span>
+      <span style="font-size: 12px; background: #3b82f6; color: white; padding: 4px 12px; border-radius: 8px;">Connected 🟢</span>
+    </div>
+    <div style="margin-bottom: 14px;">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #888;"><span>From</span><span>USDC</span></div>
+      <input class="dex-input" value="1,000" readonly />
+    </div>
+    <div style="text-align: center; color: #444; font-size: 18px; margin: 6px 0;">↓</div>
+    <div style="margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #888;"><span>To</span><span>MON</span></div>
+      <input class="dex-input" value="~44,843" readonly />
+    </div>
+    <button class="dex-swap-btn" onclick="showPopup()">Swap</button>
+  </div>
+
+  <div style="text-align: center; margin-top: 20px;">
+    <div style="font-size: 13px; color: #888; margin-bottom: 8px;">Integration code:</div>
+    <div style="background: #0a0a15; border: 1px solid #1e1e2e; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; color: #7c6ff7; max-width: 420px; margin: 0 auto;">
+      &lt;GaleonBrainWidget asset="MON" onSwap={handleSwap} /&gt;
+    </div>
+  </div>
+</div>
+
+<!-- Brain Link Popup -->
+<div class="popup-overlay" id="popup" onclick="hidePopup(event)">
+  <div class="popup" onclick="event.stopPropagation()">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <span style="font-size: 15px; font-weight: 700; color: #7c6ff7;">🧠 Galeon Brain Link</span>
+      <span style="cursor: pointer; color: #555; font-size: 18px;" onclick="hidePopup()">✕</span>
+    </div>
+
+    <div style="text-align: center; font-size: 12px; color: #888; margin-bottom: 14px;">Checking your trade against 12 AI dimensions...</div>
+
+    <!-- Decision -->
+    <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid #2a2a4a; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 14px;">
+      <div style="font-size: 26px; font-weight: 800; color: #22c55e;">LONG MON</div>
+      <div style="font-size: 13px; color: #a0a0b8; margin-top: 4px;">ADJUST — $420 recommended</div>
+      <div style="margin-top: 10px; display: inline-flex; gap: 20px; background: #0a0a15; padding: 8px 20px; border-radius: 16px;">
+        <div><span style="font-size: 20px; font-weight: 700;" class="purple">76%</span><div class="label">Confidence</div></div>
+        <div><span style="font-size: 20px; font-weight: 700;" class="green">63%</span><div class="label">Win Rate</div></div>
+        <div><span style="font-size: 20px; font-weight: 700;">184</span><div class="label">Setups</div></div>
+      </div>
+    </div>
+
+    <div style="font-size: 13px; margin-bottom: 6px;"><strong>Why:</strong> <span style="color: #a0a0b8;">BTC Trend Up + K线突破前高 + Smart Money 增持</span></div>
+    <div style="font-size: 13px; margin-bottom: 6px; color: #f59e0b;"><strong>Risk:</strong> Portfolio exposure HIGH — suggest $420 not $1,000</div>
+    <div style="font-size: 13px; margin-bottom: 6px; color: #888;"><strong>Entry:</strong> $0.0218–$0.0225 · <strong>SL:</strong> <span class="red">$0.0205</span> · <strong>TP:</strong> <span class="green">$0.0248</span></div>
+
+    <!-- Mini voting summary -->
+    <div style="background: #0e0e18; border-radius: 8px; padding: 10px 12px; margin: 12px 0; font-size: 11px; color: #888;">
+      <strong style="color: #a0a0b8;">Voting:</strong> <span class="green">9 bullish</span> / <span class="red">3 bearish</span> / 1 neutral · Score: <span class="green">+6</span> (threshold: 6)
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="hidePopup()">Execute $420 ✅</button>
+      <button class="btn btn-secondary" onclick="hidePopup()">Override $1,000 ⚠</button>
+    </div>
+
+    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #1e1e2e; text-align: center; font-size: 11px; color: #444;">
+      This trade will be <strong class="purple">AI-Endorsed</strong> on Monad. Decision, confidence, and win rate recorded on-chain forever.<br>
+      Powered by <strong>Galeon Brain Link</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(n) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('page-' + n).classList.add('active');
+  const m = { home:0, asset:1, trade:2, history:3, embed:4 };
+  if (m[n] !== undefined) document.querySelectorAll('.nav-item')[m[n]].classList.add('active');
+  window.scrollTo(0, 0);
+}
+function showPopup() { document.getElementById('popup').classList.add('show'); }
+function hidePopup(e) { if (!e || e.target.id === 'popup') document.getElementById('popup').classList.remove('show'); }
+</script>
+
+</body>
+</html>

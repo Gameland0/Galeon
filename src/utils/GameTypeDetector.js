@@ -1,0 +1,253 @@
+// ===================== 智能游戏类型检测器 =====================
+
+class GameTypeDetector {
+  /**
+   * 智能检测游戏类型
+   * @param {Object} gameRequest 游戏请求对象
+   * @returns {Object} 检测结果
+   */
+  static detect(gameRequest) {
+    const { gameType, gameContext, boardState, availableMoves, boardStructure } = gameRequest;
+    
+    // 获取棋盘基本信息
+    const boardInfo = this.analyzeBoardStructure(boardState, boardStructure);
+    const contextInfo = this.analyzeGameContext(gameContext);
+    
+    
+    // 执行多层检测
+    const result = this.performDetection(gameType, boardInfo, contextInfo, availableMoves);
+    
+    return result;
+  }
+  
+  /**
+   * 分析棋盘结构
+   */
+  static analyzeBoardStructure(boardState, boardStructure) {
+    if (!boardState || !Array.isArray(boardState)) {
+      return { size: 0, dimensions: [0, 0], valid: false };
+    }
+    
+    const rows = boardState.length;
+    const cols = Array.isArray(boardState[0]) ? boardState[0].length : 0;
+    const isSquare = rows === cols;
+    
+    return {
+      size: rows,
+      dimensions: [rows, cols],
+      isSquare,
+      valid: rows > 0 && cols > 0
+    };
+  }
+  
+  /**
+   * 分析游戏上下文
+   */
+  static analyzeGameContext(gameContext) {
+    if (!gameContext || typeof gameContext !== 'string') {
+      return { winCondition: null, keywords: [] };
+    }
+    
+    const text = gameContext.toLowerCase();
+    const keywords = [];
+    let winCondition = null;
+    
+    // 检测关键词
+    if (text.includes('五子') || text.includes('连五') || text.includes('五连')) {
+      keywords.push('gomoku');
+      winCondition = 5;
+    }
+    if (text.includes('三子') || text.includes('连三') || text.includes('三连')) {
+      keywords.push('tictactoe');
+      winCondition = 3;
+    }
+    if (text.includes('翻转') || text.includes('黑白') || text.includes('奥赛罗') || text.includes('reversi')) {
+      keywords.push('reversi');
+      winCondition = 'flip';
+    }
+    if (text.includes('井字') || text.includes('tic') || text.includes('tac')) {
+      keywords.push('tictactoe');
+      winCondition = winCondition || 3;
+    }
+    
+    return { winCondition, keywords };
+  }
+  
+  /**
+   * 执行检测逻辑
+   */
+  static performDetection(declaredType, boardInfo, contextInfo, availableMoves) {
+    const { size, isSquare } = boardInfo;
+    const { winCondition, keywords } = contextInfo;
+    
+    // 规则1: 明确的不合理配置
+    if (declaredType === 'gomoku' && winCondition === 5 && size < 5) {
+      return {
+        type: 'invalid_config',
+        confidence: 'error',
+        error: `五子棋无法在${size}x${size}棋盘上进行（需要连成5子但棋盘太小）`,
+        suggestion: '五子棋至少需要5x5棋盘，建议切换为井字棋',
+        correctedType: 'tictactoe',
+        reason: '自动修正：棋盘过小无法连5子'
+      };
+    }
+    
+    // 规则2: 3x3棋盘的特殊处理
+    if (size === 3 && isSquare) {
+      if (declaredType === 'gomoku' && winCondition !== 3) {
+        return {
+          type: 'tictactoe',
+          confidence: 'corrected',
+          corrected: true,
+          reason: '3x3棋盘无法进行五子棋，自动切换为井字棋',
+          originalType: declaredType
+        };
+      }
+      
+      if (declaredType === 'tictactoe' || winCondition === 3 || keywords.includes('tictactoe')) {
+        return {
+          type: 'tictactoe',
+          confidence: 'high',
+          reason: '3x3棋盘+三子连线，确认为井字棋'
+        };
+      }
+      
+      // 默认3x3为井字棋
+      return {
+        type: 'tictactoe',
+        confidence: 'inferred',
+        reason: '3x3棋盘通常用于井字棋'
+      };
+    }
+    
+    // 规则3: 8x8棋盘的黑白棋检测
+    if (size === 8 && isSquare) {
+      if (declaredType === 'reversi' || keywords.includes('reversi') || winCondition === 'flip') {
+        return {
+          type: 'reversi',
+          confidence: 'high',
+          reason: '8x8棋盘+翻转规则，确认为黑白棋'
+        };
+      }
+      
+      // 如果没有明确声明但是8x8，可能是黑白棋
+      if (!declaredType || declaredType === 'unknown') {
+        return {
+          type: 'reversi',
+          confidence: 'inferred',
+          reason: '8x8棋盘通常用于黑白棋'
+        };
+      }
+    }
+    
+    // 规则4: 五子棋的合理性检查
+    if (declaredType === 'gomoku' || keywords.includes('gomoku')) {
+      if (size >= 5 && isSquare) {
+        return {
+          type: 'gomoku',
+          confidence: 'high',
+          reason: `${size}x${size}棋盘适合五子棋`
+        };
+      }
+      
+      if (size >= 5) {
+        return {
+          type: 'gomoku',
+          confidence: 'medium',
+          reason: `${boardInfo.dimensions[0]}x${boardInfo.dimensions[1]}棋盘可以进行五子棋`
+        };
+      }
+    }
+    
+    // 规则5: 黑白棋的其他尺寸支持
+    if (declaredType === 'reversi' || keywords.includes('reversi')) {
+      if (size >= 4 && isSquare && size % 2 === 0) {
+        return {
+          type: 'reversi',
+          confidence: 'medium',
+          reason: `${size}x${size}偶数尺寸棋盘可以进行黑白棋`
+        };
+      }
+    }
+    
+    // 规则6: 默认处理 - 信任声明但降低置信度
+    if (declaredType && this.isValidGameType(declaredType)) {
+      return {
+        type: declaredType,
+        confidence: 'low',
+        reason: '使用声明的游戏类型（未进行验证）'
+      };
+    }
+    
+    // 规则7: 最后的智能推断
+    if (size <= 5 && isSquare) {
+      return {
+        type: 'tictactoe',
+        confidence: 'fallback',
+        reason: '小尺寸方形棋盘，推断为井字棋类游戏'
+      };
+    }
+    
+    if (size >= 8 && isSquare) {
+      return {
+        type: 'reversi',
+        confidence: 'fallback',
+        reason: '大尺寸方形棋盘，推断为黑白棋类游戏'
+      };
+    }
+    
+    // 兜底处理
+    return {
+      type: declaredType || 'unknown',
+      confidence: 'unknown',
+      reason: '无法确定游戏类型'
+    };
+  }
+  
+  /**
+   * 检查是否为有效的游戏类型
+   */
+  static isValidGameType(gameType) {
+    const validTypes = ['gomoku', 'tictactoe', 'reversi', 'connect4', 'chess', 'checkers', 'go'];
+    return validTypes.includes(gameType?.toLowerCase());
+  }
+  
+  /**
+   * 获取游戏类型的标准信息
+   */
+  static getGameTypeInfo(gameType) {
+    const gameInfoMap = {
+      gomoku: {
+        name: '五子棋',
+        standardSize: [15, 15],
+        minSize: [5, 5],
+        winCondition: '连成五子',
+        description: '在棋盘上连成五个同色棋子获胜'
+      },
+      tictactoe: {
+        name: '井字棋',
+        standardSize: [3, 3],
+        minSize: [3, 3],
+        winCondition: '连成三子',
+        description: '在3x3棋盘上连成三个同色棋子获胜'
+      },
+      reversi: {
+        name: '黑白棋',
+        standardSize: [8, 8],
+        minSize: [4, 4],
+        winCondition: '翻转占优',
+        description: '通过翻转对方棋子，最终棋子数量多者获胜'
+      }
+    };
+    
+    return gameInfoMap[gameType?.toLowerCase()] || null;
+  }
+}
+
+// 兼容性导出
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = GameTypeDetector;
+}
+if (typeof window !== 'undefined') {
+  window.GameTypeDetector = GameTypeDetector;
+}
