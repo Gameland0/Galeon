@@ -1,0 +1,6 @@
+artifacts/
+cache/
+scripts/
+deployments/
+node_modules/
+.env
