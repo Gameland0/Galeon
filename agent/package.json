@@ -1,0 +1,30 @@
+{
+  "name": "galeon-near-agent",
+  "version": "1.0.0",
+  "description": "Galeon AI Trading Agent — NEAR Intents execution service",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "npx tsx watch src/index.ts",
+    "start": "npx tsx src/index.ts",
+    "agent:trend": "npx tsx src/mock-agents/trend-agent.ts",
+    "agent:orderbook": "npx tsx src/mock-agents/orderbook-agent.ts",
+    "agent:malicious": "npx tsx src/mock-agents/malicious-agent.ts",
+    "agent:noise": "npx tsx src/mock-agents/noise-agent.ts"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "near-api-js": "^5.0.1",
+    "ethers": "^6.15.0",
+    "msgpackr": "^1.11.0",
+    "viem": "^2.21.0",
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

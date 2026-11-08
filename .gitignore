@@ -37,3 +37,28 @@ test-metis*.js
 colosseum-credentials.md
 test-privy-signer-id.md
 build.tar.gz
+
+# Agent service
+agent/.env
+agent/.agent-keys.json
+agent/.hl-addresses.json
+agent/.sources.json
+agent/data/
+agent/node_modules/
+
+# NEAR contract build artifacts
+near-contract/target/
+near-contract/node_modules/
+near-contract/Cargo.lock
+
+# NEAR credentials (private keys)
+.near-credentials/
+*.json.bak
+
+# Rust
+**/*.rs.bk
+
+# Temp & cache
+*.wasm
+/tmp/
+nohup.out

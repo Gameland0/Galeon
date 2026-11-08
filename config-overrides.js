@@ -16,6 +16,20 @@ module.exports = override(
     },
   });
 
+  // Polyfills for NEAR wallet libraries (here-wallet, near-api-js)
+  config.resolve.fallback = {
+    ...config.resolve.fallback,
+    crypto: require.resolve('crypto-browserify'),
+    stream: require.resolve('stream-browserify'),
+    http: require.resolve('stream-http'),
+    https: require.resolve('https-browserify'),
+    os: require.resolve('os-browserify/browser'),
+    url: require.resolve('url'),
+    assert: require.resolve('assert'),
+    buffer: require.resolve('buffer'),
+    zlib: require.resolve('browserify-zlib'),
+  };
+
   return config;
   },
   // 添加 ProvidePlugin 支持 Buffer 和 process

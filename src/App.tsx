@@ -36,6 +36,9 @@ import BrainLinkTradePage from './pages/BrainLinkTradePage';
 import BrainLinkHistoryPage from './pages/BrainLinkHistoryPage';
 import BrainLinkEmbedDemo from './pages/BrainLinkEmbedDemo';
 import { BlockchainProvider } from './components/BlockchainContext';
+// [HACKATHON-NEAR] NEAR Agent pages
+import { NearWalletProvider } from './contexts/NearWalletContext';
+import NearAgentPage from './pages/NearAgentPage';
 import './styles/global.css'
 import './styles/markdown.css'
 import './styles/chat.css'
@@ -113,6 +116,13 @@ const App: React.FC = () => {
                     <Route path="/brain/history" element={<BrainLinkHistoryPage />} />
                     <Route path="/brain/embed-demo" element={<BrainLinkEmbedDemo />} />
                   </Route>
+
+                  {/* [HACKATHON-NEAR] NEAR Agent — Independent layout with NearWalletProvider */}
+                  <Route path="/near-agent" element={
+                    <NearWalletProvider>
+                      <NearAgentPage />
+                    </NearWalletProvider>
+                  } />
 
                   {/* Legacy routes - keep original background/app wrapper */}
                   <Route path="/login" element={
