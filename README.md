@@ -158,12 +158,20 @@ From Galeon Brain's production trading:
 
 ---
 
+## Deployed Contracts
+
+| Contract | Network | Address |
+|----------|---------|---------|
+| Agent Trust Registry | NEAR Testnet | [`galeon-trust.testnet`](https://testnet.nearblocks.io/address/galeon-trust.testnet) |
+
+---
+
 ## NEAR Integration
 
 | Feature | NEAR Technology |
 |---------|----------------|
 | Cross-chain fund routing | NEAR Intents (1Click API) |
-| Agent trust storage | Smart contract on NEAR (Rust, near-sdk) |
+| Agent trust storage | Smart contract on NEAR Testnet (`galeon-trust.testnet`) |
 | Trust events | NEP-297 standard events |
 | Wallet connection | NEAR Wallet Selector (Meteor, Here Wallet) |
 | Agent authorization | Function-Call Access Keys |
