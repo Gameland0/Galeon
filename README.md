@@ -67,21 +67,36 @@ PROBATION ──→ VALIDATED ──→ TRUSTED ──→ or SUSPENDED
 | **Anomaly scoring** | Cumulative quality score — degrades with each red flag |
 | **Fusion outcome matching** | Did the agent's signal help or hurt the final trade? |
 
-No admin, no manual review. Good agents earn influence. Bad agents get cut.
+Trust transitions are **fully automatic** — driven by signal quality metrics, not human review. No one can manually promote an agent to Trusted or override a Suspension mid-operation.
 
 ### 4. Fusion Engine
 
-When multiple agents submit signals, Brain fuses them:
+When multiple agents submit signals, Brain fuses them into a single weighted score, then passes it to the Risk Guard for a final go/no-go decision.
+
+**Example decision trace (BTC LONG):**
+
+```
+Brain raw score:     62  (technical analysis, medium confidence)
+  + Trend Agent:     +8  weight 1.0x  [TRUSTED]   → BULLISH
+  + LunarCrush:      +5  weight 0.5x  [VALIDATED] → BULLISH
+  + OrderBook Agent:  0  weight 0.0x  [PROBATION] → ignored
+────────────────────────────────────────────────
+Fusion score:        67  → Label: Fusion Confirmed
+Risk Guard:          PASS  (position within limit, no regime block)
+Result:              BTC LONG executed on HyperLiquid
+```
+
+**Fusion labels:**
 
 | Label | Meaning |
 |-------|---------|
-| **Fusion Confirmed** | External agents agree with Brain → score boosted |
+| **Fusion Confirmed** | Agents agree with Brain → score boosted |
 | **Fusion Challenged** | Agents disagree → score reduced or blocked |
 | **Fusion Adjusted** | Partial agreement → score modified |
-| **Brain Solo** | Only Brain had a signal → acts alone |
-| **Security Block** | Regime guard vetoed the trade entirely |
+| **Brain Solo** | No external signals available → Brain acts alone |
+| **Security Block** | Risk Guard vetoed the trade (regime/drawdown/position limit) |
 
-Each decision has a full reasoning chain — every factor that built the score is visible.
+Probation-state agents contribute zero weight — their signals are logged for evaluation but do not affect execution. Only after passing consistency checks does an agent gain voting power.
 
 ### 5. On-Chain Agent Trust Registry
 
@@ -131,29 +146,37 @@ From Galeon Brain's production trading:
 │                        Galeon Brain                              │
 │                                                                  │
 │  ┌──────────────┐  ┌─────────────────┐  ┌────────────────────┐  │
-│  │ Trust Store  │  │  Fusion Engine  │  │  Signal Validator  │  │
-│  │ (4 states)   │  │ (weighted vote) │  │  (anomaly detect)  │  │
-│  └──────────────┘  └────────┬────────┘  └────────────────────┘  │
+│  │ Signal       │  │  Signal         │  │  Trust Store       │  │
+│  │ Poller       │  │  Validator      │  │  (4 states)        │  │
+│  │ (15s cycle)  │  │  (anomaly det.) │  │                    │  │
+│  └──────┬───────┘  └────────┬────────┘  └─────────┬──────────┘  │
+│         │                   │                     │              │
+│         └───────────────────▼─────────────────────┘             │
 │                             │                                    │
-│  ┌──────────────┐  ┌───────▼──────────┐  ┌────────────────────┐ │
-│  │ Risk Guard   │  │  Signal Poller   │  │  NEAR Trust Chain  │ │
-│  │ (max pos,    │  │  (15s cycle)     │  │  (on-chain sync)   │ │
-│  │  drawdown)   │  └────────┬─────────┘  └────────────────────┘ │
-│  └──────────────┘           │                                    │
-└─────────────────────────────┼────────────────────────────────────┘
-                              │
-                ┌─────────────┼──────────────┐
-                ▼                            ▼
-      ┌──────────────────┐      ┌────────────────────┐
-      │   NEAR Intents   │      │  NEAR Chain        │
-      │   (cross-chain   │      │  (trust registry)  │
-      │    fund routing) │      │                    │
-      └────────┬─────────┘      └────────────────────┘
-               ▼
-      ┌──────────────────┐
-      │   HyperLiquid    │
-      │   (perp trading) │
-      └──────────────────┘
+│                    ┌────────▼────────┐   ┌────────────────────┐  │
+│                    │  Fusion Engine  │   │  NEAR Trust Chain  │  │
+│                    │ (weighted vote) │   │  (on-chain sync)   │  │
+│                    └────────┬────────┘   └────────────────────┘  │
+│                             │                                    │
+│                    ┌────────▼────────┐                           │
+│                    │   Risk Guard    │                           │
+│                    │  (position/     │                           │
+│                    │   drawdown/     │                           │
+│                    │   regime check) │                           │
+│                    └────────┬────────┘                           │
+└─────────────────────────────┼──────────────────────────────────-─┘
+                              │ execute / reject
+                              ▼
+                   ┌──────────────────┐      ┌────────────────────┐
+                   │   NEAR Intents   │      │  NEAR Chain        │
+                   │   (cross-chain   │      │  (trust registry   │
+                   │    fund routing) │      │   galeon-trust     │
+                   └────────┬─────────┘      │   .testnet)        │
+                            ▼               └────────────────────┘
+                   ┌──────────────────┐
+                   │   HyperLiquid    │
+                   │   (perp trading) │
+                   └──────────────────┘
 ```
 
 ---
@@ -168,13 +191,13 @@ From Galeon Brain's production trading:
 
 ## NEAR Integration
 
-| Feature | NEAR Technology |
-|---------|----------------|
-| Cross-chain fund routing | NEAR Intents (1Click API) |
-| Agent trust storage | Smart contract on NEAR Testnet (`galeon-trust.testnet`) |
-| Trust events | NEP-297 standard events |
-| Wallet connection | NEAR Wallet Selector (Meteor, Here Wallet) |
-| Agent authorization | Function-Call Access Keys |
+| Feature | NEAR Technology | Detail |
+|---------|----------------|--------|
+| Cross-chain fund routing | NEAR Intents (1Click API) | Routes funds from NEAR to HyperLiquid |
+| Agent trust storage | Smart contract (`galeon-trust.testnet`) | Trust state + scores written on-chain after each evaluation |
+| Trust state events | NEP-297 standard events | Emitted on PROBATION → VALIDATED → TRUSTED → SUSPENDED transitions |
+| Wallet connection | NEAR Wallet Selector | Meteor Wallet, Here Wallet |
+| On-chain write authorization | Function-Call Access Keys | Backend holds a limited-scope key: can only call `update_trust_score` and `register_agent` on `galeon-trust.testnet` — cannot transfer NEAR tokens |
 
 ---
 
